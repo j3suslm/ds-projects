@@ -1,5 +1,8 @@
 polars
 pandas
+pyarrow
+fastexcel
+openpyxl
 geopandas
 pathlib
 folium

@@ -7,3 +7,6 @@ geopandas
 pathlib
 folium
 jupyter
+matplotlib
+mapclassify
+

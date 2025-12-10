@@ -1,0 +1,6 @@
+polars
+pandas
+geopandas
+pathlib
+folium
+jupyter

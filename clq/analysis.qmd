@@ -33,9 +33,10 @@ jupyter: python3
 
 ::: {#fig-crimes}
 
-![](header.png){width=65% .lightbox fig-align="left"}
+![](header.png){width=52% .lightbox fig-align="left"}
 
-Several violent episodes in Mexico suggest a worrying trend (The Economist)
+Several violent episodes in Mexico suggest a worrying trend   
+Source: The Economist
 
 :::
 
@@ -223,16 +224,14 @@ def lq_calculation(df: pl.DataFrame) -> pl.DataFrame:
 ```{python}
 results = (
     lq_calculation(df)
-        .filter(pl.col('CL_homicides')>1)
-        .sort('CL_homicides', descending=True)
 )
 
-df4 = results.to_pandas()
+df4 = results.filter(pl.col('CL_homicides')>1).sort('CL_homicides', descending=True).to_pandas()
 ```
 
 ```{python}
 #| label: tbl-combined
-#| tbl-cap: Preview of comined dataset
+#| tbl-cap: Preview of final dataset
 (
   df4
       .head(10)
@@ -271,19 +270,20 @@ mexico['cve_geo'] = mexico['cve_ent'] + mexico['cve_mun']
 # convert to int
 mexico['cve_geo'] = mexico['cve_geo'].astype(int)
 
-# convert to pandas
-df_pd = results.to_pandas().round(2)
-
 # concat tables
 df_geo = (
-    mexico.merge(df_pd, on='cve_geo', how='left')
+    mexico.merge(results.to_pandas(), on='cve_geo', how='left')
     [['cve_geo','Entidad','Municipio','Homicidios','Pob','CL_homicides','geometry']]
 )
+
+# save geojson file
+#df_geo.to_file('geo_results.geojson', driver='GeoJSON')
+
+df_geo_gt1 = df_geo[df_geo['CL_homicides']>1]
 ```
 
-
 ```{python}
-m = df_geo.explore(
+m = df_geo_gt1.explore(
     location=[24, -104],
     zoom_start=5.4,
     column='CL_homicides',
@@ -298,14 +298,16 @@ fullscreen_plugin = plugins.Fullscreen(
 ).add_to(m)
 ```
 
-```{python}
-m
+```{=html}
+<div class='tableauPlaceholder' id='viz1765556881772' style='position: relative'><noscript><a href='#'><img alt='clq-mexico ' src='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;Cr&#47;CrimeLocationQuotient&#47;clq-mexico&#47;1_rss.png' style='border: none' /></a></noscript><object class='tableauViz'  style='display:none;'><param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' /> <param name='embed_code_version' value='3' /> <param name='site_root' value='' /><param name='name' value='CrimeLocationQuotient&#47;clq-mexico' /><param name='tabs' value='no' /><param name='toolbar' value='yes' /><param name='static_image' value='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;Cr&#47;CrimeLocationQuotient&#47;clq-mexico&#47;1.png' /> <param name='animate_transition' value='yes' /><param name='display_static_image' value='yes' /><param name='display_spinner' value='yes' /><param name='display_overlay' value='yes' /><param name='display_count' value='yes' /><param name='language' value='es-ES' /></object></div>                <script type='text/javascript'>                    var divElement = document.getElementById('viz1765556881772');                    var vizElement = divElement.getElementsByTagName('object')[0];                    if ( divElement.offsetWidth > 800 ) { vizElement.style.minWidth='420px';vizElement.style.maxWidth='1200px';vizElement.style.width='100%';vizElement.style.minHeight='587px';vizElement.style.maxHeight='877px';vizElement.style.height=(divElement.offsetWidth*0.75)+'px';} else if ( divElement.offsetWidth > 500 ) { vizElement.style.minWidth='420px';vizElement.style.maxWidth='1200px';vizElement.style.width='100%';vizElement.style.minHeight='587px';vizElement.style.maxHeight='877px';vizElement.style.height=(divElement.offsetWidth*0.75)+'px';} else { vizElement.style.width='100%';vizElement.style.height='727px';}                     var scriptElement = document.createElement('script');                    scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';                    vizElement.parentNode.insertBefore(scriptElement, vizElement);                </script>
 ```
 
 
-# Policy Implications and Conclusions
+# Policy Implications
 
-The application of Location Quotient (LQ) methodology to crime analysis is a specialized area within spatial criminology, drawing heavily on its original use in economic geography. The literature establishes LQ as a powerful tool for moving beyond simple crime rates to identify areas where specific criminal activity is disproportionately concentrated.
+The application of Location Quotient (LQ) methodology to crime analysis is a specialized area within spatial criminology, drawing heavily on its original use in economic geography.
+
+The literature establishes LQ as a powerful tool for moving beyond simple crime rates to identify areas where specific criminal activity is disproportionately concentrated.
 
 
 # References

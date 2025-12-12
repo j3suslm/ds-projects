@@ -6,4 +6,6 @@ openpyxl
 geopandas
 pathlib
 folium
+matplotlib
+mapclassify
 jupyter

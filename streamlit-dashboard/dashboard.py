@@ -63,3 +63,6 @@ st.markdown('''
     </p>''',
     unsafe_allow_html=True
 )
+
+st.caption('Inspirado en el curso de Jorge Maldonado (Desarrollo de Web apps con Streamlit)')
+

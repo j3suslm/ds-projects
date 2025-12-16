@@ -1,6 +1,6 @@
 streamlit
 pathlib
-streamlit_extras.metric_cards
+streamlit_extras
 faker
 pandas
 numpy

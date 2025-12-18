@@ -1,6 +1,17 @@
 import streamlit as st
 from PIL import Image
 
+# Custom CSS to hide 3 dots on top right
+hide_menu_style = """
+        <style>
+        #MainMenu {visibility: hidden;}
+        footer {visibility: hidden;}
+        header {visibility: some;}
+        </style>
+        """
+st.markdown(hide_menu_style, unsafe_allow_html=True)
+
+
 # Custom CSS to make the sidebar black
 st.markdown(
     """

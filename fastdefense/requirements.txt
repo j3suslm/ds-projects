@@ -1,5 +1,5 @@
 streamlit
-PIL
+Pillow
 st_social_media_links
-streamlit.components.v1
+
 

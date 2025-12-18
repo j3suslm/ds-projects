@@ -8,7 +8,6 @@ hide_menu_style = """
         <style>
         #MainMenu {visibility: hidden;}
         footer {visibility: hidden;}
-        header {visibility: some;}
         </style>
         """
 st.markdown(hide_menu_style, unsafe_allow_html=True)

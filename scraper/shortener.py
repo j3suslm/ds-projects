@@ -34,4 +34,3 @@ def shortener():
                     st.error('Type a valid url')
             else:
                 st.warning('Type a url')
-

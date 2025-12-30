@@ -2,6 +2,8 @@
 
 In this repository I will share some projects on data science and related stuff.
 
+Test
+
 - [Crime Location Quotient](https://jesuslm-clq.share.connect.posit.cloud)
 
 

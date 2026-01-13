@@ -33,7 +33,7 @@ jupyter: python3
 
 ::: {#fig-crimes}
 
-![](header.png){width=52% .lightbox fig-align="left"}
+![](images/header.png){width=52% .lightbox fig-align="left"}
 
 Several violent episodes in Mexico suggest a worrying trend   
 Source: The Economist
@@ -100,15 +100,14 @@ homicides = Path('homicides.parquet')
 
 df_homicides = pl.read_parquet(homicides)
 
-df2 = df_homicides.to_pandas()
+df2 = df_homicides.to_pandas().head(10)
 ```
 
 ```{python}
 #| label: tbl-homicides
 #| tbl-cap: Preview of homicides dataset
 (
-    df2 
-        .head(10)
+    df2
         .style.hide(axis='index')
 )
 ```
@@ -120,7 +119,7 @@ pop = Path('population.parquet')
 
 df_pop = pl.read_parquet(pop)
 
-df3 = df_pop.to_pandas()
+df3 = df_pop.to_pandas().head(10)
 ```
 
 ```{python}
@@ -128,7 +127,6 @@ df3 = df_pop.to_pandas()
 #| tbl-cap: Preview of population dataset
 (
   df3
-      .head(10)
       .style.hide(axis='index')
 )
 ```
@@ -183,6 +181,7 @@ df = (
     df_homicides
         .join(df_pop, on='cve_geo', how='inner')
         .select(['cve_geo','Entidad','Municipio','Homicidios','Pob',])
+        .filter(pl.col('Pob')>10_000)
 )
 ```
 
@@ -226,19 +225,20 @@ results = (
     lq_calculation(df)
 )
 
-df4 = results.filter(pl.col('CL_homicides')>1).sort('CL_homicides', descending=True).to_pandas()
+df4 = (
+    results
+        .filter(pl.col('CL_homicides')>1)
+        .sort('CL_homicides', descending=True)
+        .to_pandas()
+        .head(10)
+)
 ```
 
 ```{python}
 #| label: tbl-combined
 #| tbl-cap: Preview of final dataset
 (
-  df4
-      .head(10)
-      .style.hide(axis='index')
-)
-(
-    df4.head(10)
+    df4
         .style.hide(axis='index')
         .format(precision=2, thousands=",", decimal=".")
 )
@@ -276,10 +276,10 @@ df_geo = (
     [['cve_geo','Entidad','Municipio','Homicidios','Pob','CL_homicides','geometry']]
 )
 
-# save geojson file
-#df_geo.to_file('geo_results.geojson', driver='GeoJSON')
-
 df_geo_gt1 = df_geo[df_geo['CL_homicides']>1]
+
+# save geojson file
+#df_geo_g1.to_file('geo_results.geojson', driver='GeoJSON')
 ```
 
 ```{python}

@@ -36,7 +36,7 @@ st.markdown("""
 st.set_page_config(layout="centered", page_title="Contact", page_icon=":material/contact_mail:")
 
 # set title and subtitle
-st.markdown("<h1><span style='color: #691c32;'>📩 Contact Form</span></h1>",
+st.markdown("<h1><span style='color: #781310;'>📩 Contact Form</span></h1>",
     unsafe_allow_html=True)
 
 st.write("Please fill out the form below to get in touch.")

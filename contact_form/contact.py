@@ -36,10 +36,10 @@ st.markdown("""
 st.set_page_config(layout="centered", page_title="Contact", page_icon=":material/contact_mail:")
 
 # set title and subtitle
-st.markdown("<h1><span style='color: #781310;'>📩 Contact Form</span></h1>",
-    unsafe_allow_html=True)
+#st.markdown("<h1><span style='color: #781310;'>📩 Contact Form</span></h1>",
+#    unsafe_allow_html=True)
 
-st.write("Please fill out the form below to get in touch.")
+st.write("📩 Please fill out the form below to get in touch.")
 
 
 # Simple but effective email regex
@@ -96,4 +96,8 @@ with st.form("contact_form", clear_on_submit=True):
         else:
             st.warning("⚠️ Please fill in all fields.")
 
-st.caption('©2026 *Jesus LM*')
+# Custom colored caption
+st.markdown(
+    '<p style="color: #00a398; font-size: 0.9rem;">©2026 Jesus LM</p>', 
+    unsafe_allow_html=True
+)

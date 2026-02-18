@@ -1,7 +1,7 @@
 [theme] # You have to add this line
 
-primaryColor = '#691c32'
-backgroundColor = '#fff'
-textColor = '#28282b'
-font="Noto Sans"
+primaryColor = '#e3120b'
+backgroundColor = '#f0f0f0'
+textColor = '#4b4f54'
+font='ITC Charter', Georgia, serif
 codeBackgroundColor="#f8f8f8"

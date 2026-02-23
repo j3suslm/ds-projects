@@ -1,0 +1,127 @@
+/*-- scss:defaults --*/
+
+// The Economist Color Palette
+$brand-red: #e3120b;
+$deep-blue: #004f71;
+$bg-gray: #F5F2F0;
+$text-black: #111111;
+
+// Reveal.js Variable Overrides
+$body-bg: $bg-gray;
+$body-color: $text-black;
+$link-color: $brand-red;
+$selection-bg: lighten($brand-red, 30%);
+$heading-color: $text-black;
+$heading-font-weight: 700;
+
+/*-- scss:rules --*/
+.reveal .title {
+  border-top: 5px solid $brand-red; /* The iconic top border */
+  color: #004f71;
+  font-weight: 800;
+  font-size: 80px;
+  text-transform: none; /* Common in their branding */
+}
+
+.reveal .subtitle {
+  color: $brand-red; /* The Economist Deep Blue */
+  font-size: 35px;
+  margin-top: -2px;
+  text-transform: uppercase;
+}
+
+// change author color
+.quarto-title-author {
+  color: #28282b;
+  font-size: 1em;
+  font-weight: 400;     /* Normal weight for contrast against bold title */
+  margin-top: 2px;     /* Space between title/subtitle and author */
+  letter-spacing: 0.05em; /* Subtle professional spacing */
+}
+
+.reveal .date {
+  color: #666666;
+  font-size: 0.6em;
+  text-transform: uppercase;
+  margin-top: 10px;
+}
+
+.reveal h1, .reveal h2 {
+  position: relative; /* Needed to anchor the line */
+  border-top: none;   /* Remove the old border */
+  padding-top: 15px;
+  text-transform: none;
+  color: #004f71;
+}
+
+.reveal h1::before, .reveal h2::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0; /* Change to 'left: 50%; transform: translateX(-50%);' to center */
+  width: 100px; /* Adjust this to make the border narrower */
+  height: 5px; /* The thickness */
+  background-color: $brand-red;
+}
+
+.reveal .footer {
+  font-size: 0.8em;
+  color: #007583;
+}
+
+.reveal .slide-number {
+  color: $brand-red;
+  background-color: transparent; /* Clean look */
+  font-weight: bold;
+  font-size: 20px;
+  bottom: 0px; /* Distance from bottom */
+  right: 20px; /* Distance from right */
+}
+
+.reveal blockquote {
+  border-left: 5px solid $brand-red;
+  background: #fff;
+  box-shadow: none;
+  font-style: italic;
+  font-size: 30px;
+  padding: 10px;
+}
+
+.justify {
+  text-align: justify;
+  color: #333333;
+}
+
+
+/* Table styling */
+/* target the top of the header and the bottom of the table */
+.reveal table {
+  border-top: 2px solid var(--econ-dark-blue) !important;
+  border-bottom: 2px solid var(--econ-dark-blue) !important;
+  border-collapse: collapse; /* ensures lines look crisp */
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+/* Optional: Add a line under the header row (Standard Three-Line Table) */
+.reveal table thead th {
+  border-bottom: 1px solid var(--econ-dark-blue);
+}
+
+/* Remove default striped backgrounds if they clash */
+.reveal table tr:nth-child(even) {
+  background-color: transparent;
+}
+
+/* target all callout types */
+.callout.callout-style-default {
+  border-left: 5px solid var(--econ-red) !important; /* specify width and style */
+  background-color: white !important;
+  border-radius: 5px; /* '1' is too small to see; 5px is standard */
+  box-shadow: none; /* optional: removes default shadow for a cleaner look */
+}
+
+/* ensure the icon/title area matches if needed */
+.callout-header {
+  background-color: white !important;
+}

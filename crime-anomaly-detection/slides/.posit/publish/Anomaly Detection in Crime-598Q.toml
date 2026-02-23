@@ -1,0 +1,12 @@
+product_type = 'connect_cloud'
+'$schema' = 'https://cdn.posit.co/publisher/schemas/posit-publishing-schema-v3.json'
+type = 'html'
+entrypoint = 'crime-slides.html'
+source = 'crime-slides.qmd'
+validate = true
+files = [
+  '/crime-slides.html',
+  '/.posit/publish/Anomaly Detection in Crime-598Q.toml',
+  '/.posit/publish/deployments/deployment-J8M3.toml'
+]
+title = 'Anomaly Detection in Crime'

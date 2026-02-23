@@ -1,0 +1,267 @@
+---
+title: "Modern Anomaly Detection in Crime"
+subtitle: "A Case Study for Mexico"
+author: Jesus L. Monroy
+date: 2026-02-20
+last-update: last-modified
+date-format: medium
+abstract: |
+  In the high-stakes world of public safety, identifying a "crime wave" before it becomes a crisis is the ultimate goal.
+  Traditional spreadsheets often fail to highlight subtle shifts in criminal behavior, buried under thousands of rows of routine reports.
+format:
+  html:
+    embed-resources: true
+    #fig-cap-location: margin
+    #tbl-cap-location: margin
+    number-sections: false
+    toc: true
+    toc-location: left
+    toc-title: Table of Contents
+    grid:
+      sidebar-width: 260px
+      body-width: 940px
+      margin-width: 100px
+      gutter-width: 1em
+    theme: custom.scss
+    bibliography: references.bib
+    nocite: | 
+      @*
+    link-external-newwindow: true
+    other-links:
+      - text: LinkedIn
+        icon: linkedin
+        href: https://www.linkedin.com/in/j3sus-lm/
+      - text: Twitter
+        icon: twitter
+        href: https://x.com/j3suslm
+      - text: Medium
+        icon: medium
+        href: https://medium.com/@jesuslm
+---
+
+::: {#fig-map}
+
+![](https://jesuslm-my-website.share.connect.posit.cloud/images/mexico-city-crime-map.png){fig-align="left" .lightbox}
+
+Mexico City Crime Heat Map
+:::
+
+# Overview
+
+Crime data is inherently "noisy."
+A Saturday night in a downtown district will naturally have more incidents than a Tuesday morning in the suburbs.
+A simple threshold (e.g., "alert me if crimes > 20") doesn't work because it ignores context like seasonality, day of the week, and location-specific baselines.
+
+To solve this, we move beyond simple counting and toward Unsupervised Machine Learning.
+
+## The Tech Stack
+
+For this case study, we selected a modern Python stack designed for performance and clarity:
+
+- Polars
+  Unlike Pandas, Polars is built in Rust and uses multi-threading. When processing millions of crime logs, Polars can be 10–100x faster, making it the ideal engine for real-time analytics.
+
+- Scikit-Learn
+We wil use the Isolation Forest model. This algorithm is a "forest" of trees that tries to isolate each data point. Anomalies are "easy to isolate" (they require fewer splits in the tree), while normal points are "hard to isolate." This makes it incredibly effective at finding rare events in unlabeled data.
+
+- Plotly
+Static charts are dead in crime analysis. Detectors need to zoom in on specific dates and hover over data points to see metadata—Plotly provides this interactivity natively.
+
+## From Raw Logs to Red Flags
+
+1. Data Synthesis & Cleaning
+
+We begin by simulating a year of crime data across two distinct districts: "Downtown" (high volume) and "Suburbs" (low volume). Using Polars, we inject specific "spikes"—such as an artificial surge in incidents on July 4th—to test if our model can find them without being told where they are.
+
+2. Feature Engineering
+
+A crime count of "25" means something different on a Monday than it does on New Year's Eve. We use Polars to extract features like day_of_week and month. This allows the machine learning model to understand the rhythm of the city.
+
+3. Training the Isolation Forest
+
+We feed the counts and temporal features into the Isolation Forest. We set a contamination parameter (e.g., 0.02), telling the model we expect about 2% of our data to be anomalous. The model then assigns an "anomaly score" to every single day in the dataset.
+
+# Environment settings
+
+```{python}
+import polars as pl
+import numpy as np
+import plotly.express as px
+from sklearn.ensemble import IsolationForest
+from datetime import datetime, timedelta
+```
+
+```{python}
+# 1. GENERATE DUMMY CRIME DATA
+# We'll create a year of data for two districts with a "normal" baseline 
+# and then manually inject anomalies (crime spikes).
+np.random.seed(42)
+dates = [datetime(2025, 1, 1) + timedelta(days=i) for i in range(365)]
+
+def create_district_data(name, base_rate, noise):
+    counts = np.random.poisson(base_rate, len(dates))
+    return pl.DataFrame({
+        "date": dates,
+        "district": [name] * 365,
+        "incident_count": counts.astype(float)
+    })
+
+df = pl.concat([
+    create_district_data("Downtown", 15, 2),
+    create_district_data("Suburbs", 5, 1)
+])
+
+# INJECT ANOMALIES (Artificial Spikes)
+# A huge spike in Downtown on July 4th and a weird jump in Suburbs in October
+df = df.with_columns(
+    incident_count = pl.when(
+        (pl.col("date") == datetime(2025, 7, 4)) 
+        & (pl.col("district") == "Downtown")
+    )
+    .then(pl.col("incident_count") + 50)
+    .when(
+        (pl.col("date") == datetime(2025, 10, 15))
+        & (pl.col("district") == "Suburbs")
+    )
+    .then(pl.col("incident_count") + 30)
+    .otherwise(pl.col("incident_count"))
+)
+```
+
+# Data preprocessing
+
+```{python}
+# 2. FEATURE ENGINEERING & PREPROCESSING
+# Anomaly detection works better when it understands context (like Day of Week)
+df = df.with_columns([
+    pl.col("date").dt.weekday().alias("day_of_week"),
+    pl.col("date").dt.month().alias("month")
+])
+```
+
+```{python}
+# 3. ANOMALY DETECTION WITH ISOLATION FOREST
+# Isolation Forest "isolates" observations by randomly selecting a feature and split value.
+# Anomalies are easier to isolate and thus have shorter paths in the trees.
+model = IsolationForest(contamination=0.02, random_state=42)
+
+# Convert to numpy for sklearn (using Polars' fast selection)
+X = df.select(["incident_count", "day_of_week", "month"]).to_numpy()
+df = df.with_columns(
+    anomaly_score = model.fit_predict(X)
+)
+
+# Convert -1 (anomaly) and 1 (normal) to readable labels
+df = df.with_columns(
+    is_anomaly = pl.when(pl.col("anomaly_score") == -1)
+        .then(pl.lit("Yes"))
+        .otherwise(pl.lit("No"))
+)
+```
+
+# Model evaluation
+
+```{python}
+ECONOMIST_RED = "#e3120b"
+ECONOMIST_BLUE = "#00313a" # Your header color
+ECONOMIST_TEAL = "#00a398"
+ECONOMIST_LIGHT_BLUE = "#76b7b2"
+
+fig = px.scatter(
+    df.to_pandas(), # Plotly works natively with pandas-like structures
+    x="date", 
+    y="incident_count", 
+    color="is_anomaly",
+    facet_row="district",
+    title="Crime Incident Anomaly Detection (2025)",
+    labels={"incident_count": "Daily Crime Reports", "is_anomaly": "Anomaly Detected?"},
+    color_discrete_map={"Yes": "red", "No": "blue"},
+    hover_data=["day_of_week"]
+)
+
+fig.update_layout(
+    title=dict(
+        text='''
+            <b>Chart Title</b><br><span style='font-size:14px; color:#4b4f54'
+            >Sub-heading or units go here</span>
+            ''',
+        x=0.05,
+        y=0.9,
+        font=dict(family="Georgia, serif", size=24, color=ECONOMIST_BLUE)
+    ),
+    plot_bgcolor="#F5F5F5",
+    paper_bgcolor="#F5F5F5",
+    hovermode="x unified",
+    margin=dict(t=100, l=50, r=50, b=50),
+    legend=dict(orientation="h", yanchor="bottom", y=0.95, xanchor="left", x=0),
+    xaxis=dict(
+        showline=True,
+        linecolor='black',
+        gridcolor='#eeeeee',
+        #tickmode='linear',
+        #tick0=df['Year'].min(),
+        #dtick=1, # Forces a tick every 1 unit (year)
+    ),
+
+    yaxis=dict(
+        side="right", # The Economist often puts labels on the right
+        gridcolor='#eeeeee',
+        zeroline=True,
+        zerolinecolor='black'
+    )
+)
+
+# Add the signature Red Rectangle at the top left
+fig.add_shape(
+    type="rect", x0=-0.05, y0=1.2, x1=0.02, y1=1.22,
+    xref="paper", yref="paper",
+    fillcolor=ECONOMIST_RED, line=dict(width=0)
+)
+
+fig.show()
+```
+
+# Conclusions
+
+Visualizing the Invisible
+
+The output is an interactive dashboard. While a human might miss a slight but statistically significant rise in suburb crime during October, the model flags it instantly in bright red.
+
+- Downtown: The model successfully identified the July 4th spike as an anomaly, distinguishing it from the already high daily average.
+- Suburbs: It caught a smaller "micro-spike" in mid-October that might have been overlooked by manual review.
+
+Why This Matters for Public Safety
+
+This approach shifts law enforcement from reactive to proactive. By identifying anomalies in real-time, departments can:
+
+- Allocate patrols to "hot zones" before a trend scales.
+- Identify potential new "Modus Operandi" (MO) used by organized groups.
+- Validate whether a specific community intervention is successfully reducing crime below the expected baseline.
+
+# References
+
+::: {#refs}
+:::
+
+
+# Contact
+
+::: {style="color: #00313a; font-size: 28px; font-weight: bold; margin-top: 10px; margin-bottom: 0px"}
+Jesus L. Monroy
+:::
+
+::: {style="color: #00a398; font-size: 20px; font-style: italic; font-family: 'ITC Charter', Georgia, serif; margin-top: 0px;"}
+Economist & Data Scientist
+:::
+
+::: {style="color: #4b4f54; font-size: 16px; font-style: italic; font-family: 'ITC Charter', Georgia, serif; width: 65%; text-align: justify; line-height: 1.5; margin-top: 0px; margin-bottom: 15px;"}
+Passionate about creating tools that make data accessible and impactful using SQL, Python, Streamlit, Shiny and Tableau in diverse sectors like Public Security, e-commerce, and Healthcare.     
+BA in Economics, MA in Information Technology, and Data Science and Machine Learning certification.
+:::
+
+::: {style="color: #4b4f54; font-size: 16px; font-family: sans-serif;"}
+[Portfolio](https://jesuslm-my-website.share.connect.posit.cloud) | 
+[Linkedin](https://www.linkedin.com/in/j3sus-lm) | 
+[Twitter](https://x.com/j3suslm) | 
+[Tableau](https://tinyurl.com/jesuslm-tableau)
+:::

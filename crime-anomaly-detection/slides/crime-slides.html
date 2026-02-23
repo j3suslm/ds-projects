@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.27">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Jesus L. Monroy">
+
+<title>Anomaly Detection in Crime</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="crime-slides_files/libs/clipboard/clipboard.min.js"></script>
+<script src="crime-slides_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="crime-slides_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="crime-slides_files/libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="crime-slides_files/libs/quarto-html/popper.min.js"></script>
+<script src="crime-slides_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="crime-slides_files/libs/quarto-html/anchor.min.js"></script>
+<link href="crime-slides_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="crime-slides_files/libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="crime-slides_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="crime-slides_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="crime-slides_files/libs/bootstrap/bootstrap-d6a003b94517c951b2d65075d42fb01b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+<script type="text/javascript">
+window.PlotlyConfig = {MathJaxConfig: 'local'};
+if (window.MathJax && window.MathJax.Hub && window.MathJax.Hub.Config) {window.MathJax.Hub.Config({SVG: {font: "STIX-Web"}});}
+</script>
+<script type="module">import "https://cdn.plot.ly/plotly-3.3.0.min"</script>
+
+
+
+</head>
+
+<body class="quarto-light">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="crime-slides.html"><i class="bi bi-file-slides"></i>RevealJS</a></li></ul></div></div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Anomaly Detection in Crime</h1>
+<p class="subtitle lead">A Case Study for Mexico</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p><em>Jesus L. Monroy</em> </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">Feb 23, 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="overview" class="level2 smaller" data-background-image="slides-fondo-latte.png" data-background-opacity="0.5">
+<h2 class="smaller anchored" data-background-image="slides-fondo-latte.png" data-background-opacity="0.5" data-anchor-id="overview">Overview</h2>
+<div class="justify">
+<p>Crime data is inherently “<em>noisy</em>.” A Saturday night in a downtown district will naturally have more incidents than a Tuesday morning in the suburbs.</p>
+<p>A simple threshold (<em>e.g., “alert me if crimes &gt; 20”</em>) doesn’t work because it ignores context like seasonality, day of the week, and location-specific baselines.</p>
+<p><em>To solve this, we move beyond simple counting and toward Unsupervised Machine Learning</em>.</p>
+</div>
+<style>
+.callout {
+  border-left: 8px solid #e3120b !important; /* Replace with your --econ-red hex */
+  background-color: #f6f6f6 !important;
+}
+</style>
+<div class="callout callout-style-simple callout-note no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<p><em>This case study is based on fictituos data only</em>.</p>
+</div>
+</div>
+</div>
+<hr>
+</section>
+<section id="the-tech-stack" class="level2 incremental smaller" data-background-image="slides-fondo-latte.png" data-background-opacity="0.5">
+<h2 class="incremental smaller anchored" data-background-image="slides-fondo-latte.png" data-background-opacity="0.5" data-anchor-id="the-tech-stack">The Tech Stack</h2>
+<div class="justify">
+<ul>
+<li><strong>Polars</strong>.</li>
+</ul>
+<p>Unlike <code>Pandas</code>, <code>Polars</code> is built in <code>Rust</code> and uses multi-threading. When processing millions of crime logs, <code>Polars</code> can be 10–100x faster, making it the ideal engine for real-time analytics.</p>
+<ul>
+<li><strong>Scikit-Learn</strong>.</li>
+</ul>
+<p>We wil use the <strong>Isolation Forest model</strong>. This algorithm is a “<em>forest</em>” of trees that tries to isolate each data point. Anomalies are “<em>easy to isolate</em>” (they require fewer splits in the tree), while normal points are “<em>hard to isolate</em>.” This makes it incredibly effective at finding rare events in unlabeled data.</p>
+<ul>
+<li><strong>Plotly</strong>.</li>
+</ul>
+<p><em>Static charts are dead in crime analysis</em>. Detectors need to zoom in on specific dates and hover over data points to see metadata. <code>Plotly</code> provides this interactivity natively.</p>
+</div>
+<hr>
+</section>
+<section id="from-raw-logs-to-red-flags" class="level2 incremental smaller" data-background-image="slides-fondo-latte.png" data-background-opacity="0.5">
+<h2 class="incremental smaller anchored" data-background-image="slides-fondo-latte.png" data-background-opacity="0.5" data-anchor-id="from-raw-logs-to-red-flags">From Raw Logs to Red Flags</h2>
+<div class="justify">
+<ol type="1">
+<li><strong>Data Synthesis &amp; Cleaning</strong></li>
+</ol>
+<p>We study a year of crime data across two districts: “<strong>Downtown</strong>” (<em>high volume</em>) and “<strong>Suburbs</strong>” (<em>low volume</em>).</p>
+<ol start="2" type="1">
+<li><strong>Feature Engineering</strong></li>
+</ol>
+<p>A crime count of “25” means something different on a Monday than it does on New Year’s Eve. We use <code>Polars</code> to extract features like day_of_week and month. This allows the machine learning model to understand the rhythm of the city.</p>
+<ol start="3" type="1">
+<li><strong>Training the Isolation Forest</strong></li>
+</ol>
+<p>We feed the counts and temporal features into the Isolation Forest. We set a contamination parameter (0.02), telling the model we expect about 2% of our data to be anomalous. The model then assigns an “anomaly score” to every single day in the dataset.</p>
+</div>
+<hr>
+</section>
+<section id="dataset-preview" class="level2 incremental smaller" data-background-image="slides-fondo-latte.png" data-background-opacity="0.5">
+<h2 class="incremental smaller anchored" data-background-image="slides-fondo-latte.png" data-background-opacity="0.5" data-anchor-id="dataset-preview">Dataset Preview</h2>
+<div class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>(</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    df</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>        .to_pandas().head(<span class="dv">9</span>).style</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>        .relabel_index([<span class="st">"Date"</span>, <span class="st">"District"</span>, <span class="st">"Incident count"</span>, <span class="st">"Day of week"</span>, <span class="st">"Month"</span>], axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>        .<span class="bu">format</span>(precision<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>        .set_properties(<span class="op">**</span>{</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>            <span class="st">'background-color'</span>: <span class="st">'#f8f8f8'</span>,</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>            <span class="st">'border'</span>: <span class="st">'1px solid black'</span>,</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>            <span class="st">'text-align'</span>: <span class="st">'center'</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>        })</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="tbl-preview" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="4">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-preview-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;1: Preview of dataset
+</figcaption>
+<div aria-describedby="tbl-preview-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output cell-output-display" data-execution_count="4">
+<style type="text/css">
+#T_9f5a7_row0_col0, #T_9f5a7_row0_col1, #T_9f5a7_row0_col2, #T_9f5a7_row0_col3, #T_9f5a7_row0_col4, #T_9f5a7_row1_col0, #T_9f5a7_row1_col1, #T_9f5a7_row1_col2, #T_9f5a7_row1_col3, #T_9f5a7_row1_col4, #T_9f5a7_row2_col0, #T_9f5a7_row2_col1, #T_9f5a7_row2_col2, #T_9f5a7_row2_col3, #T_9f5a7_row2_col4, #T_9f5a7_row3_col0, #T_9f5a7_row3_col1, #T_9f5a7_row3_col2, #T_9f5a7_row3_col3, #T_9f5a7_row3_col4, #T_9f5a7_row4_col0, #T_9f5a7_row4_col1, #T_9f5a7_row4_col2, #T_9f5a7_row4_col3, #T_9f5a7_row4_col4, #T_9f5a7_row5_col0, #T_9f5a7_row5_col1, #T_9f5a7_row5_col2, #T_9f5a7_row5_col3, #T_9f5a7_row5_col4, #T_9f5a7_row6_col0, #T_9f5a7_row6_col1, #T_9f5a7_row6_col2, #T_9f5a7_row6_col3, #T_9f5a7_row6_col4, #T_9f5a7_row7_col0, #T_9f5a7_row7_col1, #T_9f5a7_row7_col2, #T_9f5a7_row7_col3, #T_9f5a7_row7_col4, #T_9f5a7_row8_col0, #T_9f5a7_row8_col1, #T_9f5a7_row8_col2, #T_9f5a7_row8_col3, #T_9f5a7_row8_col4 {
+  background-color: #f8f8f8;
+  border: 1px solid black;
+  text-align: center;
+}
+</style>
+
+<table id="T_9f5a7" class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th class="blank level0" data-quarto-table-cell-role="th">&nbsp;</th>
+<th id="T_9f5a7_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">Date</th>
+<th id="T_9f5a7_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">District</th>
+<th id="T_9f5a7_level0_col2" class="col_heading level0 col2" data-quarto-table-cell-role="th">Incident count</th>
+<th id="T_9f5a7_level0_col3" class="col_heading level0 col3" data-quarto-table-cell-role="th">Day of week</th>
+<th id="T_9f5a7_level0_col4" class="col_heading level0 col4" data-quarto-table-cell-role="th">Month</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th id="T_9f5a7_level0_row0" class="row_heading level0 row0" data-quarto-table-cell-role="th">0</th>
+<td id="T_9f5a7_row0_col0" class="data row0 col0">2025-01-01 00:00:00</td>
+<td id="T_9f5a7_row0_col1" class="data row0 col1">Downtown</td>
+<td id="T_9f5a7_row0_col2" class="data row0 col2">18.0</td>
+<td id="T_9f5a7_row0_col3" class="data row0 col3">3</td>
+<td id="T_9f5a7_row0_col4" class="data row0 col4">1</td>
+</tr>
+<tr class="even">
+<th id="T_9f5a7_level0_row1" class="row_heading level0 row1" data-quarto-table-cell-role="th">1</th>
+<td id="T_9f5a7_row1_col0" class="data row1 col0">2025-01-02 00:00:00</td>
+<td id="T_9f5a7_row1_col1" class="data row1 col1">Downtown</td>
+<td id="T_9f5a7_row1_col2" class="data row1 col2">10.0</td>
+<td id="T_9f5a7_row1_col3" class="data row1 col3">4</td>
+<td id="T_9f5a7_row1_col4" class="data row1 col4">1</td>
+</tr>
+<tr class="odd">
+<th id="T_9f5a7_level0_row2" class="row_heading level0 row2" data-quarto-table-cell-role="th">2</th>
+<td id="T_9f5a7_row2_col0" class="data row2 col0">2025-01-03 00:00:00</td>
+<td id="T_9f5a7_row2_col1" class="data row2 col1">Downtown</td>
+<td id="T_9f5a7_row2_col2" class="data row2 col2">16.0</td>
+<td id="T_9f5a7_row2_col3" class="data row2 col3">5</td>
+<td id="T_9f5a7_row2_col4" class="data row2 col4">1</td>
+</tr>
+<tr class="even">
+<th id="T_9f5a7_level0_row3" class="row_heading level0 row3" data-quarto-table-cell-role="th">3</th>
+<td id="T_9f5a7_row3_col0" class="data row3 col0">2025-01-04 00:00:00</td>
+<td id="T_9f5a7_row3_col1" class="data row3 col1">Downtown</td>
+<td id="T_9f5a7_row3_col2" class="data row3 col2">19.0</td>
+<td id="T_9f5a7_row3_col3" class="data row3 col3">6</td>
+<td id="T_9f5a7_row3_col4" class="data row3 col4">1</td>
+</tr>
+<tr class="odd">
+<th id="T_9f5a7_level0_row4" class="row_heading level0 row4" data-quarto-table-cell-role="th">4</th>
+<td id="T_9f5a7_row4_col0" class="data row4 col0">2025-01-05 00:00:00</td>
+<td id="T_9f5a7_row4_col1" class="data row4 col1">Downtown</td>
+<td id="T_9f5a7_row4_col2" class="data row4 col2">11.0</td>
+<td id="T_9f5a7_row4_col3" class="data row4 col3">7</td>
+<td id="T_9f5a7_row4_col4" class="data row4 col4">1</td>
+</tr>
+<tr class="even">
+<th id="T_9f5a7_level0_row5" class="row_heading level0 row5" data-quarto-table-cell-role="th">5</th>
+<td id="T_9f5a7_row5_col0" class="data row5 col0">2025-01-06 00:00:00</td>
+<td id="T_9f5a7_row5_col1" class="data row5 col1">Downtown</td>
+<td id="T_9f5a7_row5_col2" class="data row5 col2">13.0</td>
+<td id="T_9f5a7_row5_col3" class="data row5 col3">1</td>
+<td id="T_9f5a7_row5_col4" class="data row5 col4">1</td>
+</tr>
+<tr class="odd">
+<th id="T_9f5a7_level0_row6" class="row_heading level0 row6" data-quarto-table-cell-role="th">6</th>
+<td id="T_9f5a7_row6_col0" class="data row6 col0">2025-01-07 00:00:00</td>
+<td id="T_9f5a7_row6_col1" class="data row6 col1">Downtown</td>
+<td id="T_9f5a7_row6_col2" class="data row6 col2">14.0</td>
+<td id="T_9f5a7_row6_col3" class="data row6 col3">2</td>
+<td id="T_9f5a7_row6_col4" class="data row6 col4">1</td>
+</tr>
+<tr class="even">
+<th id="T_9f5a7_level0_row7" class="row_heading level0 row7" data-quarto-table-cell-role="th">7</th>
+<td id="T_9f5a7_row7_col0" class="data row7 col0">2025-01-08 00:00:00</td>
+<td id="T_9f5a7_row7_col1" class="data row7 col1">Downtown</td>
+<td id="T_9f5a7_row7_col2" class="data row7 col2">16.0</td>
+<td id="T_9f5a7_row7_col3" class="data row7 col3">3</td>
+<td id="T_9f5a7_row7_col4" class="data row7 col4">1</td>
+</tr>
+<tr class="odd">
+<th id="T_9f5a7_level0_row8" class="row_heading level0 row8" data-quarto-table-cell-role="th">8</th>
+<td id="T_9f5a7_row8_col0" class="data row8 col0">2025-01-09 00:00:00</td>
+<td id="T_9f5a7_row8_col1" class="data row8 col1">Downtown</td>
+<td id="T_9f5a7_row8_col2" class="data row8 col2">12.0</td>
+<td id="T_9f5a7_row8_col3" class="data row8 col3">4</td>
+<td id="T_9f5a7_row8_col4" class="data row8 col4">1</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<hr>
+</section>
+<section id="modelling" class="level2 incremental smaller" data-background-image="slides-fondo-latte.png" data-background-opacity="0.5">
+<h2 class="incremental smaller anchored" data-background-image="slides-fondo-latte.png" data-background-opacity="0.5" data-anchor-id="modelling">Modelling</h2>
+<div id="266580a5" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Isolation Forest "isolates" observations by randomly selecting a feature and split value.</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Anomalies are easier to isolate and thus have shorter paths in the trees.</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> IsolationForest(contamination<span class="op">=</span><span class="fl">0.02</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert to numpy for sklearn (using Polars' fast selection)</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> df.select([<span class="st">"incident_count"</span>, <span class="st">"day_of_week"</span>, <span class="st">"month"</span>]).to_numpy()</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df.with_columns(anomaly_score <span class="op">=</span> model.fit_predict(X))</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert -1 (anomaly) and 1 (normal) to readable labels</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> (</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    df.with_columns(</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>        is_anomaly <span class="op">=</span> pl.when(pl.col(<span class="st">"anomaly_score"</span>) <span class="op">==</span> <span class="op">-</span><span class="dv">1</span>)</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>                        .then(pl.lit(<span class="st">"Yes"</span>))</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>                        .otherwise(pl.lit(<span class="st">"No"</span>))</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<hr>
+<div id="cell-fig-detection" class="cell" data-execution_count="6">
+<div id="fig-detection" class="cell-output cell-output-display quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-detection-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div>            <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_SVG"></script><script type="text/javascript">if (window.MathJax && window.MathJax.Hub && window.MathJax.Hub.Config) {window.MathJax.Hub.Config({SVG: {font: "STIX-Web"}});}</script>                <script type="text/javascript">window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.3.0.min.js" integrity="sha256-bO3dS6yCpk9aK4gUpNELtCiDeSYvGYnK7jFI58NQnHI=" crossorigin="anonymous"></script>                <div id="9f3dab83-507b-4142-b70d-c3c5f4a51ca3" class="plotly-graph-div" style="height:600px; width:1030px;"></div>            <script type="text/javascript">                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("9f3dab83-507b-4142-b70d-c3c5f4a51ca3")) {                    Plotly.newPlot(                        "9f3dab83-507b-4142-b70d-c3c5f4a51ca3",                        [{"customdata":{"dtype":"i1","bdata":"AwQFBgcBAgMEBQYHAQIDBAUGBwECAwQFBgcCAwQFBgcCAwQFBgECAwQFBgcBAgMEBQcBAgMEBQYHAQIDBAUGBwECAwQFBgcBAgMEBQYHAQIDBAUGBwECAwQFBgcBAgMEBQYHAQIDBAUGBwECAwQFBgcBAgMEBQYHAQIDBAUGBwECAwQFBgcCAwQFBgcBAgMEBQYHAQIDBAUGBwIDBAUGBwECAwQFBgcBAgMEBQcBAgMEBgcBAgMEBQYBAgMEBQYHAgMEBQYHAQIDBAUGBwECAwQFBgcBAgMEBQYHAQIDBAUGBwECAwQFBgcBAgMEBQYHAQIDBAUGBwECAwQFBgcBAgMEBQYHAQIDBAUGAQIDBAUGBwECAwQFBgcBAgMEBQYHAQIDBAUGBwIDBAUGBwECAwQFBgcBAgMEBQYHAQIDBAUGBwECAwQFBgcCAwQFBgcBAgMEBQYHAQIDBAUGBwECAw==","shape":"352, 1"},"hovertemplate":"Anomaly Detected?=No\u003cbr\u003edistrict=Downtown\u003cbr\u003eincident_date=%{x}\u003cbr\u003eDaily Crime Reports=%{y}\u003cbr\u003eday_of_week=%{customdata[0]}\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"No","marker":{"color":"#004f71","symbol":"circle"},"mode":"markers","name":"No","orientation":"v","showlegend":true,"x":["2025-01-01T00:00:00","2025-01-02T00:00:00","2025-01-03T00:00:00","2025-01-04T00:00:00","2025-01-05T00:00:00","2025-01-06T00:00:00","2025-01-07T00:00:00","2025-01-08T00:00:00","2025-01-09T00:00:00","2025-01-10T00:00:00","2025-01-11T00:00:00","2025-01-12T00:00:00","2025-01-13T00:00:00","2025-01-14T00:00:00","2025-01-15T00:00:00","2025-01-16T00:00:00","2025-01-17T00:00:00","2025-01-18T00:00:00","2025-01-19T00:00:00","2025-01-20T00:00:00","2025-01-21T00:00:00","2025-01-22T00:00:00","2025-01-23T00:00:00","2025-01-24T00:00:00","2025-01-25T00:00:00","2025-01-26T00:00:00","2025-01-28T00:00:00","2025-01-29T00:00:00","2025-01-30T00:00:00","2025-01-31T00:00:00","2025-02-01T00:00:00","2025-02-02T00:00:00","2025-02-04T00:00:00","2025-02-05T00:00:00","2025-02-06T00:00:00","2025-02-07T00:00:00","2025-02-08T00:00:00","2025-02-10T00:00:00","2025-02-11T00:00:00","2025-02-12T00:00:00","2025-02-13T00:00:00","2025-02-14T00:00:00","2025-02-15T00:00:00","2025-02-16T00:00:00","2025-02-17T00:00:00","2025-02-18T00:00:00","2025-02-19T00:00:00","2025-02-20T00:00:00","2025-02-21T00:00:00","2025-02-23T00:00:00","2025-02-24T00:00:00","2025-02-25T00:00:00","2025-02-26T00:00:00","2025-02-27T00:00:00","2025-02-28T00:00:00","2025-03-01T00:00:00","2025-03-02T00:00:00","2025-03-03T00:00:00","2025-03-04T00:00:00","2025-03-05T00:00:00","2025-03-06T00:00:00","2025-03-07T00:00:00","2025-03-08T00:00:00","2025-03-09T00:00:00","2025-03-10T00:00:00","2025-03-11T00:00:00","2025-03-12T00:00:00","2025-03-13T00:00:00","2025-03-14T00:00:00","2025-03-15T00:00:00","2025-03-16T00:00:00","2025-03-17T00:00:00","2025-03-18T00:00:00","2025-03-19T00:00:00","2025-03-20T00:00:00","2025-03-21T00:00:00","2025-03-22T00:00:00","2025-03-23T00:00:00","2025-03-24T00:00:00","2025-03-25T00:00:00","2025-03-26T00:00:00","2025-03-27T00:00:00","2025-03-28T00:00:00","2025-03-29T00:00:00","2025-03-30T00:00:00","2025-03-31T00:00:00","2025-04-01T00:00:00","2025-04-02T00:00:00","2025-04-03T00:00:00","2025-04-04T00:00:00","2025-04-05T00:00:00","2025-04-06T00:00:00","2025-04-07T00:00:00","2025-04-08T00:00:00","2025-04-09T00:00:00","2025-04-10T00:00:00","2025-04-11T00:00:00","2025-04-12T00:00:00","2025-04-13T00:00:00","2025-04-14T00:00:00","2025-04-15T00:00:00","2025-04-16T00:00:00","2025-04-17T00:00:00","2025-04-18T00:00:00","2025-04-19T00:00:00","2025-04-20T00:00:00","2025-04-21T00:00:00","2025-04-22T00:00:00","2025-04-23T00:00:00","2025-04-24T00:00:00","2025-04-25T00:00:00","2025-04-26T00:00:00","2025-04-27T00:00:00","2025-04-28T00:00:00","2025-04-29T00:00:00","2025-04-30T00:00:00","2025-05-01T00:00:00","2025-05-02T00:00:00","2025-05-03T00:00:00","2025-05-04T00:00:00","2025-05-05T00:00:00","2025-05-06T00:00:00","2025-05-07T00:00:00","2025-05-08T00:00:00","2025-05-09T00:00:00","2025-05-10T00:00:00","2025-05-11T00:00:00","2025-05-12T00:00:00","2025-05-13T00:00:00","2025-05-14T00:00:00","2025-05-15T00:00:00","2025-05-16T00:00:00","2025-05-17T00:00:00","2025-05-18T00:00:00","2025-05-20T00:00:00","2025-05-21T00:00:00","2025-05-22T00:00:00","2025-05-23T00:00:00","2025-05-24T00:00:00","2025-05-25T00:00:00","2025-05-26T00:00:00","2025-05-27T00:00:00","2025-05-28T00:00:00","2025-05-29T00:00:00","2025-05-30T00:00:00","2025-05-31T00:00:00","2025-06-01T00:00:00","2025-06-02T00:00:00","2025-06-03T00:00:00","2025-06-04T00:00:00","2025-06-05T00:00:00","2025-06-06T00:00:00","2025-06-07T00:00:00","2025-06-08T00:00:00","2025-06-10T00:00:00","2025-06-11T00:00:00","2025-06-12T00:00:00","2025-06-13T00:00:00","2025-06-14T00:00:00","2025-06-15T00:00:00","2025-06-16T00:00:00","2025-06-17T00:00:00","2025-06-18T00:00:00","2025-06-19T00:00:00","2025-06-20T00:00:00","2025-06-21T00:00:00","2025-06-22T00:00:00","2025-06-23T00:00:00","2025-06-24T00:00:00","2025-06-25T00:00:00","2025-06-26T00:00:00","2025-06-27T00:00:00","2025-06-29T00:00:00","2025-06-30T00:00:00","2025-07-01T00:00:00","2025-07-02T00:00:00","2025-07-03T00:00:00","2025-07-05T00:00:00","2025-07-06T00:00:00","2025-07-07T00:00:00","2025-07-08T00:00:00","2025-07-09T00:00:00","2025-07-10T00:00:00","2025-07-11T00:00:00","2025-07-12T00:00:00","2025-07-14T00:00:00","2025-07-15T00:00:00","2025-07-16T00:00:00","2025-07-17T00:00:00","2025-07-18T00:00:00","2025-07-19T00:00:00","2025-07-20T00:00:00","2025-07-22T00:00:00","2025-07-23T00:00:00","2025-07-24T00:00:00","2025-07-25T00:00:00","2025-07-26T00:00:00","2025-07-27T00:00:00","2025-07-28T00:00:00","2025-07-29T00:00:00","2025-07-30T00:00:00","2025-07-31T00:00:00","2025-08-01T00:00:00","2025-08-02T00:00:00","2025-08-03T00:00:00","2025-08-04T00:00:00","2025-08-05T00:00:00","2025-08-06T00:00:00","2025-08-07T00:00:00","2025-08-08T00:00:00","2025-08-09T00:00:00","2025-08-10T00:00:00","2025-08-11T00:00:00","2025-08-12T00:00:00","2025-08-13T00:00:00","2025-08-14T00:00:00","2025-08-15T00:00:00","2025-08-16T00:00:00","2025-08-17T00:00:00","2025-08-18T00:00:00","2025-08-19T00:00:00","2025-08-20T00:00:00","2025-08-21T00:00:00","2025-08-22T00:00:00","2025-08-23T00:00:00","2025-08-24T00:00:00","2025-08-25T00:00:00","2025-08-26T00:00:00","2025-08-27T00:00:00","2025-08-28T00:00:00","2025-08-29T00:00:00","2025-08-30T00:00:00","2025-08-31T00:00:00","2025-09-01T00:00:00","2025-09-02T00:00:00","2025-09-03T00:00:00","2025-09-04T00:00:00","2025-09-05T00:00:00","2025-09-06T00:00:00","2025-09-07T00:00:00","2025-09-08T00:00:00","2025-09-09T00:00:00","2025-09-10T00:00:00","2025-09-11T00:00:00","2025-09-12T00:00:00","2025-09-13T00:00:00","2025-09-14T00:00:00","2025-09-15T00:00:00","2025-09-16T00:00:00","2025-09-17T00:00:00","2025-09-18T00:00:00","2025-09-19T00:00:00","2025-09-20T00:00:00","2025-09-21T00:00:00","2025-09-22T00:00:00","2025-09-23T00:00:00","2025-09-24T00:00:00","2025-09-25T00:00:00","2025-09-26T00:00:00","2025-09-27T00:00:00","2025-09-28T00:00:00","2025-09-29T00:00:00","2025-09-30T00:00:00","2025-10-01T00:00:00","2025-10-02T00:00:00","2025-10-03T00:00:00","2025-10-04T00:00:00","2025-10-06T00:00:00","2025-10-07T00:00:00","2025-10-08T00:00:00","2025-10-09T00:00:00","2025-10-10T00:00:00","2025-10-11T00:00:00","2025-10-12T00:00:00","2025-10-13T00:00:00","2025-10-14T00:00:00","2025-10-15T00:00:00","2025-10-16T00:00:00","2025-10-17T00:00:00","2025-10-18T00:00:00","2025-10-19T00:00:00","2025-10-20T00:00:00","2025-10-21T00:00:00","2025-10-22T00:00:00","2025-10-23T00:00:00","2025-10-24T00:00:00","2025-10-25T00:00:00","2025-10-26T00:00:00","2025-10-27T00:00:00","2025-10-28T00:00:00","2025-10-29T00:00:00","2025-10-30T00:00:00","2025-10-31T00:00:00","2025-11-01T00:00:00","2025-11-02T00:00:00","2025-11-04T00:00:00","2025-11-05T00:00:00","2025-11-06T00:00:00","2025-11-07T00:00:00","2025-11-08T00:00:00","2025-11-09T00:00:00","2025-11-10T00:00:00","2025-11-11T00:00:00","2025-11-12T00:00:00","2025-11-13T00:00:00","2025-11-14T00:00:00","2025-11-15T00:00:00","2025-11-16T00:00:00","2025-11-17T00:00:00","2025-11-18T00:00:00","2025-11-19T00:00:00","2025-11-20T00:00:00","2025-11-21T00:00:00","2025-11-22T00:00:00","2025-11-23T00:00:00","2025-11-24T00:00:00","2025-11-25T00:00:00","2025-11-26T00:00:00","2025-11-27T00:00:00","2025-11-28T00:00:00","2025-11-29T00:00:00","2025-11-30T00:00:00","2025-12-01T00:00:00","2025-12-02T00:00:00","2025-12-03T00:00:00","2025-12-04T00:00:00","2025-12-05T00:00:00","2025-12-06T00:00:00","2025-12-07T00:00:00","2025-12-09T00:00:00","2025-12-10T00:00:00","2025-12-11T00:00:00","2025-12-12T00:00:00","2025-12-13T00:00:00","2025-12-14T00:00:00","2025-12-15T00:00:00","2025-12-16T00:00:00","2025-12-17T00:00:00","2025-12-18T00:00:00","2025-12-19T00:00:00","2025-12-20T00:00:00","2025-12-21T00:00:00","2025-12-22T00:00:00","2025-12-23T00:00:00","2025-12-24T00:00:00","2025-12-25T00:00:00","2025-12-26T00:00:00","2025-12-27T00:00:00","2025-12-28T00:00:00","2025-12-29T00:00:00","2025-12-30T00:00:00","2025-12-31T00:00:00"],"xaxis":"x2","y":{"dtype":"f8","bdata":"AAAAAAAAMkAAAAAAAAAkQAAAAAAAADBAAAAAAAAAM0AAAAAAAAAmQAAAAAAAACpAAAAAAAAALEAAAAAAAAAwQAAAAAAAAChAAAAAAAAALEAAAAAAAAAmQAAAAAAAADBAAAAAAAAAMEAAAAAAAAAqQAAAAAAAADFAAAAAAAAAJEAAAAAAAAAoQAAAAAAAACpAAAAAAAAALkAAAAAAAAAiQAAAAAAAABhAAAAAAAAALEAAAAAAAAAzQAAAAAAAAChAAAAAAAAAJEAAAAAAAAAyQAAAAAAAADJAAAAAAAAAKkAAAAAAAAA0QAAAAAAAACpAAAAAAAAAKkAAAAAAAAAyQAAAAAAAACRAAAAAAAAAMkAAAAAAAAAyQAAAAAAAAC5AAAAAAAAAKkAAAAAAAAAsQAAAAAAAAChAAAAAAAAAKEAAAAAAAAA2QAAAAAAAADNAAAAAAAAANUAAAAAAAAAqQAAAAAAAAChAAAAAAAAALEAAAAAAAAAkQAAAAAAAADdAAAAAAAAALkAAAAAAAAAuQAAAAAAAAChAAAAAAAAAMEAAAAAAAAAcQAAAAAAAADVAAAAAAAAAJEAAAAAAAAAxQAAAAAAAAChAAAAAAAAAKkAAAAAAAAAxQAAAAAAAACJAAAAAAAAAKkAAAAAAAAAxQAAAAAAAAC5AAAAAAAAAMUAAAAAAAAAxQAAAAAAAADZAAAAAAAAAKkAAAAAAAAAoQAAAAAAAADNAAAAAAAAALkAAAAAAAAA1QAAAAAAAACpAAAAAAAAAMUAAAAAAAAAwQAAAAAAAACJAAAAAAAAALkAAAAAAAAAxQAAAAAAAADJAAAAAAAAAKkAAAAAAAAAxQAAAAAAAACJAAAAAAAAAKEAAAAAAAAA1QAAAAAAAADNAAAAAAAAAMEAAAAAAAAAmQAAAAAAAAChAAAAAAAAAMUAAAAAAAAA1QAAAAAAAAChAAAAAAAAANEAAAAAAAAAmQAAAAAAAADZAAAAAAAAAMEAAAAAAAAAkQAAAAAAAADRAAAAAAAAAMUAAAAAAAAAqQAAAAAAAAC5AAAAAAAAAM0AAAAAAAAAxQAAAAAAAADVAAAAAAAAAKkAAAAAAAAAwQAAAAAAAAC5AAAAAAAAAKEAAAAAAAAAQQAAAAAAAADNAAAAAAAAAJEAAAAAAAAAyQAAAAAAAADBAAAAAAAAAHEAAAAAAAAAuQAAAAAAAAC5AAAAAAAAAM0AAAAAAAAAsQAAAAAAAADNAAAAAAAAALEAAAAAAAAAkQAAAAAAAADBAAAAAAAAAMUAAAAAAAAAwQAAAAAAAACxAAAAAAAAAKkAAAAAAAAAYQAAAAAAAAC5AAAAAAAAALkAAAAAAAAAmQAAAAAAAACxAAAAAAAAAMUAAAAAAAAAqQAAAAAAAAC5AAAAAAAAAMUAAAAAAAAAgQAAAAAAAACxAAAAAAAAALEAAAAAAAAA3QAAAAAAAACZAAAAAAAAAIkAAAAAAAAAiQAAAAAAAACBAAAAAAAAANEAAAAAAAAAzQAAAAAAAADBAAAAAAAAAKEAAAAAAAAAqQAAAAAAAACpAAAAAAAAANEAAAAAAAAAyQAAAAAAAAC5AAAAAAAAAKkAAAAAAAAAsQAAAAAAAADVAAAAAAAAAKkAAAAAAAAAwQAAAAAAAAChAAAAAAAAAMUAAAAAAAAAiQAAAAAAAABxAAAAAAAAALEAAAAAAAAAqQAAAAAAAACRAAAAAAAAAMEAAAAAAAAAxQAAAAAAAACpAAAAAAAAAKkAAAAAAAAAyQAAAAAAAACxAAAAAAAAAIkAAAAAAAAAcQAAAAAAAACJAAAAAAAAAMkAAAAAAAAAgQAAAAAAAADBAAAAAAAAALEAAAAAAAAAYQAAAAAAAACxAAAAAAAAALkAAAAAAAAAwQAAAAAAAADFAAAAAAAAAKkAAAAAAAAAxQAAAAAAAADVAAAAAAAAAN0AAAAAAAAAwQAAAAAAAABhAAAAAAAAAKkAAAAAAAAAwQAAAAAAAADNAAAAAAAAALEAAAAAAAAA0QAAAAAAAACxAAAAAAAAAKEAAAAAAAAAwQAAAAAAAACJAAAAAAAAALkAAAAAAAAAuQAAAAAAAADBAAAAAAAAANEAAAAAAAAAkQAAAAAAAADJAAAAAAAAAMUAAAAAAAAAkQAAAAAAAACpAAAAAAAAALEAAAAAAAAA1QAAAAAAAAC5AAAAAAAAALEAAAAAAAAAuQAAAAAAAAC5AAAAAAAAAMUAAAAAAAAAgQAAAAAAAACRAAAAAAAAAJEAAAAAAAAAmQAAAAAAAADVAAAAAAAAAMUAAAAAAAAAmQAAAAAAAACZAAAAAAAAAJkAAAAAAAAAkQAAAAAAAACZAAAAAAAAALkAAAAAAAAAwQAAAAAAAABxAAAAAAAAAJkAAAAAAAAAqQAAAAAAAADBAAAAAAAAALEAAAAAAAAAuQAAAAAAAACJAAAAAAAAALkAAAAAAAAAoQAAAAAAAACZAAAAAAAAAJEAAAAAAAAAwQAAAAAAAADNAAAAAAAAAIkAAAAAAAAAwQAAAAAAAACxAAAAAAAAAKEAAAAAAAAAxQAAAAAAAADBAAAAAAAAAIkAAAAAAAAAoQAAAAAAAACZAAAAAAAAAJkAAAAAAAAAgQAAAAAAAACJAAAAAAAAAM0AAAAAAAAAmQAAAAAAAADZAAAAAAAAAMEAAAAAAAAAyQAAAAAAAACpAAAAAAAAALkAAAAAAAAAiQAAAAAAAAChAAAAAAAAAJEAAAAAAAAAuQAAAAAAAACpAAAAAAAAAKkAAAAAAAAAoQAAAAAAAADJAAAAAAAAALkAAAAAAAAAqQAAAAAAAACRAAAAAAAAAIEAAAAAAAAAwQAAAAAAAACRAAAAAAAAAJkAAAAAAAAAxQAAAAAAAACpAAAAAAAAALEAAAAAAAAAsQAAAAAAAACxAAAAAAAAAMkAAAAAAAAAoQAAAAAAAACxAAAAAAAAANUAAAAAAAAAwQAAAAAAAACRAAAAAAAAAMEAAAAAAAAAkQAAAAAAAAChAAAAAAAAAKkAAAAAAAAAkQAAAAAAAADNAAAAAAAAAKEAAAAAAAAAyQAAAAAAAADFAAAAAAAAAKEAAAAAAAAAwQAAAAAAAACRAAAAAAAAALkAAAAAAAAAxQAAAAAAAADBAAAAAAAAALEAAAAAAAAA2QAAAAAAAACxAAAAAAAAANEAAAAAAAAAwQAAAAAAAABxAAAAAAAAAM0AAAAAAAAAqQAAAAAAAAC5AAAAAAAAAKkAAAAAAAAAyQAAAAAAAACZAAAAAAAAAJEAAAAAAAAAuQAAAAAAAADVAAAAAAAAAMEAAAAAAAAAkQAAAAAAAAC5AAAAAAAAAIEAAAAAAAAAmQAAAAAAAADBAAAAAAAAAMkAAAAAAAAAuQAAAAAAAACxAAAAAAAAAJEAAAAAAAAAqQAAAAAAAADFAAAAAAAAAMkAAAAAAAAAoQAAAAAAAADNAAAAAAAAAMUAAAAAAAAAiQAAAAAAAADFAAAAAAAAAJkAAAAAAAAAmQAAAAAAAACxAAAAAAAAAM0AAAAAAAAAoQAAAAAAAADBAAAAAAAAAMEAAAAAAAAAwQAAAAAAAADJAAAAAAAAANEAAAAAAAAAsQAAAAAAAAChAAAAAAAAAMUAAAAAAAAAmQAAAAAAAACJAAAAAAAAAKEAAAAAAAAAmQAAAAAAAADRAAAAAAAAAMEAAAAAAAAAsQAAAAAAAAC5AAAAAAAAAJkA="},"yaxis":"y2","type":"scatter"},{"customdata":{"dtype":"i1","bdata":"AwQFBgcBAgMEBQYHAQIDBAUGBwECAwQFBgcBAgMEBQYHAQIDBAUGBwECAwQFBgcBAgMEBQYHAQIDBAUGBwECAwQFBgcBAgMEBQYHAQIDBAUGBwECAwQFBgcBAgMEBQYHAQIDBAUGBwECAwQFBgcBAgMEBQYHAQIDBAUGBwECAwQFBgcBAgMEBQYHAQIDBAUGBwECAwQFBgcBAgMEBQYHAQIDBAUGBwECAwQFBgcBAgMEBQYHAQIDBAUGBwECAwQFBgcBAgMEBQYHAQIDBAUGBwECAwQFBgcBAgMEBQYHAQIDBAUGBwECAwQFBgcBAgMEBQYHAQIDBAUGBwECAwQFBgcBAgMEBQYHAQIDBAUGBwECAwQFBgcBAgMEBQYHAQIEBQYHAQIDBAUGBwECAwQFBgcBAgMEBQYHAQIDBAUGBwIDBAUGBwECAwQFBgcBAgMEBQYHAQIDBAUGBwECAwQFBgcBAgMEBQYHAQID","shape":"363, 1"},"hovertemplate":"Anomaly Detected?=No\u003cbr\u003edistrict=Suburbs\u003cbr\u003eincident_date=%{x}\u003cbr\u003eDaily Crime Reports=%{y}\u003cbr\u003eday_of_week=%{customdata[0]}\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"No","marker":{"color":"#004f71","symbol":"circle"},"mode":"markers","name":"No","orientation":"v","showlegend":false,"x":["2025-01-01T00:00:00","2025-01-02T00:00:00","2025-01-03T00:00:00","2025-01-04T00:00:00","2025-01-05T00:00:00","2025-01-06T00:00:00","2025-01-07T00:00:00","2025-01-08T00:00:00","2025-01-09T00:00:00","2025-01-10T00:00:00","2025-01-11T00:00:00","2025-01-12T00:00:00","2025-01-13T00:00:00","2025-01-14T00:00:00","2025-01-15T00:00:00","2025-01-16T00:00:00","2025-01-17T00:00:00","2025-01-18T00:00:00","2025-01-19T00:00:00","2025-01-20T00:00:00","2025-01-21T00:00:00","2025-01-22T00:00:00","2025-01-23T00:00:00","2025-01-24T00:00:00","2025-01-25T00:00:00","2025-01-26T00:00:00","2025-01-27T00:00:00","2025-01-28T00:00:00","2025-01-29T00:00:00","2025-01-30T00:00:00","2025-01-31T00:00:00","2025-02-01T00:00:00","2025-02-02T00:00:00","2025-02-03T00:00:00","2025-02-04T00:00:00","2025-02-05T00:00:00","2025-02-06T00:00:00","2025-02-07T00:00:00","2025-02-08T00:00:00","2025-02-09T00:00:00","2025-02-10T00:00:00","2025-02-11T00:00:00","2025-02-12T00:00:00","2025-02-13T00:00:00","2025-02-14T00:00:00","2025-02-15T00:00:00","2025-02-16T00:00:00","2025-02-17T00:00:00","2025-02-18T00:00:00","2025-02-19T00:00:00","2025-02-20T00:00:00","2025-02-21T00:00:00","2025-02-22T00:00:00","2025-02-23T00:00:00","2025-02-24T00:00:00","2025-02-25T00:00:00","2025-02-26T00:00:00","2025-02-27T00:00:00","2025-02-28T00:00:00","2025-03-01T00:00:00","2025-03-02T00:00:00","2025-03-03T00:00:00","2025-03-04T00:00:00","2025-03-05T00:00:00","2025-03-06T00:00:00","2025-03-07T00:00:00","2025-03-08T00:00:00","2025-03-09T00:00:00","2025-03-10T00:00:00","2025-03-11T00:00:00","2025-03-12T00:00:00","2025-03-13T00:00:00","2025-03-14T00:00:00","2025-03-15T00:00:00","2025-03-16T00:00:00","2025-03-17T00:00:00","2025-03-18T00:00:00","2025-03-19T00:00:00","2025-03-20T00:00:00","2025-03-21T00:00:00","2025-03-22T00:00:00","2025-03-23T00:00:00","2025-03-24T00:00:00","2025-03-25T00:00:00","2025-03-26T00:00:00","2025-03-27T00:00:00","2025-03-28T00:00:00","2025-03-29T00:00:00","2025-03-30T00:00:00","2025-03-31T00:00:00","2025-04-01T00:00:00","2025-04-02T00:00:00","2025-04-03T00:00:00","2025-04-04T00:00:00","2025-04-05T00:00:00","2025-04-06T00:00:00","2025-04-07T00:00:00","2025-04-08T00:00:00","2025-04-09T00:00:00","2025-04-10T00:00:00","2025-04-11T00:00:00","2025-04-12T00:00:00","2025-04-13T00:00:00","2025-04-14T00:00:00","2025-04-15T00:00:00","2025-04-16T00:00:00","2025-04-17T00:00:00","2025-04-18T00:00:00","2025-04-19T00:00:00","2025-04-20T00:00:00","2025-04-21T00:00:00","2025-04-22T00:00:00","2025-04-23T00:00:00","2025-04-24T00:00:00","2025-04-25T00:00:00","2025-04-26T00:00:00","2025-04-27T00:00:00","2025-04-28T00:00:00","2025-04-29T00:00:00","2025-04-30T00:00:00","2025-05-01T00:00:00","2025-05-02T00:00:00","2025-05-03T00:00:00","2025-05-04T00:00:00","2025-05-05T00:00:00","2025-05-06T00:00:00","2025-05-07T00:00:00","2025-05-08T00:00:00","2025-05-09T00:00:00","2025-05-10T00:00:00","2025-05-11T00:00:00","2025-05-12T00:00:00","2025-05-13T00:00:00","2025-05-14T00:00:00","2025-05-15T00:00:00","2025-05-16T00:00:00","2025-05-17T00:00:00","2025-05-18T00:00:00","2025-05-19T00:00:00","2025-05-20T00:00:00","2025-05-21T00:00:00","2025-05-22T00:00:00","2025-05-23T00:00:00","2025-05-24T00:00:00","2025-05-25T00:00:00","2025-05-26T00:00:00","2025-05-27T00:00:00","2025-05-28T00:00:00","2025-05-29T00:00:00","2025-05-30T00:00:00","2025-05-31T00:00:00","2025-06-01T00:00:00","2025-06-02T00:00:00","2025-06-03T00:00:00","2025-06-04T00:00:00","2025-06-05T00:00:00","2025-06-06T00:00:00","2025-06-07T00:00:00","2025-06-08T00:00:00","2025-06-09T00:00:00","2025-06-10T00:00:00","2025-06-11T00:00:00","2025-06-12T00:00:00","2025-06-13T00:00:00","2025-06-14T00:00:00","2025-06-15T00:00:00","2025-06-16T00:00:00","2025-06-17T00:00:00","2025-06-18T00:00:00","2025-06-19T00:00:00","2025-06-20T00:00:00","2025-06-21T00:00:00","2025-06-22T00:00:00","2025-06-23T00:00:00","2025-06-24T00:00:00","2025-06-25T00:00:00","2025-06-26T00:00:00","2025-06-27T00:00:00","2025-06-28T00:00:00","2025-06-29T00:00:00","2025-06-30T00:00:00","2025-07-01T00:00:00","2025-07-02T00:00:00","2025-07-03T00:00:00","2025-07-04T00:00:00","2025-07-05T00:00:00","2025-07-06T00:00:00","2025-07-07T00:00:00","2025-07-08T00:00:00","2025-07-09T00:00:00","2025-07-10T00:00:00","2025-07-11T00:00:00","2025-07-12T00:00:00","2025-07-13T00:00:00","2025-07-14T00:00:00","2025-07-15T00:00:00","2025-07-16T00:00:00","2025-07-17T00:00:00","2025-07-18T00:00:00","2025-07-19T00:00:00","2025-07-20T00:00:00","2025-07-21T00:00:00","2025-07-22T00:00:00","2025-07-23T00:00:00","2025-07-24T00:00:00","2025-07-25T00:00:00","2025-07-26T00:00:00","2025-07-27T00:00:00","2025-07-28T00:00:00","2025-07-29T00:00:00","2025-07-30T00:00:00","2025-07-31T00:00:00","2025-08-01T00:00:00","2025-08-02T00:00:00","2025-08-03T00:00:00","2025-08-04T00:00:00","2025-08-05T00:00:00","2025-08-06T00:00:00","2025-08-07T00:00:00","2025-08-08T00:00:00","2025-08-09T00:00:00","2025-08-10T00:00:00","2025-08-11T00:00:00","2025-08-12T00:00:00","2025-08-13T00:00:00","2025-08-14T00:00:00","2025-08-15T00:00:00","2025-08-16T00:00:00","2025-08-17T00:00:00","2025-08-18T00:00:00","2025-08-19T00:00:00","2025-08-20T00:00:00","2025-08-21T00:00:00","2025-08-22T00:00:00","2025-08-23T00:00:00","2025-08-24T00:00:00","2025-08-25T00:00:00","2025-08-26T00:00:00","2025-08-27T00:00:00","2025-08-28T00:00:00","2025-08-29T00:00:00","2025-08-30T00:00:00","2025-08-31T00:00:00","2025-09-01T00:00:00","2025-09-02T00:00:00","2025-09-03T00:00:00","2025-09-04T00:00:00","2025-09-05T00:00:00","2025-09-06T00:00:00","2025-09-07T00:00:00","2025-09-08T00:00:00","2025-09-09T00:00:00","2025-09-10T00:00:00","2025-09-11T00:00:00","2025-09-12T00:00:00","2025-09-13T00:00:00","2025-09-14T00:00:00","2025-09-15T00:00:00","2025-09-16T00:00:00","2025-09-17T00:00:00","2025-09-18T00:00:00","2025-09-19T00:00:00","2025-09-20T00:00:00","2025-09-21T00:00:00","2025-09-22T00:00:00","2025-09-23T00:00:00","2025-09-24T00:00:00","2025-09-25T00:00:00","2025-09-26T00:00:00","2025-09-27T00:00:00","2025-09-28T00:00:00","2025-09-29T00:00:00","2025-09-30T00:00:00","2025-10-01T00:00:00","2025-10-02T00:00:00","2025-10-03T00:00:00","2025-10-04T00:00:00","2025-10-05T00:00:00","2025-10-06T00:00:00","2025-10-07T00:00:00","2025-10-08T00:00:00","2025-10-09T00:00:00","2025-10-10T00:00:00","2025-10-11T00:00:00","2025-10-12T00:00:00","2025-10-13T00:00:00","2025-10-14T00:00:00","2025-10-16T00:00:00","2025-10-17T00:00:00","2025-10-18T00:00:00","2025-10-19T00:00:00","2025-10-20T00:00:00","2025-10-21T00:00:00","2025-10-22T00:00:00","2025-10-23T00:00:00","2025-10-24T00:00:00","2025-10-25T00:00:00","2025-10-26T00:00:00","2025-10-27T00:00:00","2025-10-28T00:00:00","2025-10-29T00:00:00","2025-10-30T00:00:00","2025-10-31T00:00:00","2025-11-01T00:00:00","2025-11-02T00:00:00","2025-11-03T00:00:00","2025-11-04T00:00:00","2025-11-05T00:00:00","2025-11-06T00:00:00","2025-11-07T00:00:00","2025-11-08T00:00:00","2025-11-09T00:00:00","2025-11-10T00:00:00","2025-11-11T00:00:00","2025-11-12T00:00:00","2025-11-13T00:00:00","2025-11-14T00:00:00","2025-11-15T00:00:00","2025-11-16T00:00:00","2025-11-18T00:00:00","2025-11-19T00:00:00","2025-11-20T00:00:00","2025-11-21T00:00:00","2025-11-22T00:00:00","2025-11-23T00:00:00","2025-11-24T00:00:00","2025-11-25T00:00:00","2025-11-26T00:00:00","2025-11-27T00:00:00","2025-11-28T00:00:00","2025-11-29T00:00:00","2025-11-30T00:00:00","2025-12-01T00:00:00","2025-12-02T00:00:00","2025-12-03T00:00:00","2025-12-04T00:00:00","2025-12-05T00:00:00","2025-12-06T00:00:00","2025-12-07T00:00:00","2025-12-08T00:00:00","2025-12-09T00:00:00","2025-12-10T00:00:00","2025-12-11T00:00:00","2025-12-12T00:00:00","2025-12-13T00:00:00","2025-12-14T00:00:00","2025-12-15T00:00:00","2025-12-16T00:00:00","2025-12-17T00:00:00","2025-12-18T00:00:00","2025-12-19T00:00:00","2025-12-20T00:00:00","2025-12-21T00:00:00","2025-12-22T00:00:00","2025-12-23T00:00:00","2025-12-24T00:00:00","2025-12-25T00:00:00","2025-12-26T00:00:00","2025-12-27T00:00:00","2025-12-28T00:00:00","2025-12-29T00:00:00","2025-12-30T00:00:00","2025-12-31T00:00:00"],"xaxis":"x","y":{"dtype":"f8","bdata":"AAAAAAAACEAAAAAAAAAUQAAAAAAAABBAAAAAAAAACEAAAAAAAAAQQAAAAAAAACBAAAAAAAAAEEAAAAAAAAAkQAAAAAAAABBAAAAAAAAAFEAAAAAAAAAkQAAAAAAAAAhAAAAAAAAAEEAAAAAAAAAcQAAAAAAAABRAAAAAAAAAJEAAAAAAAAAQQAAAAAAAAABAAAAAAAAACEAAAAAAAAAUQAAAAAAAACBAAAAAAAAAEEAAAAAAAAAIQAAAAAAAACBAAAAAAAAAGEAAAAAAAAAgQAAAAAAAAAhAAAAAAAAACEAAAAAAAAAUQAAAAAAAACZAAAAAAAAAHEAAAAAAAAAQQAAAAAAAAAhAAAAAAAAAIEAAAAAAAAAgQAAAAAAAAAhAAAAAAAAACEAAAAAAAAAYQAAAAAAAAABAAAAAAAAAHEAAAAAAAAAUQAAAAAAAABRAAAAAAAAAGEAAAAAAAADwPwAAAAAAACRAAAAAAAAAAEAAAAAAAAAUQAAAAAAAABBAAAAAAAAAFEAAAAAAAAAQQAAAAAAAABRAAAAAAAAAGEAAAAAAAADwPwAAAAAAAAhAAAAAAAAAAEAAAAAAAAAUQAAAAAAAABBAAAAAAAAAHEAAAAAAAAAcQAAAAAAAAABAAAAAAAAAGEAAAAAAAAAcQAAAAAAAAABAAAAAAAAAHEAAAAAAAAAUQAAAAAAAABxAAAAAAAAAGEAAAAAAAAAUQAAAAAAAABhAAAAAAAAAFEAAAAAAAAAQQAAAAAAAABxAAAAAAAAA8D8AAAAAAAAgQAAAAAAAABBAAAAAAAAAFEAAAAAAAAAIQAAAAAAAABxAAAAAAAAAAEAAAAAAAAAUQAAAAAAAACRAAAAAAAAAHEAAAAAAAAAcQAAAAAAAACRAAAAAAAAA8D8AAAAAAAAUQAAAAAAAAAhAAAAAAAAAIEAAAAAAAAAcQAAAAAAAAAhAAAAAAAAA8D8AAAAAAAAUQAAAAAAAAAhAAAAAAAAAGEAAAAAAAAAIQAAAAAAAABBAAAAAAAAAFEAAAAAAAAAgQAAAAAAAABxAAAAAAAAAFEAAAAAAAAAQQAAAAAAAABhAAAAAAAAAIEAAAAAAAAAQQAAAAAAAAAhAAAAAAAAAAEAAAAAAAAAIQAAAAAAAACJAAAAAAAAAFEAAAAAAAAAQQAAAAAAAABxAAAAAAAAAIEAAAAAAAAAQQAAAAAAAABBAAAAAAAAAIEAAAAAAAAAUQAAAAAAAABRAAAAAAAAAGEAAAAAAAAAcQAAAAAAAAABAAAAAAAAA8D8AAAAAAAAcQAAAAAAAABRAAAAAAAAAEEAAAAAAAAAQQAAAAAAAAAhAAAAAAAAAIEAAAAAAAAAcQAAAAAAAAPA\u002fAAAAAAAAAEAAAAAAAAAQQAAAAAAAABhAAAAAAAAAEEAAAAAAAAAYQAAAAAAAACBAAAAAAAAAHEAAAAAAAAAUQAAAAAAAAABAAAAAAAAA8D8AAAAAAAAcQAAAAAAAABBAAAAAAAAA8D8AAAAAAAAYQAAAAAAAABRAAAAAAAAAIEAAAAAAAAAUQAAAAAAAABBAAAAAAAAAJEAAAAAAAAAcQAAAAAAAABBAAAAAAAAAIEAAAAAAAAAUQAAAAAAAABRAAAAAAAAAFEAAAAAAAAAAQAAAAAAAAAhAAAAAAAAAEEAAAAAAAAAiQAAAAAAAAAAAAAAAAAAAFEAAAAAAAAAUQAAAAAAAABRAAAAAAAAAFEAAAAAAAAAQQAAAAAAAACJAAAAAAAAAGEAAAAAAAAAAQAAAAAAAABhAAAAAAAAAGEAAAAAAAAAYQAAAAAAAABRAAAAAAAAAAEAAAAAAAAAUQAAAAAAAAAhAAAAAAAAACEAAAAAAAAAIQAAAAAAAABhAAAAAAAAAGEAAAAAAAAAQQAAAAAAAABRAAAAAAAAAFEAAAAAAAAAcQAAAAAAAABRAAAAAAAAACEAAAAAAAAAQQAAAAAAAABxAAAAAAAAAFEAAAAAAAAAcQAAAAAAAACBAAAAAAAAAHEAAAAAAAAAUQAAAAAAAACBAAAAAAAAAEEAAAAAAAAAYQAAAAAAAACBAAAAAAAAAGEAAAAAAAAAIQAAAAAAAACBAAAAAAAAAEEAAAAAAAAAcQAAAAAAAAABAAAAAAAAAJEAAAAAAAAAYQAAAAAAAABBAAAAAAAAAFEAAAAAAAAAYQAAAAAAAABBAAAAAAAAAFEAAAAAAAAAYQAAAAAAAAAhAAAAAAAAAHEAAAAAAAAAcQAAAAAAAACBAAAAAAAAAEEAAAAAAAAAcQAAAAAAAAAhAAAAAAAAAEEAAAAAAAAAQQAAAAAAAAAAAAAAAAAAA8D8AAAAAAADwPwAAAAAAABxAAAAAAAAAFEAAAAAAAAAUQAAAAAAAACBAAAAAAAAACEAAAAAAAAAUQAAAAAAAAAhAAAAAAAAAFEAAAAAAAADwPwAAAAAAABxAAAAAAAAAAEAAAAAAAAAQQAAAAAAAABhAAAAAAAAAHEAAAAAAAAAiQAAAAAAAABBAAAAAAAAA8D8AAAAAAAAQQAAAAAAAABhAAAAAAAAACEAAAAAAAAAQQAAAAAAAAABAAAAAAAAAGEAAAAAAAAAgQAAAAAAAABxAAAAAAAAAAEAAAAAAAAAYQAAAAAAAACJAAAAAAAAACEAAAAAAAAAgQAAAAAAAABxAAAAAAAAAGEAAAAAAAAAkQAAAAAAAABRAAAAAAAAAFEAAAAAAAAAUQAAAAAAAABRAAAAAAAAAEEAAAAAAAAAkQAAAAAAAAAhAAAAAAAAAAEAAAAAAAAAYQAAAAAAAABBAAAAAAAAAEEAAAAAAAAAgQAAAAAAAABRAAAAAAAAAEEAAAAAAAAAcQAAAAAAAABBAAAAAAAAAAEAAAAAAAAAAQAAAAAAAAAhAAAAAAAAACEAAAAAAAAAgQAAAAAAAABhAAAAAAAAAAAAAAAAAAAAgQAAAAAAAABRAAAAAAAAAEEAAAAAAAAAUQAAAAAAAABxAAAAAAAAAGEAAAAAAAAAIQAAAAAAAABBAAAAAAAAAAEAAAAAAAAAQQAAAAAAAACJAAAAAAAAACEAAAAAAAADwPwAAAAAAABRAAAAAAAAAEEAAAAAAAAAYQAAAAAAAABRAAAAAAAAAIEAAAAAAAAAUQAAAAAAAABxAAAAAAAAAEEAAAAAAAADwPwAAAAAAABRAAAAAAAAAEEAAAAAAAAAIQAAAAAAAAABAAAAAAAAAKEAAAAAAAAAUQAAAAAAAACRAAAAAAAAAGEAAAAAAAADwPwAAAAAAABhAAAAAAAAAAEAAAAAAAAAQQAAAAAAAABRAAAAAAAAAIEAAAAAAAAAQQAAAAAAAAABAAAAAAAAA8D8AAAAAAAAgQAAAAAAAACBAAAAAAAAAEEAAAAAAAAAiQAAAAAAAABBAAAAAAAAAAEAAAAAAAAAQQAAAAAAAAAhAAAAAAAAAIEAAAAAAAAAiQAAAAAAAABBAAAAAAAAAEEAAAAAAAAAUQAAAAAAAACZAAAAAAAAAIEAAAAAAAAAYQAAAAAAAAABAAAAAAAAAIEAAAAAAAAAcQAAAAAAAABhAAAAAAAAAFEAAAAAAAAAIQAAAAAAAABRAAAAAAAAACEAAAAAAAAAIQAAAAAAAABxAAAAAAAAAEEAAAAAAAAAQQAAAAAAAABhAAAAAAAAAGEAAAAAAAAAIQAAAAAAAABBAAAAAAAAAGEAAAAAAAAAYQAAAAAAAABhAAAAAAAAAGEAAAAAAAAAIQAAAAAAAABRAAAAAAAAAAEAAAAAAAAAUQAAAAAAAAAhAAAAAAAAACEAAAAAAAAAUQAAAAAAAACZAAAAAAAAAHEAAAAAAAAAcQAAAAAAAABBA"},"yaxis":"y","type":"scatter"},{"customdata":{"dtype":"i1","bdata":"AQEHBgEBBgUHAQcBAQ==","shape":"13, 1"},"hovertemplate":"Anomaly Detected?=Yes\u003cbr\u003edistrict=Downtown\u003cbr\u003eincident_date=%{x}\u003cbr\u003eDaily Crime Reports=%{y}\u003cbr\u003eday_of_week=%{customdata[0]}\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"Yes","marker":{"color":"#e3120b","symbol":"circle"},"mode":"markers","name":"Yes","orientation":"v","showlegend":true,"x":["2025-01-27T00:00:00","2025-02-03T00:00:00","2025-02-09T00:00:00","2025-02-22T00:00:00","2025-05-19T00:00:00","2025-06-09T00:00:00","2025-06-28T00:00:00","2025-07-04T00:00:00","2025-07-13T00:00:00","2025-07-21T00:00:00","2025-10-05T00:00:00","2025-11-03T00:00:00","2025-12-08T00:00:00"],"xaxis":"x2","y":{"dtype":"f8","bdata":"AAAAAAAAMUAAAAAAAAA1QAAAAAAAADVAAAAAAAAAOUAAAAAAAAA3QAAAAAAAADhAAAAAAAAAOUAAAAAAAABPQAAAAAAAADZAAAAAAAAAOEAAAAAAAAA3QAAAAAAAADZAAAAAAAAAM0A="},"yaxis":"y2","type":"scatter"},{"customdata":{"dtype":"i1","bdata":"AwE=","shape":"2, 1"},"hovertemplate":"Anomaly Detected?=Yes\u003cbr\u003edistrict=Suburbs\u003cbr\u003eincident_date=%{x}\u003cbr\u003eDaily Crime Reports=%{y}\u003cbr\u003eday_of_week=%{customdata[0]}\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"Yes","marker":{"color":"#e3120b","symbol":"circle"},"mode":"markers","name":"Yes","orientation":"v","showlegend":false,"x":["2025-10-15T00:00:00","2025-11-17T00:00:00"],"xaxis":"x","y":{"dtype":"f8","bdata":"AAAAAAAAP0AAAAAAAADwPw=="},"yaxis":"y","type":"scatter"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"},"margin":{"b":0,"l":0,"r":0,"t":30}}},"xaxis":{"anchor":"y","domain":[0.0,0.98],"title":{"text":"incident_date"},"showline":true,"linecolor":"black","gridcolor":"#eeeeee"},"yaxis":{"anchor":"x","domain":[0.0,0.485],"title":{"text":"Daily Crime Reports"},"side":"left","gridcolor":"#eeeeee","zeroline":true,"zerolinecolor":"black"},"xaxis2":{"anchor":"y2","domain":[0.0,0.98],"matches":"x","showticklabels":false},"yaxis2":{"anchor":"x2","domain":[0.515,1.0],"matches":"y","title":{"text":"Daily Crime Reports"}},"annotations":[{"font":{},"showarrow":false,"text":"district=Suburbs","textangle":90,"x":0.98,"xanchor":"left","xref":"paper","y":0.2425,"yanchor":"middle","yref":"paper"},{"font":{},"showarrow":false,"text":"district=Downtown","textangle":90,"x":0.98,"xanchor":"left","xref":"paper","y":0.7575000000000001,"yanchor":"middle","yref":"paper"}],"legend":{"title":{"text":"Anomaly Detected?"},"tracegroupgap":0,"orientation":"h","yanchor":"bottom","y":0.95,"xanchor":"left","x":0},"title":{"font":{"family":"Georgia, serif","size":24,"color":"#00313a"},"text":"\n            \u003cb\u003eCrime Incident Anomaly Detection\u003c\u002fb\u003e\u003cbr\u003e\u003cspan style='font-size:14px; color:#4b4f54'\n            \u003eMexico City Case Study (Jan-Dec 2025)\u003c\u002fspan\u003e\n            ","x":0.05,"y":0.9},"margin":{"t":100,"l":50,"r":50,"b":50},"width":1030,"height":600,"plot_bgcolor":"#F5F5F5","paper_bgcolor":"#F5F5F5","hovermode":"x unified","shapes":[{"fillcolor":"#e3120b","line":{"width":0},"type":"rect","x0":-0.05,"x1":0.02,"xref":"paper","y0":1.2,"y1":1.22,"yref":"paper"}]},                        {"responsive": true}                    ).then(function(){
+                            
+var gd = document.getElementById('9f3dab83-507b-4142-b70d-c3c5f4a51ca3');
+var x = new MutationObserver(function (mutations, observer) {{
+        var display = window.getComputedStyle(gd).display;
+        if (!display || display === 'none') {{
+            console.log([gd, 'removed!']);
+            Plotly.purge(gd);
+            observer.disconnect();
+        }}
+}});
+
+// Listen for the removal of the full notebook cells
+var notebookContainer = gd.closest('#notebook-container');
+if (notebookContainer) {{
+    x.observe(notebookContainer, {childList: true});
+}}
+
+// Listen for the clearing of the current output cell
+var outputEl = gd.closest('.output');
+if (outputEl) {{
+    x.observe(outputEl, {childList: true});
+}}
+
+                        })                };            </script>        </div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-detection-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Display of crime anomaly dection
+</figcaption>
+</figure>
+</div>
+</div>
+<hr>
+</section>
+<section id="conclusions" class="level2 incremental smaller" data-background-image="slides-fondo-latte.png" data-background-opacity="0.5">
+<h2 class="incremental smaller anchored" data-background-image="slides-fondo-latte.png" data-background-opacity="0.5" data-anchor-id="conclusions">Conclusions</h2>
+<div class="justify">
+<p>The output is an interactive dashboard. While a human might miss a slight but statistically significant rise in suburb crime during October, <em>the model flags it instantly in bright red</em>.</p>
+<ul>
+<li><strong>Downtown</strong>: The model successfully identified the July 4th spike as an anomaly, distinguishing it from the already high daily average.</li>
+<li><strong>Suburbs</strong>: It caught a smaller “micro-spike” in mid-October that might have been overlooked by manual review.</li>
+</ul>
+<p>This approach shifts law enforcement from reactive to proactive. By identifying anomalies in real-time, departments can:</p>
+<ul>
+<li>Allocate patrols to “<em>hot zones</em>” before a trend scales.</li>
+<li>Identify potential new “<em>modus operandi</em>” used by organized groups.</li>
+<li>Validate whether a specific community intervention is successfully reducing crime below the expected baseline.</li>
+</ul>
+</div>
+<hr>
+</section>
+<section id="contact" class="level2 center" data-background-image="slides-fondo-latte.png" data-background-opacity="0.5">
+<h2 class="center anchored" data-background-image="slides-fondo-latte.png" data-background-opacity="0.5" data-anchor-id="contact">Contact</h2>
+<div class="columns">
+<div class="column" style="width:60%;">
+<div style="color: #00313a; font-size: 40px; font-weight: bold; margin-top: 10px; margin-bottom: 0px;">
+<p>Jesus L. Monroy</p>
+</div>
+<div style="color: #00a398; font-size: 30px; font-style: italic; font-family: 'ITC Charter', Georgia, serif; margin-top: 0px;">
+<p>Economist &amp; Data Scientist</p>
+</div>
+<div style="color: #4b4f54; font-size: 18px; font-style:italic; font-family: 'ITC Charter', Georgia, serif; width: 65%; text-align: justify; line-height: 1.5; margin-top: 0px; margin-bottom: 15px;">
+<p>Passionate about creating tools that make data accessible and impactful using SQL, Python, Streamlit, Shiny and Tableau in diverse sectors like Public Security, e-commerce, and Healthcare.<br>
+BA in Economics, MA in Information Technology, and Data Science/Machine Learning certification.</p>
+</div>
+<div style="font-size: 18px; font-family: sans-serif;">
+<p><a href="https://jesuslm-my-website.share.connect.posit.cloud">Portfolio</a> | <a href="https://www.linkedin.com/in/j3sus-lm">Linkedin</a> | <a href="https://x.com/j3suslm">Twitter</a> | <a href="https://tinyurl.com/jesuslm-tableau">Tableau</a></p>
+</div>
+</div><div class="column" style="width:40%;">
+<p><img src="network.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

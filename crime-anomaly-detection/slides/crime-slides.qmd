@@ -10,6 +10,8 @@ date-format: medium
 author: '*Jesus L. Monroy*'
 format:
   revealjs:
+    mainfont: "PT Serif"
+    headerfont: "Montserrat"
     embed-resources: true
     tbl-cap-location: bottom
     center-title-slide: true
@@ -32,6 +34,8 @@ A simple threshold (*e.g., "alert me if crimes > 20"*) doesn't work because it i
 *To solve this, we move beyond simple counting and toward Unsupervised Machine Learning*.
 :::
 
+<br>
+
 <style>
 .callout {
   border-left: 8px solid #e3120b !important; /* Replace with your --econ-red hex */
@@ -48,17 +52,21 @@ A simple threshold (*e.g., "alert me if crimes > 20"*) doesn't work because it i
 ## The Tech Stack {.incremental background-image=slides-fondo-latte.png background-opacity=0.5 .smaller}
 
 ::: {.justify}
-- **Polars**. 
 
+::: {.fragment}
+- **Polars**  
 Unlike `Pandas`, `Polars` is built in `Rust` and uses multi-threading. When processing millions of crime logs, `Polars` can be 10–100x faster, making it the ideal engine for real-time analytics.
+:::
 
-- **Scikit-Learn**. 
-
+::: {.fragment}
+- **Scikit-Learn**   
 We wil use the **Isolation Forest model**. This algorithm is a "*forest*" of trees that tries to isolate each data point. Anomalies are "*easy to isolate*" (they require fewer splits in the tree), while normal points are "*hard to isolate*." This makes it incredibly effective at finding rare events in unlabeled data.
+:::
 
-- **Plotly**. 
-
+::: {.fragment}
+- **Plotly**  
 *Static charts are dead in crime analysis*. Detectors need to zoom in on specific dates and hover over data points to see metadata. `Plotly` provides this interactivity natively.
+:::
 :::
 
 ---
@@ -66,17 +74,21 @@ We wil use the **Isolation Forest model**. This algorithm is a "*forest*" of tre
 ## From Raw Logs to Red Flags {.incremental background-image=slides-fondo-latte.png background-opacity=0.5 .smaller}
 
 ::: {.justify}
-1. **Data Synthesis & Cleaning**
 
+::: {.fragment}
+1. **Data Synthesis & Cleaning**  
 We study a year of crime data across two districts: "**Downtown**" (*high volume*) and "**Suburbs**" (*low volume*).
+:::
 
-2. **Feature Engineering**
-
+::: {.fragment}
+2. **Feature Engineering**  
 A crime count of "25" means something different on a Monday than it does on New Year's Eve. We use `Polars` to extract features like day_of_week and month. This allows the machine learning model to understand the rhythm of the city.
+:::
 
-3. **Training the Isolation Forest**
-
+::: {.fragment}
+3. **Training the Isolation Forest**  
 We feed the counts and temporal features into the Isolation Forest. We set a contamination parameter (0.02), telling the model we expect about 2% of our data to be anomalous. The model then assigns an "anomaly score" to every single day in the dataset.
+:::
 :::
 
 ---
@@ -145,16 +157,38 @@ df = df.with_columns([
 #| label: tbl-preview
 #| tbl-cap: Preview of dataset
 
+from great_tables import GT, style, loc
+
+start_date = "2025-01-01"
+end_date = "2025-12-31"
+
 (
-    df
-        .to_pandas().head(9).style
-        .relabel_index(["Date", "District", "Incident count", "Day of week", "Month"], axis=1)
-        .format(precision=1)
-        .set_properties(**{
-            'background-color': '#f8f8f8',
-            'border': '1px solid black',
-            'text-align': 'center'
-        })
+    GT(df.head(9))
+    .tab_header(
+        title="Mexico City Incidents",
+        subtitle=f"{start_date} to {end_date}"
+    )
+    .cols_label(
+        incident_date="Incident date",
+        district="District",
+        incident_count="Incident count",
+        day_of_week="Day of Week",
+        month="Month"
+    )
+    .tab_options(
+        container_width = "100%",
+        table_width="100%",
+        table_background_color="#f8faf7",
+        heading_background_color = "#004f71",
+        column_labels_background_color="#e3120b",
+    )
+    .tab_style(
+        style=style.text(size="18px"),
+        locations=loc.body(columns=None, rows=None),
+    )
+    .fmt_date(columns="incident_date", date_style="wd_m_day_year")
+    .fmt_number(columns="incident_count", decimals=0)
+    .cols_align(align="center", columns=None)
 )
 ```
 
@@ -219,8 +253,8 @@ fig.update_layout(
     ),
     width=1_030,
     height=600,
-    plot_bgcolor="#F5F5F5",
-    paper_bgcolor="#F5F5F5",
+    plot_bgcolor="#F6F6F6",
+    paper_bgcolor="#F6F6F6",
     hovermode="x unified",
     margin=dict(t=100, l=50, r=50, b=50),
     legend=dict(orientation="h", yanchor="bottom", y=0.95, xanchor="left", x=0),
@@ -257,16 +291,28 @@ fig.show()
 
 ::: {.justify}
 
+::: {.fragment}
 The output is an interactive dashboard. While a human might miss a slight but statistically significant rise in suburb crime during October, *the model flags it instantly in bright red*.
+:::
 
+::: {.fragment}
 - **Downtown**: The model successfully identified the July 4th spike as an anomaly, distinguishing it from the already high daily average.
+:::
+
+::: {.fragment}
 - **Suburbs**: It caught a smaller "micro-spike" in mid-October that might have been overlooked by manual review.
+:::
 
+::: {.fragment}
 This approach shifts law enforcement from reactive to proactive. By identifying anomalies in real-time, departments can:
+:::
 
+::: {.incremental}
 - Allocate patrols to "*hot zones*" before a trend scales.
 - Identify potential new "*modus operandi*" used by organized groups.
 - Validate whether a specific community intervention is successfully reducing crime below the expected baseline.
+:::
+
 :::
 
 ---
@@ -305,4 +351,3 @@ BA in Economics, MA in Information Technology, and Data Science/Machine Learning
 ::::
 
 :::::
-

@@ -5,6 +5,8 @@ $brand-red: #e3120b;
 $deep-blue: #004f71;
 $bg-gray: #F5F2F0;
 $text-black: #111111;
+$font-family-sans-serif: "Montserrat", sans-serif;
+$font-family-serif: "PT Serif", serif;
 
 // Reveal.js Variable Overrides
 $body-bg: $bg-gray;
@@ -14,12 +16,13 @@ $selection-bg: lighten($brand-red, 30%);
 $heading-color: $text-black;
 $heading-font-weight: 700;
 
+
 /*-- scss:rules --*/
 .reveal .title {
   border-top: 5px solid $brand-red; /* The iconic top border */
   color: #004f71;
   font-weight: 800;
-  font-size: 80px;
+  font-size: 75px;
   text-transform: none; /* Common in their branding */
 }
 
@@ -34,7 +37,7 @@ $heading-font-weight: 700;
 .quarto-title-author {
   color: #28282b;
   font-size: 1em;
-  font-weight: 400;     /* Normal weight for contrast against bold title */
+  font-weight: 4000;    /* Normal weight for contrast against bold title */
   margin-top: 2px;     /* Space between title/subtitle and author */
   letter-spacing: 0.05em; /* Subtle professional spacing */
 }

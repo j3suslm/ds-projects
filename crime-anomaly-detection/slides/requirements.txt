@@ -6,4 +6,5 @@ polars
 pyarrow
 fastexcel
 scikit-learn
+great-tables
 jupyter

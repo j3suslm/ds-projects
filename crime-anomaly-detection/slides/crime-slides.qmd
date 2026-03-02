@@ -338,7 +338,7 @@ Jesus L. Monroy
 Economist & Data Scientist
 :::
 
-::: {style="color: #4b4f54; font-size: 18px; font-style:italic; font-family: 'ITC Charter', Georgia, serif; width: 65%; text-align: justify; line-height: 1.5; margin-top: 0px; margin-bottom: 15px;"}
+::: {style="color: #4b4f54; font-size: 16px; font-style:italic; font-family: 'ITC Charter', Georgia, serif; width: 63%; text-align: justify; line-height: 1.5; margin-top: 0px; margin-bottom: 15px;"}
 
 Passionate about creating tools that make data accessible and impactful using SQL, Python, Streamlit, Shiny and Tableau in diverse sectors like Public Security, e-commerce, and Healthcare.     
 BA in Economics, MA in Information Technology, and Data Science/Machine Learning certification.

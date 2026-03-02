@@ -1,7 +1,7 @@
 ---
 title: Anomaly Detection in Crime
 title-slide-attributes:
-  data-background-image: slides-fondo-latte.png
+  data-background-image: latte.png
   data-background-size: contain
   data-background-opacity: '0.5'
 subtitle: A Case Study for Mexico
@@ -24,7 +24,7 @@ format:
 jupyter: python3
 ---
 
-## Overview {background-image=slides-fondo-latte.png background-opacity=0.5 .smaller}
+## Overview {.smaller}
 
 ::: {.justify}
 Crime data is inherently "*noisy*." A Saturday night in a downtown district will naturally have more incidents than a Tuesday morning in the suburbs.
@@ -49,7 +49,7 @@ A simple threshold (*e.g., "alert me if crimes > 20"*) doesn't work because it i
 
 ---
 
-## The Tech Stack {.incremental background-image=slides-fondo-latte.png background-opacity=0.5 .smaller}
+## The Tech Stack {.incremental .smaller}
 
 ::: {.justify}
 
@@ -71,7 +71,7 @@ We wil use the **Isolation Forest model**. This algorithm is a "*forest*" of tre
 
 ---
 
-## From Raw Logs to Red Flags {.incremental background-image=slides-fondo-latte.png background-opacity=0.5 .smaller}
+## From Raw Logs to Red Flags {.incremental .smaller}
 
 ::: {.justify}
 
@@ -93,7 +93,7 @@ We feed the counts and temporal features into the Isolation Forest. We set a con
 
 ---
 
-## Dataset Preview {.incremental background-image=slides-fondo-latte.png background-opacity=0.5 .smaller}
+## Dataset Preview {.incremental .smaller}
 
 ```{python}
 #| echo: false
@@ -194,7 +194,7 @@ end_date = "2025-12-31"
 
 ---
 
-## Modelling {.incremental background-image=slides-fondo-latte.png background-opacity=0.5 .smaller}
+## Modelling {.incremental .smaller}
 
 ```{python}
 #| echo: true
@@ -223,7 +223,7 @@ df = (
 ```{python}
 #| echo: false
 #| label: fig-detection
-#| fig-cap: Display of crime anomaly dection
+#| fig-cap: Display of crime anomaly detection
 
 ECONOMIST_RED = "#e3120b"
 ECONOMIST_BLUE = "#00313a" # Your header color
@@ -258,19 +258,23 @@ fig.update_layout(
     hovermode="x unified",
     margin=dict(t=100, l=50, r=50, b=50),
     legend=dict(orientation="h", yanchor="bottom", y=0.95, xanchor="left", x=0),
+    xaxis_title=None,
     xaxis=dict(
-        showline=True,
+        showline=False,
         linecolor='black',
         gridcolor='#eeeeee',
-        #tickmode='linear',
-        #tick0=df['Year'].min(),
-        #dtick=1, # Forces a tick every 1 unit (year)
+        tickmode='linear',
+        tick0=df['incident_date'].min(),
+        dtick='M1',
+        tickformat='%b %Y',
+        tickangle=-30,
+        tickfont=dict(size=10) # Sets the font size to 10
     ),
 
     yaxis=dict(
         side="left", # The Economist often puts labels on the right
         gridcolor='#eeeeee',
-        zeroline=True,
+        zeroline=False,
         zerolinecolor='black'
     )
 )
@@ -282,12 +286,15 @@ fig.add_shape(
     fillcolor=ECONOMIST_RED, line=dict(width=0)
 )
 
+# remove "district="" from facet_row
+fig.for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1]))
+
 fig.show()
 ```
 
 ---
 
-## Conclusions {.incremental background-image=slides-fondo-latte.png background-opacity=0.5 .smaller}
+## Conclusions {.incremental .smaller}
 
 ::: {.justify}
 
@@ -317,7 +324,7 @@ This approach shifts law enforcement from reactive to proactive. By identifying 
 
 ---
 
-## Contact {.center background-image=slides-fondo-latte.png background-opacity=0.5}
+## Contact {.center}
 
 ::::: {.columns}
 

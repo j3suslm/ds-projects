@@ -1,0 +1,4 @@
+- source: clq_analysis.qmd
+  quarto-pub:
+    - id: 8ac1d8e8-5721-4aab-b8e6-c99b1925716e
+      url: https://j3sus.quarto.pub/clq-case-study

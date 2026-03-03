@@ -1,0 +1,139 @@
+/*-- scss:defaults --*/
+
+/* The Economist Color Palette & Web Reporting Style */
+:root {
+  /* Core Palette */
+  --econ-red: #e3120b;         /* The 'Red Top' brand color */
+  --econ-dark-blue: #00313a;   /* Headings and primary text */
+  --econ-light-blue: #00a398;  /* Accents / Links */
+  --econ-bg-latte: #f6f6f6;    /* #F5F2F0 Page background */
+  --econ-grey-text: #4b4f54;   /* Body text */
+  --econ-border: #d7d7d7;      /* Dividers */
+}
+
+/*-- scss:rules --*/
+
+.title {
+  color: #00313a !important;
+  border-bottom: 3px solid #e3120b; /* Increased to 4px for that bold masthead look */
+  padding-top: 15px;
+  margin-top: 20px;
+  font-family: 'Milo', sans-serif;
+  font-weight: 900;
+  font-size: 40px;
+  /*text-transform: uppercase;*/
+}
+
+.subtitle {
+  color: #e3120b;
+  font-weight: bold;
+  font-size: 0.9em;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: -10px; /* Pulls the title closer to the subtitle */
+}
+
+.abstract {
+  font-family: 'ITC Charter', Georgia, serif;
+  font-size: 18px; /* Slightly smaller than 'lead' for standard abstracts */
+  color: #4b4f54;
+  line-height: 1.4;
+  text-align: justify;
+  border-left: 1px solid #e3120b;  /* Adds a red Economist accent bar */
+  padding-left: 20px;
+  margin-bottom: 30px;
+  font-style: italic;
+}
+
+/* Optional: Style the "Abstract" title itself */
+.abstract-title {
+  color: #e3120b;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+body {
+  background-color: var(--econ-bg-latte);
+  color: var(--econ-grey-text);
+  font-family: "ITC Charter", "Georgia", serif; /* Mimics their serif style */
+  line-height: 1.5;
+}
+
+p {
+  text-align: justify;
+}
+
+hr {
+  width: 50%; /* narrow */
+  // margin-left: auto; /* Center it */
+  margin-right: auto;
+  border: 0; /* Reset default border */
+  height: 0.6px; /* Thickness */
+  background: #004761;
+  opacity: 0.4;
+}
+
+/* Headings */
+h1 {
+  color: var(--econ-dark-blue);
+  font-family: "Milo", "Helvetica Neue", Arial, sans-serif; /* Their sans-serif font */
+  font-weight: 700;
+  border-bottom: 0px solid #e3120b; /* increase px to show horizontal line below the title*/
+}
+
+h2, h3 {
+  color: var(--econ-light-blue);
+  font-family: "Milo", "Helvetica Neue", Arial, sans-serif; /* Their sans-serif font */
+  font-weight: 700;
+  border-bottom: 0px solid #d7d7d7;
+}
+
+/* Links */
+a {
+  color: var(--econ-light-blue);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+}
+
+a:hover {
+  border-bottom: 1px solid var(--econ-light-blue);
+}
+
+/* Quarto Callouts (The Economist uses "Box" styles often) */
+.callout {
+  border-left-color: var(--econ-red) !important;
+  background-color: white !important;
+  border-radius: 1;
+}
+
+/* Table styling */
+table {
+  border-top: 2px solid var(--econ-dark-blue);
+  border-bottom: 2px solid var(--econ-dark-blue);
+}
+
+th {
+  color: var(--econ-dark-blue);
+  border-bottom: 1px solid var(--econ-border);
+}
+
+/* Target the bibliography container */
+#refs {
+  text-align: justify; /* Use 'justify' if you prefer a block look */
+  line-height: 1.6;
+}
+
+/* Add a hyphen before each entry */
+#refs .nav-link, 
+#refs .csl-entry::before {
+  content: "- ";
+  font-weight: bold;
+  margin-right: 5px;
+}
+
+/* Ensure proper spacing between entries */
+#refs .csl-entry {
+  margin-bottom: 0.8em;
+  padding-left: 0em;
+  text-indent: -2.5em; /* Maintains the 'hanging indent' style */
+}

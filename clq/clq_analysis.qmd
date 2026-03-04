@@ -12,7 +12,6 @@ format:
   html:
     code-copy: false
     embed-resources: true
-    fig-cap-location: margin
     tbl-cap-location: margin
     number-sections: false
     toc: true
@@ -46,7 +45,7 @@ jupyter: python3
 
 ::: {#fig-crimes}
 
-![](images/header.png){width=70% .lightbox fig-align="left"}
+![](images/header.png){#fig-crimes width=60% .lightbox fig-align="left"}
 
 Several violent episodes in Mexico suggest a worrying trend   
 Source: The Economist
@@ -54,8 +53,6 @@ Source: The Economist
 :::
 
 # Introduction
-
----
 
 ## Spatial Concentration of High Impact Crime in Mexico
 
@@ -94,8 +91,6 @@ This concept is directly translated to crime analysis, replacing 'industry' with
 
 
 # Environment settings
-
----
 
 ```{python}
 import polars as pl
@@ -151,8 +146,6 @@ df3 = df_pop.to_pandas().head(10)
 
 # Methodology and Calculation
 
----
-
 The Crime Location Quotient (CLQ) compares a municipality's relative share of homicides with the country's relative share of that same indicator.
 
 The general formula for the Location Quotient is:
@@ -193,8 +186,6 @@ Source: CONAPO.
 
 
 # Results and Analysis
-
----
 
 ```{python}
 # join homicides and population tables
@@ -326,15 +317,11 @@ fullscreen_plugin = plugins.Fullscreen(
 
 # Policy Implications
 
----
-
 The application of Location Quotient (LQ) methodology to crime analysis is a specialized area within spatial criminology, drawing heavily on its original use in economic geography.
 
 The literature establishes LQ as a powerful tool for moving beyond simple crime rates to identify areas where specific criminal activity is disproportionately concentrated.
 
 # References
-
----
 
 ::: {#refs}
 :::
@@ -342,9 +329,7 @@ The literature establishes LQ as a powerful tool for moving beyond simple crime 
 
 # Contact
 
----
-
-::: {style="color: #00313a; font-size: 28px; font-weight: bold; margin-top: 10px; margin-bottom: 0px;"}
+::: {style="color: #004761; font-size: 28px; font-weight: bold; margin-top: 10px; margin-bottom: 0px;"}
 Jesus L. Monroy
 :::
 

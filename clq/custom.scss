@@ -4,18 +4,18 @@
 :root {
   /* Core Palette */
   --econ-red: #e3120b;         /* The 'Red Top' brand color */
-  --econ-dark-blue: #00313a;   /* Headings and primary text */
+  --econ-dark-blue: #004761;  /* Headings and primary text */
   --econ-light-blue: #00a398;  /* Accents / Links */
-  --econ-bg-latte: #f6f6f6;    /* #F5F2F0 Page background */
+  --econ-bg-latte: #F2F2F2;    /* #F5F2F0 Page background */
   --econ-grey-text: #4b4f54;   /* Body text */
   --econ-border: #d7d7d7;      /* Dividers */
 }
 
-/*-- scss:rules --*/
 
+/*-- scss:rules --*/
 .title {
-  color: #00313a !important;
-  border-bottom: 3px solid #e3120b; /* Increased to 4px for that bold masthead look */
+  color: #004761 !important;
+  border-bottom: 4px solid #e3120b; /* Increased to 4px for that bold masthead look */
   padding-top: 15px;
   margin-top: 20px;
   font-family: 'Milo', sans-serif;
@@ -39,7 +39,7 @@
   color: #4b4f54;
   line-height: 1.4;
   text-align: justify;
-  border-left: 1px solid #e3120b;  /* Adds a red Economist accent bar */
+  border-left: 1.5px solid #e3120b;  /* Adds a red Economist accent bar */
   padding-left: 20px;
   margin-bottom: 30px;
   font-style: italic;
@@ -63,40 +63,45 @@ p {
   text-align: justify;
 }
 
-hr {
-  width: 50%; /* narrow */
-  // margin-left: auto; /* Center it */
-  margin-right: auto;
-  border: 0; /* Reset default border */
-  height: 0.6px; /* Thickness */
-  background: #004761;
-  opacity: 0.4;
-}
-
-/* Headings */
-h1 {
+/* Headings h1*/
+h1:not(.title) {
   color: var(--econ-dark-blue);
   font-family: "Milo", "Helvetica Neue", Arial, sans-serif; /* Their sans-serif font */
   font-weight: 700;
-  border-bottom: 0px solid #e3120b; /* increase px to show horizontal line below the title*/
+  position: relative;
+
+  &::after {
+    content: "";
+    display: block;
+    width: 16%;           /* Your requested width */
+    margin-right: auto;   /* Align left (remove for center) */
+    // margin-left: auto; /* Uncomment to center */
+    height: 1.8px;        /* Your requested thickness */
+    background: #e3120b;  /* Your requested color */
+    opacity: 0.8;  /* Your requested opacity */
+    border: 0;
+  }
 }
+
 
 h2, h3 {
   color: var(--econ-light-blue);
   font-family: "Milo", "Helvetica Neue", Arial, sans-serif; /* Their sans-serif font */
   font-weight: 700;
-  border-bottom: 0px solid #d7d7d7;
+  border-bottom: 0.5px solid #d7d7d7;
+  margin-bottom: 2px;
+  margin-top: 2px;
 }
 
 /* Links */
 a {
-  color: var(--econ-light-blue);
+  color: var(--econ-red);
   text-decoration: none;
   border-bottom: 1px solid transparent;
 }
 
 a:hover {
-  border-bottom: 1px solid var(--econ-light-blue);
+  border-bottom: 1px solid var(--econ-dark-blue);
 }
 
 /* Quarto Callouts (The Economist uses "Box" styles often) */
@@ -117,23 +122,76 @@ th {
   border-bottom: 1px solid var(--econ-border);
 }
 
+/* Container for the code block */
+div.sourceCode {
+  background-color: #EFF0F5; /* Subtle cool-grey background */
+  border-top: 1px solid #d0d7de;
+  border-bottom: 1px solid #d0d7de;
+  border-left: none;
+  border-right: none;
+  border-radius: 0.1; /* Print looks usually have sharp corners */
+  padding: 1em;
+  margin-top: 1em;
+}
+
+/* Ensure the code text uses a clean monospace font */
+code.sourceCode {
+  font-family: "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.9em;
+  color: #333;
+}
+
 /* Target the bibliography container */
 #refs {
   text-align: justify; /* Use 'justify' if you prefer a block look */
-  line-height: 1.6;
+  line-height: 1.5;
+  padding-left: 0;
+  margin-left: 0;
 }
 
 /* Add a hyphen before each entry */
 #refs .nav-link, 
 #refs .csl-entry::before {
-  content: "- ";
+  content: "· ";
   font-weight: bold;
-  margin-right: 5px;
+  margin-right: 0px;
 }
 
 /* Ensure proper spacing between entries */
 #refs .csl-entry {
   margin-bottom: 0.8em;
-  padding-left: 0em;
-  text-indent: -2.5em; /* Maintains the 'hanging indent' style */
+  padding-left: 0;
+  margin-left: 5pt;
+  text-indent: 0; /* Maintains the 'hanging indent' style */
+}
+
+/* 1. The overall TOC container and inactive links */
+#quarto-toc-actions, 
+.sidebar nav[role=doc-toc] ul li a {
+  color: #004761 !important; /* Economist Deep Blue */
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+/* 2. The Active Link (where you are currently scrolling) */
+.sidebar nav[role=doc-toc] ul li a.active {
+  color: #e3120b !important; /* Economist Red */
+  border-left: 2px solid #e3120b;
+  opacity: 1;
+  font-weight: bold;
+}
+
+/* 3. Hover state */
+.sidebar nav[role=doc-toc] ul li a:hover {
+  color: #e3120b !important;
+  opacity: 1;
+}
+
+/* 4. The "Table of Contents" title header */
+#quarto-toc-target h2 {
+  color: #004761;
+  font-weight: 900;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 1px;
 }

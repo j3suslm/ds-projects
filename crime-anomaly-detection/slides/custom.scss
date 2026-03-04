@@ -4,7 +4,7 @@
 $brand-red: #e3120b;
 $deep-blue: #004f71;
 $bg-gray: #F5F2F0;
-$text-black: #111111;
+$text-black: #3b3b3b;
 $font-family-sans-serif: "Montserrat", sans-serif;
 $font-family-serif: "PT Serif", serif;
 
@@ -35,7 +35,7 @@ $heading-font-weight: 700;
 
 // change author color
 .quarto-title-author {
-  color: #28282b;
+  color: $text-black;
   font-size: 1em;
   font-weight: 4000;    /* Normal weight for contrast against bold title */
   margin-top: 2px;     /* Space between title/subtitle and author */
@@ -92,7 +92,7 @@ $heading-font-weight: 700;
 
 .justify {
   text-align: justify;
-  color: #333333;
+  color: $text-black;
 }
 
 

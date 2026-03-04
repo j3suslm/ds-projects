@@ -15,7 +15,7 @@ format:
     embed-resources: true
     tbl-cap-location: bottom
     center-title-slide: true
-    logo: https://img.favpng.com/17/0/15/logo-big-data-organization-technology-png-favpng-eBtUJzXazE4Nm0ZqVURx09RDL.jpg
+    logo: network.png
     footer: JLM © 2026
     transition: fade
     transition-speed: slow
@@ -338,13 +338,13 @@ Jesus L. Monroy
 Economist & Data Scientist
 :::
 
-::: {style="color: #4b4f54; font-size: 16px; font-style:italic; font-family: 'ITC Charter', Georgia, serif; width: 63%; text-align: justify; line-height: 1.5; margin-top: 0px; margin-bottom: 15px;"}
+::: {style="color: #4b4f54; font-size: 14px; font-style:italic; font-family: 'ITC Charter', Georgia, serif; width: 60%; text-align: justify; line-height: 1.5; margin-top: 0px; margin-bottom: 15px;"}
 
 Passionate about creating tools that make data accessible and impactful using SQL, Python, Streamlit, Shiny and Tableau in diverse sectors like Public Security, e-commerce, and Healthcare.     
 BA in Economics, MA in Information Technology, and Data Science/Machine Learning certification.
 :::
 
-::: {style="font-size: 18px; font-family: sans-serif;"}
+::: {style="font-size: 15px; font-family: sans-serif;"}
 [Portfolio](https://jesuslm-my-website.share.connect.posit.cloud) | 
 [Linkedin](https://www.linkedin.com/in/j3sus-lm) | 
 [Twitter](https://x.com/j3suslm) | 

@@ -1,12 +1,21 @@
 /*-- scss:defaults --*/
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300..700&display=swap');
 
 // The Economist Color Palette
 $brand-red: #e3120b;
 $deep-blue: #004f71;
-$bg-gray: #F5F2F0;
+$bg-gray: #F1F4F5;
+$link-color: #00608F;
 $text-black: #3b3b3b;
-$font-family-sans-serif: "Montserrat", sans-serif;
-$font-family-serif: "PT Serif", serif;
+$text-gray: #666666;
+$text-teal: #007583;
+
+// Fonts
+$font-family-sans-serif: 'Merriweather', sans-serif;
+$font-family-serif: "Newsreader", "Crimson Pro", serif;
+$font-family-monospace: "Fira Code", monospace;
 
 // Reveal.js Variable Overrides
 $body-bg: $bg-gray;
@@ -20,7 +29,7 @@ $heading-font-weight: 700;
 /*-- scss:rules --*/
 .reveal .title {
   border-top: 5px solid $brand-red; /* The iconic top border */
-  color: #004f71;
+  color: $deep-blue;
   font-weight: 800;
   font-size: 75px;
   text-transform: none; /* Common in their branding */
@@ -43,7 +52,7 @@ $heading-font-weight: 700;
 }
 
 .reveal .date {
-  color: #666666;
+  color: $text-gray;
   font-size: 0.6em;
   text-transform: uppercase;
   margin-top: 10px;
@@ -54,7 +63,7 @@ $heading-font-weight: 700;
   border-top: none;   /* Remove the old border */
   padding-top: 15px;
   text-transform: none;
-  color: #004f71;
+  color: $deep-blue;
 }
 
 .reveal h1::before, .reveal h2::before {
@@ -69,7 +78,7 @@ $heading-font-weight: 700;
 
 .reveal .footer {
   font-size: 0.8em;
-  color: #007583;
+  color: $text-teal;
 }
 
 .reveal .slide-number {
@@ -127,4 +136,13 @@ $heading-font-weight: 700;
 /* ensure the icon/title area matches if needed */
 .callout-header {
   background-color: white !important;
+}
+
+// 6. Table & Figure Captions (Humanist Sans)
+.figure-caption, figcaption, table caption {
+  font-family: $font-family-sans-serif;
+  font-size: 0.8rem;
+  //text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: $text-gray;
 }

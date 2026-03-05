@@ -26,22 +26,24 @@ jupyter: python3
 
 ## Overview {.smaller}
 
-::: {.justify}
+::: justify
 Crime data is inherently "*noisy*." A Saturday night in a downtown district will naturally have more incidents than a Tuesday morning in the suburbs.
 
-A simple threshold (*e.g., "alert me if crimes > 20"*) doesn't work because it ignores context like seasonality, day of the week, and location-specific baselines.
+A simple threshold (*e.g., "alert me if crimes \> 20"*) doesn't work because it ignores context like seasonality, day of the week, and location-specific baselines.
 
 *To solve this, we move beyond simple counting and toward Unsupervised Machine Learning*.
 :::
 
 <br>
 
+```{=html}
 <style>
 .callout {
   border-left: 8px solid #e3120b !important; /* Replace with your --econ-red hex */
   background-color: #f6f6f6 !important;
 }
 </style>
+```
 
 ::: {.callout-note appearance="simple" icon="false"}
 *This case study is based on fictituos data only*.
@@ -51,45 +53,43 @@ A simple threshold (*e.g., "alert me if crimes > 20"*) doesn't work because it i
 
 ## The Tech Stack {.incremental .smaller}
 
-::: {.justify}
-
-::: {.fragment}
-- **Polars**  
-Unlike `Pandas`, `Polars` is built in `Rust` and uses multi-threading. When processing millions of crime logs, `Polars` can be 10–100x faster, making it the ideal engine for real-time analytics.
+:::::: justify
+::: fragment
+-   **Polars**\
+    Unlike `Pandas`, `Polars` is built in `Rust` and uses multi-threading. When processing millions of crime logs, `Polars` can be 10–100x faster, making it the ideal engine for real-time analytics.
 :::
 
-::: {.fragment}
-- **Scikit-Learn**   
-We wil use the **Isolation Forest model**. This algorithm is a "*forest*" of trees that tries to isolate each data point. Anomalies are "*easy to isolate*" (they require fewer splits in the tree), while normal points are "*hard to isolate*." This makes it incredibly effective at finding rare events in unlabeled data.
+::: fragment
+-   **Scikit-Learn**\
+    We wil use the **Isolation Forest model**. This algorithm is a "*forest*" of trees that tries to isolate each data point. Anomalies are "*easy to isolate*" (they require fewer splits in the tree), while normal points are "*hard to isolate*." This makes it incredibly effective at finding rare events in unlabeled data.
 :::
 
-::: {.fragment}
-- **Plotly**  
-*Static charts are dead in crime analysis*. Detectors need to zoom in on specific dates and hover over data points to see metadata. `Plotly` provides this interactivity natively.
+::: fragment
+-   **Plotly**\
+    *Static charts are dead in crime analysis*. Detectors need to zoom in on specific dates and hover over data points to see metadata. `Plotly` provides this interactivity natively.
 :::
-:::
+::::::
 
 ---
 
 ## From Raw Logs to Red Flags {.incremental .smaller}
 
-::: {.justify}
-
-::: {.fragment}
-1. **Data Synthesis & Cleaning**  
-We study a year of crime data across two districts: "**Downtown**" (*high volume*) and "**Suburbs**" (*low volume*).
+:::::: justify
+::: fragment
+1.  **Data Synthesis & Cleaning**\
+    We study a year of crime data across two districts: "**Downtown**" (*high volume*) and "**Suburbs**" (*low volume*).
 :::
 
-::: {.fragment}
-2. **Feature Engineering**  
-A crime count of "25" means something different on a Monday than it does on New Year's Eve. We use `Polars` to extract features like day_of_week and month. This allows the machine learning model to understand the rhythm of the city.
+::: fragment
+2.  **Feature Engineering**\
+    A crime count of "25" means something different on a Monday than it does on New Year's Eve. We use `Polars` to extract features like day_of_week and month. This allows the machine learning model to understand the rhythm of the city.
 :::
 
-::: {.fragment}
-3. **Training the Isolation Forest**  
-We feed the counts and temporal features into the Isolation Forest. We set a contamination parameter (0.02), telling the model we expect about 2% of our data to be anomalous. The model then assigns an "anomaly score" to every single day in the dataset.
+::: fragment
+3.  **Training the Isolation Forest**\
+    We feed the counts and temporal features into the Isolation Forest. We set a contamination parameter (0.02), telling the model we expect about 2% of our data to be anomalous. The model then assigns an "anomaly score" to every single day in the dataset.
 :::
-:::
+::::::
 
 ---
 
@@ -296,40 +296,36 @@ fig.show()
 
 ## Conclusions {.incremental .smaller}
 
-::: {.justify}
-
-::: {.fragment}
+:::::::: justify
+::: fragment
 The output is an interactive dashboard. While a human might miss a slight but statistically significant rise in suburb crime during October, *the model flags it instantly in bright red*.
 :::
 
-::: {.fragment}
-- **Downtown**: The model successfully identified the July 4th spike as an anomaly, distinguishing it from the already high daily average.
+::: fragment
+-   **Downtown**: The model successfully identified the July 4th spike as an anomaly, distinguishing it from the already high daily average.
 :::
 
-::: {.fragment}
-- **Suburbs**: It caught a smaller "micro-spike" in mid-October that might have been overlooked by manual review.
+::: fragment
+-   **Suburbs**: It caught a smaller "micro-spike" in mid-October that might have been overlooked by manual review.
 :::
 
-::: {.fragment}
+::: fragment
 This approach shifts law enforcement from reactive to proactive. By identifying anomalies in real-time, departments can:
 :::
 
-::: {.incremental}
-- Allocate patrols to "*hot zones*" before a trend scales.
-- Identify potential new "*modus operandi*" used by organized groups.
-- Validate whether a specific community intervention is successfully reducing crime below the expected baseline.
+::: incremental
+-   Allocate patrols to "*hot zones*" before a trend scales.
+-   Identify potential new "*modus operandi*" used by organized groups.
+-   Validate whether a specific community intervention is successfully reducing crime below the expected baseline.
 :::
-
-:::
+::::::::
 
 ---
 
 ## Contact {.center}
 
-::::: {.columns}
-
-:::: {.column width="60%"}
-
+::::::::: columns
+::::::: {.column width="60%"}
 ::: {style="color: #00313a; font-size: 40px; font-weight: bold; margin-top: 10px; margin-bottom: 0px;"}
 Jesus L. Monroy
 :::
@@ -339,22 +335,16 @@ Economist & Data Scientist
 :::
 
 ::: {style="color: #4b4f54; font-size: 14px; font-style:italic; font-family: 'ITC Charter', Georgia, serif; width: 60%; text-align: justify; line-height: 1.5; margin-top: 0px; margin-bottom: 15px;"}
-
-Passionate about creating tools that make data accessible and impactful using SQL, Python, Streamlit, Shiny and Tableau in diverse sectors like Public Security, e-commerce, and Healthcare.     
+Passionate about creating tools that make data accessible and impactful using SQL, Python, Streamlit, Shiny and Tableau in diverse sectors like Public Security, e-commerce, and Healthcare.\
 BA in Economics, MA in Information Technology, and Data Science/Machine Learning certification.
 :::
 
 ::: {style="font-size: 15px; font-family: sans-serif;"}
-[Portfolio](https://jesuslm-my-website.share.connect.posit.cloud) | 
-[Linkedin](https://www.linkedin.com/in/j3sus-lm) | 
-[Twitter](https://x.com/j3suslm) | 
-[Tableau](https://tinyurl.com/jesuslm-tableau)
+[Portfolio](https://jesuslm-my-website.share.connect.posit.cloud) \| [Linkedin](https://www.linkedin.com/in/j3sus-lm) \| [Twitter](https://x.com/j3suslm) \| [Tableau](https://tinyurl.com/jesuslm-tableau)
 :::
+:::::::
 
-::::
-
-:::: {.column width="40%"}
+::: {.column width="40%"}
 ![](network.png)
-::::
-
-:::::
+:::
+:::::::::

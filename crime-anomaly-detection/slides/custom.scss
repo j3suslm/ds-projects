@@ -1,7 +1,4 @@
 /*-- scss:defaults --*/
-@import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300..700&display=swap');
 
 // The Economist Color Palette
 $brand-red: #e3120b;
@@ -136,13 +133,4 @@ $heading-font-weight: 700;
 /* ensure the icon/title area matches if needed */
 .callout-header {
   background-color: white !important;
-}
-
-// 6. Table & Figure Captions (Humanist Sans)
-.figure-caption, figcaption, table caption {
-  font-family: $font-family-sans-serif;
-  font-size: 0.8rem;
-  //text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: $text-gray;
 }

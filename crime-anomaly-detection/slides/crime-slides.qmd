@@ -16,7 +16,7 @@ format:
     tbl-cap-location: bottom
     center-title-slide: true
     logo: network.png
-    footer: JLM © 2026
+    footer: © 2026
     transition: fade
     transition-speed: slow
     slide-number: c/t
@@ -29,9 +29,9 @@ jupyter: python3
 ::: justify
 Crime data is inherently "*noisy*." A Saturday night in a downtown district will naturally have more incidents than a Tuesday morning in the suburbs.
 
-A simple threshold (*e.g., "alert me if crimes \> 20"*) doesn't work because it ignores context like seasonality, day of the week, and location-specific baselines.
+A simple threshold (*e.g., "~~alert me if crimes \> 20~~"*) doesn't work because it ignores context like seasonality, day of the week, and location-specific baselines.
 
-*To solve this, we move beyond simple counting and toward Unsupervised Machine Learning*.
+*To solve this, we move beyond simple counting and toward [Unsupervised Machine Learning]{style="color: #e3120b;"}*.
 :::
 
 <br>
@@ -46,7 +46,7 @@ A simple threshold (*e.g., "alert me if crimes \> 20"*) doesn't work because it 
 ```
 
 ::: {.callout-note appearance="simple" icon="false"}
-*This case study is based on fictituos data only*.
+[This case study is based on fictituos data only]{.smallcaps}.
 :::
 
 ---
@@ -55,17 +55,17 @@ A simple threshold (*e.g., "alert me if crimes \> 20"*) doesn't work because it 
 
 :::::: justify
 ::: fragment
--   **Polars**\
+-   [**Polars**]{style="color: #e3120b;"}\
     Unlike `Pandas`, `Polars` is built in `Rust` and uses multi-threading. When processing millions of crime logs, `Polars` can be 10–100x faster, making it the ideal engine for real-time analytics.
 :::
 
 ::: fragment
--   **Scikit-Learn**\
+-   [**Scikit-Learn**]{style="color: #e3120b;"}\
     We wil use the **Isolation Forest model**. This algorithm is a "*forest*" of trees that tries to isolate each data point. Anomalies are "*easy to isolate*" (they require fewer splits in the tree), while normal points are "*hard to isolate*." This makes it incredibly effective at finding rare events in unlabeled data.
 :::
 
 ::: fragment
--   **Plotly**\
+-   [**Plotly**]{style="color: #e3120b;"}\
     *Static charts are dead in crime analysis*. Detectors need to zoom in on specific dates and hover over data points to see metadata. `Plotly` provides this interactivity natively.
 :::
 ::::::
@@ -76,17 +76,17 @@ A simple threshold (*e.g., "alert me if crimes \> 20"*) doesn't work because it 
 
 :::::: justify
 ::: fragment
-1.  **Data Synthesis & Cleaning**\
+1.  [**Data Synthesis & Cleaning**]{style="color: #e3120b;"}\
     We study a year of crime data across two districts: "**Downtown**" (*high volume*) and "**Suburbs**" (*low volume*).
 :::
 
 ::: fragment
-2.  **Feature Engineering**\
+2.  [**Feature Engineering**]{style="color: #e3120b;"}\
     A crime count of "25" means something different on a Monday than it does on New Year's Eve. We use `Polars` to extract features like day_of_week and month. This allows the machine learning model to understand the rhythm of the city.
 :::
 
 ::: fragment
-3.  **Training the Isolation Forest**\
+3.  [**Training the Isolation Forest**]{style="color: #e3120b;"}\
     We feed the counts and temporal features into the Isolation Forest. We set a contamination parameter (0.02), telling the model we expect about 2% of our data to be anomalous. The model then assigns an "anomaly score" to every single day in the dataset.
 :::
 ::::::
@@ -222,8 +222,6 @@ df = (
 
 ```{python}
 #| echo: false
-#| label: fig-detection
-#| fig-cap: Display of crime anomaly detection
 
 ECONOMIST_RED = "#e3120b"
 ECONOMIST_BLUE = "#00313a" # Your header color
@@ -296,17 +294,17 @@ fig.show()
 
 ## Conclusions {.incremental .smaller}
 
-:::::::: justify
+::: {.justify}
 ::: fragment
 The output is an interactive dashboard. While a human might miss a slight but statistically significant rise in suburb crime during October, *the model flags it instantly in bright red*.
 :::
 
 ::: fragment
--   **Downtown**: The model successfully identified the July 4th spike as an anomaly, distinguishing it from the already high daily average.
+-   [**Downtown**]{style="color: #e3120b;"}: The model successfully identified the July 4th spike as an anomaly, distinguishing it from the already high daily average.
 :::
 
 ::: fragment
--   **Suburbs**: It caught a smaller "micro-spike" in mid-October that might have been overlooked by manual review.
+-   [**Suburbs**]{style="color: #e3120b;"}: It caught a smaller "micro-spike" in mid-October that might have been overlooked by manual review.
 :::
 
 ::: fragment
@@ -318,14 +316,14 @@ This approach shifts law enforcement from reactive to proactive. By identifying 
 -   Identify potential new "*modus operandi*" used by organized groups.
 -   Validate whether a specific community intervention is successfully reducing crime below the expected baseline.
 :::
-::::::::
+:::
 
 ---
 
 ## Contact {.center}
 
-::::::::: columns
-::::::: {.column width="60%"}
+:::: columns
+::: {.column width="60%"}
 ::: {style="color: #00313a; font-size: 40px; font-weight: bold; margin-top: 10px; margin-bottom: 0px;"}
 Jesus L. Monroy
 :::
@@ -342,9 +340,9 @@ BA in Economics, MA in Information Technology, and Data Science/Machine Learning
 ::: {style="font-size: 15px; font-family: sans-serif;"}
 [Portfolio](https://jesuslm-my-website.share.connect.posit.cloud) \| [Linkedin](https://www.linkedin.com/in/j3sus-lm) \| [Twitter](https://x.com/j3suslm) \| [Tableau](https://tinyurl.com/jesuslm-tableau)
 :::
-:::::::
+:::
 
 ::: {.column width="40%"}
 ![](network.png)
 :::
-:::::::::
+::::

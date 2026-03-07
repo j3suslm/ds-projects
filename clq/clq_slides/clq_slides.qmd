@@ -1,0 +1,155 @@
+---
+title: "Beyond the Count"
+title-slide-attributes:
+  data-background-image: latte.png
+  data-background-size: contain
+  data-background-opacity: '0.8'
+subtitle: "Crime Location Quotient vs. Raw Aggregates in Public Security"
+author: '*Jesus L. Monroy*'
+date: "2026-03-06"
+date-format: medium
+format:
+  revealjs:
+    embed-resources: true
+    theme: custom.scss
+    center-title-slide: true
+    logo: network.png
+    footer: © 2026
+    transition: fade
+    background-transition: convex
+    transition-speed: slow
+    slide-number: c/t
+    tbl-cap-location: bottom
+jupyter: python3
+---
+
+## The Volume illusion {background-image="latte.png" .smaller}
+
+<br>
+
+::: fragment
+In public security, **Raw State Counts** often lead to a "Population Trap."
+:::
+
+::: incremental
+* [**The Problem:**]{style="color: #e3120b;"} Large states (like Estado de México) always appear as "hotspots" simply due to density.
+* [**The Noise:**]{style="color: #e3120b;"} National trends (e.g., a 10% drop in crime) hide whether local interventions are actually working.
+* [**The Result:**]{style="color: #e3120b;"} "Peanut-buttering" resources across high-volume areas without addressing structural issues.
+:::
+
+---
+
+## Defining the quotient {background-color="#e3120b" .smaller}
+
+::: {.white-text}
+### The CLQ Formula
+
+::: fragment
+The Crime Location Quotient (CLQ) measures the "specialization" of a crime in a specific area relative to a reference region.
+:::
+
+::: fragment
+$$CLQ_i = \frac{C_{i} / T_{i}}{C_{ref} / T_{ref}}$$
+:::
+
+::: fragment
+where:
+:::
+
+::: incremental
+* $C_i$ = Crimes of type *X* in municipality *i*.   
+* $T_i$ = Total crimes in municipality *i*.   
+* $C_{ref}$ = Total crimes of type *X* in the State/Country.   
+:::
+:::
+
+---
+
+## Why CLQ Wins {background-image="latte.png" .smaller}
+
+#### 3 Strategic Pillars
+
+<br>
+
+::: incremental
+1. [**Relative Concentration:**]{style="color: #e3120b;"} It identifies where a specific crime is disproportionately high, regardless of population.
+2. [**Structural Diagnosis:**]{style="color: #e3120b;"} It distinguishes between "General Disorder" and "Organized Specialization."
+3. [**The Trend Filter:**]{style="color: #e3120b;"} In a cohort analysis, CLQ only improves if the municipality recovers **faster** than the national average.
+:::
+
+---
+
+## Comparative Matrix {background-image="latte.png" .smaller}
+
+<br>
+
+```{python}
+#| label: tbl-clq
+#| tbl-cap: Comparison of Public Security Metrics
+
+from IPython.display import Markdown
+from tabulate import tabulate
+
+table = [["SuSensivity","Biased by population","Normalized/Structural"],
+         ["Trend tracking","Absolute change","Relative/Performance"],
+         ["Strategy","Reactive/General","Proactive/Targeted"],
+         ["Cohort suitability","Poor (low granularity)","High (dynamic tracking)"]]
+
+Markdown(tabulate(table, headers=["Feature","State Counts", "CLQ Analysis"]))
+```
+
+---
+
+## The Data Mirage {background-image="latte.png" .smaller}
+
+### Why Stats $\neq$ Reality
+
+::: incremental
+* [**92% Invisible:**]{style="color: #e3120b;"} The *Cifra Negra* means we only see the tip of the iceberg.
+* [**The Reporting Bias:**]{style="color: #e3120b;"} Higher education and higher trust = Higher "apparent" crime. 
+* [**CLQ as the Filter:**]{style="color: #e3120b;"} By focusing on the **Quotient**, we strip away the noise of absolute volume and reveal the **underlying structure** of violence.
+:::
+
+```{=html}
+<style>
+.callout {
+  border-left: 8px solid #e3120b !important; /* Replace with your --econ-red hex */
+  background-color: #fff !important;
+}
+</style>
+```
+
+::: fragment
+::: {.callout-note appearance="simple" icon="false"}
+"*Official statistics tell us more about the behavior of the police than the behavior of criminals.*"
+:::
+:::
+
+---
+
+## Contact {background-image="latte.png" .center}
+
+:::: columns
+::: {.column width="60%"}
+::: {style="color: #00313a; font-size: 40px; font-weight: bold; margin-top: 10px; margin-bottom: 0px;"}
+Jesus L. Monroy
+:::
+
+::: {style="color: #00a398; font-size: 30px; font-style: italic; font-family: 'ITC Charter', Georgia, serif; margin-top: 0px;"}
+Economist & Data Scientist
+:::
+
+::: {style="color: #4b4f54; font-size: 14px; font-style:italic; font-family: 'ITC Charter', Georgia, serif; width: 60%; text-align: justify; line-height: 1.5; margin-top: 0px; margin-bottom: 15px;"}
+Passionate about creating tools that make data accessible and impactful using SQL, Python, Streamlit, Shiny and Tableau in diverse sectors like Public Security, e-commerce, and Healthcare.\
+BA in Economics, MA in Information Technology, and Data Science/Machine Learning certification.
+:::
+
+::: {style="font-size: 15px; font-family: sans-serif;"}
+[Portfolio](https://jesuslm-my-website.share.connect.posit.cloud) \| [Linkedin](https://www.linkedin.com/in/j3sus-lm) \| [Twitter](https://x.com/j3suslm) \| [Tableau](https://tinyurl.com/jesuslm-tableau)
+:::
+:::
+
+::: {.column width="40%"}
+![](network.png)
+:::
+::::

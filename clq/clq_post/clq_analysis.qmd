@@ -45,7 +45,7 @@ jupyter: python3
 
 ::: {#fig-crimes}
 
-![](images/header.png){#fig-crimes width=60% .lightbox fig-align="left"}
+![](map.png){#fig-crimes width=60% .lightbox fig-align="left"}
 
 Several violent episodes in Mexico suggest a worrying trend   
 Source: The Economist

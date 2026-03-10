@@ -1,9 +1,5 @@
 ---
 title: Anomaly Detection in Crime
-title-slide-attributes:
-  data-background-image: latte.png
-  data-background-size: contain
-  data-background-opacity: '0.5'
 subtitle: A Case Study for Mexico
 date: last-modified
 date-format: medium

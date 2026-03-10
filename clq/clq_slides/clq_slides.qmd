@@ -1,9 +1,5 @@
 ---
 title: "Beyond the Count"
-title-slide-attributes:
-  data-background-image: latte.png
-  data-background-size: contain
-  data-background-opacity: '0.8'
 subtitle: "Crime Location Quotient vs. Raw Aggregates in Public Security"
 author: '*Jesus L. Monroy*'
 date: "2026-03-06"
@@ -23,7 +19,7 @@ format:
 jupyter: python3
 ---
 
-## The Volume illusion {background-image="latte.png" .smaller}
+## The Volume illusion {.smaller}
 
 <br>
 
@@ -65,7 +61,7 @@ where:
 
 ---
 
-## Why CLQ Wins {background-image="latte.png" .smaller}
+## Why CLQ Wins {.smaller}
 
 #### 3 Strategic Pillars
 
@@ -79,7 +75,7 @@ where:
 
 ---
 
-## Comparative Matrix {background-image="latte.png" .smaller}
+## Comparative Matrix {.smaller}
 
 <br>
 
@@ -100,7 +96,7 @@ Markdown(tabulate(table, headers=["Feature","State Counts", "CLQ Analysis"]))
 
 ---
 
-## The Data Mirage {background-image="latte.png" .smaller}
+## The Data Mirage {.smaller}
 
 ### Why Stats $\neq$ Reality
 
@@ -127,7 +123,7 @@ Markdown(tabulate(table, headers=["Feature","State Counts", "CLQ Analysis"]))
 
 ---
 
-## Contact {background-image="latte.png" .center}
+## Contact {.center}
 
 :::: columns
 ::: {.column width="60%"}

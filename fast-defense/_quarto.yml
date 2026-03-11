@@ -1,0 +1,38 @@
+project:
+  type: website
+
+website:
+  page-navigation: true
+  back-to-top-navigation: false
+  title: "Fast Defense System"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - instructores.qmd
+    right:
+      - icon: youtube
+        href: https://www.youtube.com/@fastdefensesystem
+      - icon: tiktok
+        href: https://www.tiktok.com/@fastdefensesystem?lang=es&is_from_webapp=1&sender_device=mobile&sender_web_id=7431161494010250757
+      - icon: facebook
+        href: https://www.facebook.com/Sifumartinarzate/videos/fast-defense-system-te-permite-aprender-a-defenderte-ante-cualquier-situaci%C3%B3n-de/233239751937116
+  page-footer: 
+    background: light
+    center: 
+      - text: "&copy; 2026, Fast Defense Mexico &nbsp;"
+      - icon: envelope
+        href: mailto:marzate38@yahoo.com.mx?subject=Informes%20Wing-Tsun%20
+      - icon: whatsapp 
+        href: https://wa.link/w9tbs1
+      - icon: phone 
+        href: "5530283342"
+      - icon: geo
+        href: https://www.google.com/maps/place/Fast+Defense+System,+Municipio+Libre+174,+Portales+Nte,+Benito+Ju%C3%A1rez,+03300+Ciudad+de+M%C3%A9xico,+CDMX/@19.3694912,-99.1519037,13z/data=!4m6!3m5!1s0x85d1ff86e874b39d:0x65a4132ed916912e!8m2!3d19.3694912!4d-99.1519037!16s%2Fg%2F1yg4tsgw8
+format:
+  html:
+    theme:
+      - cosmo
+      - flatly
+    css: styles.css
+    toc: true

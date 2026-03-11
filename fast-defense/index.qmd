@@ -1,0 +1,46 @@
+---
+title: "Sobre Nosotros"
+image: images/portada.png
+about:
+  template: solana
+  links:
+    - icon: envelope
+      text: email
+      href: mailto:marzate38@yahoo.com.mx?subject=Informes%20Wing-Tsun%20
+    - icon: whatsapp 
+      text: Whatsapp
+      href: https://wa.link/w9tbs1
+    - icon: phone 
+      text: Teléfono
+      href: "5530283342"
+    - icon: geo
+      text: Ubicación
+      href: https://www.google.com/maps/place/Fast+Defense+System,+Municipio+Libre+174,+Portales+Nte,+Benito+Ju%C3%A1rez,+03300+Ciudad+de+M%C3%A9xico,+CDMX/@19.3694912,-99.1519037,13z/data=!4m6!3m5!1s0x85d1ff86e874b39d:0x65a4132ed916912e!8m2!3d19.3694912!4d-99.1519037!16s%2Fg%2F1yg4tsgw8
+---
+
+**FAST DEFENSE SYSTEM** te permite aprender un método de defensa personal altamente **EFICIENTE** y de rápido aprendizaje.
+
+Aprender a defenderte, te permitirá desarrollar confianza y seguridad. Además, aprenderás a obtener el control ante una agresión o cualquier situación de peligro que te encuentres.
+
+Aprenderás como aplicar las técnicas y estrategias más efectivas para contrarrestar cualquier tipo de agresión. Y estarás preparado para actuar eficientemente ante cualquier situación o agresión inminente.
+
+La verdad es que no necesitas ser cinta negra ni pasar muchos años entrenando, para que aprendas como puedes defenderte eficientemente.
+
+> Nuestro método de defensa personal, funciona para cualquier persona que necesite aprender a protegerse en situaciones a las que estamos **EXPUESTOS** todo el tiempo.
+
+Fast Defense System es un método comprobado. Aquí no perdemos tiempo haciendo katas, ejercicios aeróbicos o simulaciones de pelea que no sirven para la vida real.
+
+La diferencia es muy simple; enseñamos técnicas y estrategias basadas en la realidad, a la que inevitablemente te vas a enfrentar.
+
+Debemos de entender que en la calle no existen reglas ni un réferi que te proteja en un conflicto, donde las cosas no te estén saliendo bien. Solo tu instinto asesino de supervivencia hará que salgas victorioso.
+
+::: {.callout-note appearance="minimal"}
+
+**LA REALIDAD ES QUE EN LA CALLE NO HAY REGLAS**  
+En una pelea callejera nadie estará para ayudarte.   
+Sólo tus habilidades podrán sacarte victorioso para **SOBREVIVIR**.
+
+:::
+
+¡No esperes más y **CONTÁCTANOS YA!**   
+Te garantizamos **RESULTADOS INMEDIATOS**

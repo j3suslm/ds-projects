@@ -3,7 +3,7 @@
 // The Economist Color Palette
 $brand-red: #e3120b;
 $deep-blue: #004f71;
-$bg-gray: #F5F4EF; //#F1F4F5;
+$bg-gray: #F1F4F5; //#F5F4EF; //#F1F4F5; #e0e9ec
 $link-color: #00608F;
 $text-black: #3b3b3b;
 $text-gray: #666666;
@@ -30,6 +30,7 @@ $heading-font-weight: 700;
   font-weight: 800;
   font-size: 75px;
   text-transform: none; /* Common in their branding */
+  padding-top: 20px; /* Space between line and text */
 }
 
 .reveal .subtitle {
@@ -55,6 +56,7 @@ $heading-font-weight: 700;
   margin-top: 10px;
 }
 
+
 .reveal h1, .reveal h2 {
   position: relative; /* Needed to anchor the line */
   border-top: none;   /* Remove the old border */
@@ -63,7 +65,8 @@ $heading-font-weight: 700;
   color: $deep-blue;
 }
 
-.reveal h1::before, .reveal h2::before {
+.reveal h1:not(.title)::before, 
+.reveal h2::before {
   content: "";
   position: absolute;
   top: 0;

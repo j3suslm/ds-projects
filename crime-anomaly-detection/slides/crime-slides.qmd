@@ -238,20 +238,20 @@ fig = px.scatter(
 fig.update_layout(
     title=dict(
         text='''
-            <b>Crime Incident Anomaly Detection</b><br><span style='font-size:14px; color:#4b4f54'
-            >Mexico City Case Study (Jan-Dec 2025)</span>
+            <b>Crime Incident Anomaly Detection</b><br><span style='font-size:14px; color:#333'
+            >Mexico City Case Study (Jan - Dec 2025)</span>
             ''',
         x=0.05,
-        y=0.9,
+        y=0.92,
         font=dict(family="Georgia, serif", size=24, color=ECONOMIST_BLUE)
     ),
     width=1_030,
     height=600,
-    plot_bgcolor="#F6F6F6",
-    paper_bgcolor="#F6F6F6",
+    plot_bgcolor="#fbfbfb",
+    paper_bgcolor="#fbfbfb",
     hovermode="x unified",
     margin=dict(t=100, l=50, r=50, b=50),
-    legend=dict(orientation="h", yanchor="bottom", y=0.95, xanchor="left", x=0),
+    legend=dict(orientation="h", yanchor="bottom", y=0.96, xanchor="left", x=0.3),
     xaxis_title=None,
     xaxis=dict(
         showline=False,
@@ -275,7 +275,7 @@ fig.update_layout(
 
 # Add the signature Red Rectangle at the top left
 fig.add_shape(
-    type="rect", x0=-0.05, y0=1.2, x1=0.02, y1=1.22,
+    type="rect", x0=-0.05, y0=1.18, x1=0.02, y1=1.19,
     xref="paper", yref="paper",
     fillcolor=ECONOMIST_RED, line=dict(width=0)
 )

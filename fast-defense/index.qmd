@@ -12,7 +12,7 @@ about:
       href: https://wa.link/w9tbs1
     - icon: phone 
       text: Teléfono
-      href: "5530283342"
+      href: "tel:+5530283342"
     - icon: geo
       text: Ubicación
       href: https://www.google.com/maps/place/Fast+Defense+System,+Municipio+Libre+174,+Portales+Nte,+Benito+Ju%C3%A1rez,+03300+Ciudad+de+M%C3%A9xico,+CDMX/@19.3694912,-99.1519037,13z/data=!4m6!3m5!1s0x85d1ff86e874b39d:0x65a4132ed916912e!8m2!3d19.3694912!4d-99.1519037!16s%2Fg%2F1yg4tsgw8
@@ -44,3 +44,14 @@ Sólo tus habilidades podrán sacarte victorioso para **SOBREVIVIR**.
 
 ¡No esperes más y **CONTÁCTANOS YA!**   
 Te garantizamos **RESULTADOS INMEDIATOS**
+
+---
+
+<iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d60223.87490881656!2d-99.1519037!3d19.3694912!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85d1ff86e874b39d%3A0x65a4132ed916912e!2sFast%20Defense%20System!5e0!3m2!1sen!2smx!4v1773269762755!5m2!1sen!2smx"
+width="600"
+height="450"
+style="border:0;"
+allowfullscreen=""
+loading="lazy"
+referrerpolicy="no-referrer-when-downgrade">
+</iframe>

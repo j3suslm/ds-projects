@@ -4,27 +4,28 @@ toc: true
 toc-title: Instructores
 ---
 
-![](images/fd.png){.lightbox fig-align="left" width="70%"}
+![](images/home.png){.lightbox fig-align="left" width="90%"}
 
-# Martin Arzate
+## Martin Arzate
 
-### Director general y Fundador de Fast Defense System 
+**Director general**  
+**Fundador de Fast Defense System** 
 
-Inicia su entrenamiento de Wing Chun en 1985 en el Puerto de Acapulco; Gro. Con el Profr. Rodolfo Álvares. (QEPD †)
+Inicia su entrenamiento de Wing Chun en 1985 en el Puerto de Acapulco, Guerrero con el Prof. Rodolfo Álvares. (QEPD †)
 
-De 1990 – 1996 entrena Jeet Kune Do en la Academia IMB en el Puerto de Acapulco; Gro. Representada por el profesor Rodolfo Álvares Ayvar,donde entrenó diversas disciplinas de Artes Marciales como Boxeo, Muay Thai, Kali Filipino, Jeet Kune Do. Durante este tiempo, participo en diversos seminarios de Jeet Kune con el Maestro Richard Bustillo, Co-fundador de la IMB (INTERNATIONAL MARTIAL ARTS & BOXING)
+De 1990 – 1996 entrena Jeet Kune Do en la Academia IMB en el Puerto de Acapulco, representada por el profesor Rodolfo Álvares Ayvar,donde entrenó diversas disciplinas de Artes Marciales como Boxeo, Muay Thai, Kali Filipino, Jeet Kune Do. Durante este tiempo, participó en diversos seminarios de Jeet Kune con el Maestro Richard Bustillo, Co-fundador de la IMB (INTERNATIONAL MARTIAL ARTS & BOXING)
 
-De 1996 – 2000 entreno con Si fu Abram Ghandy Yuaza, Fundador de la Asociación Nacional de Hok Hok Pai y Asociación Nacional de VingTsun Moy Yat.
+De 1996 – 2000 entrenó con Sifu Abram Ghandy Yuaza, Fundador de la Asociación Nacional de Hok Hok Pai y Asociación Nacional de VingTsun Moy Yat.
 
 2000 – 2010 Entrenó con Sifu Emin Boztepe.
 
-Ha practicado diversos sistemas de Artes Marciales aparte del WingChun como Boxeo, Kali, Kuntao Silat, Jiu-jitsu, Sambo y judo, así como kick boxing. Sus entrenamientos los ha llevado a cabo en México y USA. ( LAX, MIAMI, LAS VEGAS )
+Ha practicado diversos sistemas de Artes Marciales aparte del WingChun, como Boxeo, Kali, Kuntao Silat, Jiu-jitsu, Sambo y judo, así como kick boxing. Sus entrenamientos los ha llevado a cabo en México y USA. (Los Angeles, Miami, Las Vegas)
 
 Ha participado en diversos programas de  televisión, tales como:
 
-Hoy,Se vale, TeleHit, Canal 11, TV Azteca,y un gran número de reportajes de medios impresos y radio.
+Hoy, Se vale, TeleHit, Canal 11, y un gran número de reportajes de medios impresos y radio.
 
-Ha impartido varios seminarios de VingTzun y defensa personal en diversas Ciudades del País.
+Ha impartido varios seminarios de VingTzun y defensa personal en diversas ciudades del país.
 
 Ha sido Instructor de escoltas  y grupos de seguridad élite.
 
@@ -44,15 +45,72 @@ Título de “Quirofísico” con especialidad en Hidroterapia, Quiropráctico y
 - Certificación en terapia neural
 - Certificación en manejo de emociones
 
----
+<br>
 
-# Alejandro Nava
+**Contacto**
+
+::: {.link-container .nav-links}
+{{< bi phone >}} [Celular]("tel:+5530283342")
+{{< bi twitter >}} [Twitter](https://x.com)
+{{< bi tiktok >}} [Tiktok](https://www.tiktok.com)
+{{< bi youtube >}} [YouTube](https://www.youtube.com)
+:::
 
 
+## Alejandro Nava
 
----
+**Instructor**
+
+Más de 10 años practicando el arte marcial Wing Tsun de la mano de Sifu Martin Arzate.
+
+En 2025 obtuvo el grado de Sifu.
+
+| Día  | Horario  |
+|--------|--------|
+| Lunes  | 18:00-20:00 |
+| Martes  | 18:00-20:00 |
+| Miercoles | 18:00-20:00 |
+| Jueves | 18:00-20:00 |
+| Viernes | 18:00-20:00 |
+| Sabado | 10:00-12:00 |
+| Domingo | 10:00-12:00 |
+
+: Horarios disponibles {.striped .hover}
+
+<br>
+
+**Contacto**
+
+::: {.link-container .nav-links}
+{{< bi phone >}} [Celular]("tel:+5530283342")
+{{< bi twitter >}} [Twitter](https://x.com)
+{{< bi tiktok >}} [Tiktok](https://www.tiktok.com)
+{{< bi youtube >}} [YouTube](https://www.youtube.com)
+:::
 
 
-# Jesús López
+## Jesús López
 
----
+**Instructor**
+
+Más de 10 años practicando el arte marcial Wing Tsun de la mano de Sifu Martin Arzate.
+
+En 2025 obtuvo el grado de Sifu.
+
+| Día  | Horario  |
+|--------|--------|
+| Sabado | 10:00-12:00 |
+| Domingo | 10:00-12:00 |
+
+: Horarios disponibles {.striped .hover}
+
+<br>
+
+**Contacto**
+
+::: {.link-container .nav-links}
+{{< bi phone >}} [Celular]("tel:+5530283342")
+{{< bi twitter >}} [Twitter](https://x.com)
+{{< bi tiktok >}} [Tiktok](https://www.tiktok.com)
+{{< bi youtube >}} [YouTube](https://www.youtube.com)
+:::

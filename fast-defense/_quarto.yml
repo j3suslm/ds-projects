@@ -26,13 +26,12 @@ website:
       - icon: whatsapp 
         href: https://wa.link/w9tbs1
       - icon: phone 
-        href: "5530283342"
+        href: "tel:+5530283342"
       - icon: geo
         href: https://www.google.com/maps/place/Fast+Defense+System,+Municipio+Libre+174,+Portales+Nte,+Benito+Ju%C3%A1rez,+03300+Ciudad+de+M%C3%A9xico,+CDMX/@19.3694912,-99.1519037,13z/data=!4m6!3m5!1s0x85d1ff86e874b39d:0x65a4132ed916912e!8m2!3d19.3694912!4d-99.1519037!16s%2Fg%2F1yg4tsgw8
 format:
   html:
-    theme:
-      - cosmo
-      - flatly
-    css: styles.css
+    theme: 
+    - simplex
+    - styles.scss
     toc: true

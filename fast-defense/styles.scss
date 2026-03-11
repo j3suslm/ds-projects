@@ -1,0 +1,37 @@
+/*-- scss:defaults --*/
+$navbar-bg: #b30000;
+
+
+/* css rules */
+/* This specifically targets the icons if they are being stubborn */
+.navbar .navbar-nav .nav-link i {
+  color: white !important;
+}
+
+p {
+    text-align: justify;
+}
+
+body {
+  background-color: #f8f8f8;
+  color: #28282b;
+  font-family: "ITC Charter", "Georgia", serif; /* Mimics their serif style */
+  line-height: 1.5;
+}
+
+.link-container {
+  display: flex;
+  justify-content: left; /* Centers them horizontally */
+  flex-wrap: wrap;        /* Allows them to wrap to a new line on mobile */
+  gap: 10px;              /* Perfect spacing without needing "|" dividers */
+}
+
+.nav-links {
+  display: flex;
+  justify-content: left;
+  flex-wrap: wrap; /* Critical for mobile responsiveness */
+  gap: 0;          /* We'll use padding and borders instead of gaps */
+  margin: 4px 0;
+  font-family: var(--sansfont); /* Or your Economist-style font */
+  font-size: 0.9rem;
+}

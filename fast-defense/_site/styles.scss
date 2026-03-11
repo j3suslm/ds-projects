@@ -1,12 +1,15 @@
-/* css styles */
+/*-- scss:defaults --*/
+$navbar-bg: #d9230f;
+$link-color: #d9230f;
 
+/* css styles */
 p {
     text-align: justify;
 }
 
 body {
   background-color: #f8f8f8;
-  color: #333;
+  color: #28282b;
   font-family: "ITC Charter", "Georgia", serif; /* Mimics their serif style */
   line-height: 1.5;
 }

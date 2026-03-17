@@ -1,0 +1,63 @@
+---
+title: "Polars, the New Gold Standard for Scikit-Learn Workflows"
+subtitle: Ditch the NumPy bottleneck and build end-to-end workflows.
+abstract: |
+  The transition from data manipulation to machine learning has historically been a point of friction, often requiring the conversion of structured DataFrames into "anonymous" NumPy arrays.While this transition is the foundation of the scikit-learn ecosystem, it frequently results in the loss of critical metadata, specifically feature names and data types. Traditionally, Pandas has been the primary tool for managing this workflow, but as datasets grow in complexity and scale, its single-threaded nature and memory overhead have become significant bottlenecks.
+  <br>
+  This article explores the modern alternative: Polars. We demonstrate how the native integration between Polars and scikit-learn (introduced in version 1.4) allows data scientists to maintain a "DataFrame-in, DataFrame-out" workflow. By leveraging the transform_output="polars" configuration, practitioners can perform high-speed, multi-threaded feature engineering in Rust-backed Polars while preserving column identities through every stage of a pipeline.   
+  <br>
+  We provide a comparative analysis of the benefits, such as automatic horizontal concatenation (hstack) and Apache Arrow memory efficiency, alongside the limitations, including the current lack of native support for Polars LazyFrames within fit/predict cycles. Readers will learn how to build a robust, name-aware machine learning pipeline that is significantly faster and more memory-efficient than traditional Pandas-based approaches.   
+author: Jesus LM
+date: 2026-03-16
+date-format: MMM, YYYY
+format:
+  html:
+    toc: true
+    embed-resources: true
+    theme: custom.scss
+    execute: true
+jupyter: python3
+---
+
+# Machine Learning Workflow
+
+## Load dataset
+
+```{python}
+import pandas as pd
+import polars as pl
+
+df = pl.read_csv('http://bit.ly/MLtrain')
+df.head()
+```
+
+```{python}
+X = df.select('Parch', 'Fare')
+```
+
+```{python}
+y = df.get_column('Survived')
+```
+
+```{python}
+y.shape
+```
+
+```{python}
+y.shape
+```
+
+## Model selection
+
+```{python}
+from sklearn.linear_model import LogisticRegression
+logreg = LogisticRegression(solver='liblinear', random_state=1)
+```
+
+```{python}
+from sklearn.model_selection import cross_val_score
+cross_val_score(logreg, X, y, cv=3, scoring='accuracy').mean()
+```
+
+
+# Contact

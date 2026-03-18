@@ -2,6 +2,8 @@
 numpy
 plotly
 pandas
+matplotlib
+seaborn
 polars
 pyarrow
 fastexcel

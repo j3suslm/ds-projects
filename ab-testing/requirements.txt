@@ -1,0 +1,11 @@
+# using /Users/user/miniforge3/envs/ds_projects/bin/python
+numpy
+plotly
+pandas
+polars
+pyarrow
+fastexcel
+scipy
+scikit-learn
+great-tables
+jupyter

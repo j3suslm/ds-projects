@@ -1,0 +1,22 @@
+---
+title: "Video Galería"
+toc: false
+---
+
+::: {layout-ncol=2}
+{{< video https://youtu.be/QFnxxUZEETU?t=138 width="450" height="300" >}}
+
+{{< video https://youtu.be/W167nuC9BEQ width="450" height="300" >}}
+
+{{< video https://youtu.be/_aSMIDrBTRc width="450" height="300" >}}
+
+{{< video https://youtu.be/OKI6NOyCf68 width="450" height="300" >}}
+
+{{< video https://youtu.be/h30XCO4EV_I width="450" height="300" >}}
+
+{{< video https://youtu.be/sZqPYRjlC5c width="450" height="300" >}}
+
+{{< video https://youtu.be/vCE58YNJ_Js width="450" height="300" >}}
+
+{{< video https://youtu.be/ebrzGax1Xrw width="450" height="300" >}}
+:::

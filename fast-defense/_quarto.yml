@@ -10,6 +10,8 @@ website:
       - href: index.qmd
         text: Home
       - instructores.qmd
+      - videogaleria.qmd
+      - cursos.qmd
     right:
       - icon: youtube
         href: https://www.youtube.com/@fastdefensesystem

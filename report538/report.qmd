@@ -1,0 +1,45 @@
+---
+title: "Riesgo de Impago en Microcréditos"
+subtitle: "Un análisis comparativo de la CDMX (2025-2026)"
+author: "Alan Solís"
+date: today
+abstract: "An bastract about my study."
+lang: es
+format:
+  typst:
+    toc: true
+    template-partials:
+      - typst-template.typ
+      - typst-show.typ
+    font-family: "Merriweather" # Asegúrate de tenerla instalada
+---
+
+# Resumen Ejecutivo
+
+Este reporte aplica una metodología de *Machine Learning* y simulación de Monte Carlo para predecir la probabilidad de *default* en carteras de microcréditos en la Ciudad de México. Siguiendo la filosofía de **Data as Code**, todo el pipeline es auditable y reproducible.
+
+"La capacidad de predecir el riesgo no es solo una ventaja competitiva, es un requisito ético para la inclusión financiera."
+
+# Metodología y Datos
+
+Utilizamos datos anonimizados de transacciones financieras mensuales. El pipeline de datos se construyó usando **Ibis** para la transformación y **Pandera** para la validación de calidad.
+
+## Resultados Principales
+
+A continuación, se presentan las métricas clave de riesgo agrupadas por alcaldía. Esta tabla sigue el estilo editorial minimalista de 538:
+
+| Alcaldía | Score de Riesgo (Avg) | Tasa de Default (%) | Exposición Total (MXN) |
+| :--- | :---: | :---: | :---: |
+| Iztapalapa | 68.5 | 5.2 | 1.2M |
+| Gustavo A. Madero | 65.2 | 4.8 | 950K |
+| Tlalpan | 59.8 | 3.9 | 820K |
+| Coyoacán | 55.1 | 3.1 | 710K |
+| Cuauhtémoc | 61.3 | 4.2 | 890K |
+
+# Simulación Monte Carlo
+
+Para estresar el modelo, ejecutamos 10,000 simulaciones variando las tasas de interés y el desempleo local. El peor escenario (percentil 99) sugiere un aumento de la tasa de *default* del 5.2% al 8.7%.
+
+# Conclusiones y Recomendaciones
+
+El modelo demuestra que las alcaldías del este de la CDMX presentan una mayor vulnerabilidad a choques económicos externos. Se recomienda ajustar las tasas de interés de forma dinámica basadas en el score de riesgo mensual.

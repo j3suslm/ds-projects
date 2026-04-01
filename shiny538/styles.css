@@ -1,0 +1,32 @@
+/* The Economist Design Tokens */
+$economist-red: #e3120b;
+$economist-bg: #f5f4f0;
+$economist-text: #000000;
+$economist-font: 'Arial', sans-serif; // Or 'Lato' if imported
+
+body {
+  background-color: $economist-bg !important;
+  font-family: $economist-font;
+}
+
+/* The signature red bar at the top of cards */
+.card {
+  border: none !important;
+  border-top: 5px solid $economist-red !important;
+  border-radius: 0 !important;
+  background-color: $economist-bg !important;
+  box-shadow: none !important;
+}
+
+.card-header {
+  background-color: transparent !important;
+  border-bottom: 1px solid #d7d7d7 !important;
+  font-weight: bold;
+  font-size: 1.2rem;
+  padding-left: 0;
+}
+
+.navbar {
+  border-bottom: 2px solid $economist-red;
+  background-color: #ffffff !important;
+}

@@ -6,7 +6,7 @@
   --econ-red: #e3120b;         /* The 'Red Top' brand color */
   --econ-dark-blue: #004761;  /* Headings and primary text */
   --econ-light-blue: #00a398;  /* Accents / Links */
-  --econ-bg-latte: #F2F2F2;    /* #F5F2F0 Page background */
+  --econ-bg-latte: #f8f8f8;    /* #F5F2F0 Page background */
   --econ-grey-text: #4b4f54;   /* Body text */
   --econ-border: #d7d7d7;      /* Dividers */
 }
@@ -89,8 +89,8 @@ h2, h3 {
   font-family: "Milo", "Helvetica Neue", Arial, sans-serif; /* Their sans-serif font */
   font-weight: 700;
   border-bottom: 0.5px solid #d7d7d7;
-  margin-bottom: 2px;
-  margin-top: 2px;
+  margin-bottom: 5px;
+  margin-top: 5px;
 }
 
 /* Links */
@@ -124,7 +124,7 @@ th {
 
 /* Container for the code block */
 div.sourceCode {
-  background-color: #EFF0F5; /* Subtle cool-grey background */
+  background-color: #f8faf7; /* Subtle cool-grey background */
   border-top: 1px solid #d0d7de;
   border-bottom: 1px solid #d0d7de;
   border-left: none;

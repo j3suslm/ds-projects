@@ -30,7 +30,7 @@ format:
     other-links:
       - text: LinkedIn
         icon: linkedin
-        href: https://www.linkedin.com/in/j3sus-lm/
+        href: https://www.linkedin.com/in/j3sus-lm
       - text: Twitter
         icon: twitter
         href: https://x.com/j3suslm
@@ -56,7 +56,7 @@ Source: The Economist
 
 ## Spatial Concentration of High Impact Crime in Mexico
 
-This study utilizes the Location Quotient (LQ) methodology to systematically identify and quantify the spatial concentration of High-Impact Crimes across Mexican municipalities, January through October 2025.
+This study utilizes the `Location Quotient` (LQ) methodology to systematically identify and quantify the spatial concentration of high-impact crimes across Mexican municipalities, January through October 2025.
 We have reduced the research to analyze homicides, in order to establish baseline LQs for the target year.
 
 Findings are anticipated to reveal significant spatial segregation of criminal risk, with certain key urban and border jurisdictions demonstrating LQs significantly greater than 1.0, indicating a severe concentration of high-impact offenses.
@@ -71,28 +71,27 @@ The resulting maps and risk profiles offer a critical foundation for designing p
 
 - Methodology: Location Quotient (LQ) analysis.
 
-- Focus: High-Impact Homicides in Mexico.
+- Focus: High-impact homicides in Mexico.
 
 - Timeframe: January through October 2025.
 
-- Key Findings: Significant spatial segregation/concentration (LQ > 1.0) will be revealed.
+- Key Findings: Significant spatial concentration (LQ > 1.0) will be revealed.
 
 - Impact: Provides intelligence for targeted resource allocation and precision policing.
 
 ## Foundations of Location Quotients
 
-The Location Quotient, primarily developed by economists to study regional specialization and industrial concentration, provides a measure of relative importance.
+The **Location Quotient**, primarily developed by economists to study *regional specialization and industrial concentration*, provides a measure of relative importance.
 
-Hoover (1936) and Isard (1951) are credited with pioneering the concept.
-In economics, the LQ for an industry in a region is the ratio of that industry's share of regional employment to its share of national employment.
+Hoover (1936) and Isard (1951) are credited with pioneering the concept. In economics, the LQ for an industry in a region is the ratio of that industry's share of regional employment to its share of national employment.
 
 An LQ greater than 1.0 signifies that the region is specialized in that industry compared to the nation.
-This concept is directly translated to crime analysis, replacing 'industry' with 'crime type' and 'employment' with 'crime counts' or 'population.'
-
+This concept is directly translated to **crime analysis**, replacing "industry" with "crime type" and "employment" with "crime counts" or "population".
 
 # Environment settings
 
 ```{python}
+# libraries
 import polars as pl
 import pandas as pd
 import geopandas as gpd
@@ -146,7 +145,7 @@ df3 = df_pop.to_pandas().head(10)
 
 # Methodology and Calculation
 
-The Crime Location Quotient (CLQ) compares a municipality's relative share of homicides with the country's relative share of that same indicator.
+The `Crime Location Quotient` (CLQ) compares a municipality's relative share of homicides with the country's relative share of that same indicator.
 
 The general formula for the Location Quotient is:
 
@@ -160,14 +159,13 @@ $X_{P,m​}$: Population in the municipality m.
 $X_{h,T}$​: Averall homicides in Mexico.   
 $X_{P,T}$​: Averall population in Mexico.   
 
-
 ## Data Collection for 2025
 
 ::: {.callout-note appearance="simple" icon=false style="border-left: 5px solid #e3120b;"}
 
 **Crime Incidence Data**
 
-Required Data: The number of victims of homicide disaggregated by municipality and the national total for the study period (January-October 2025).
+Required Data: The number of victims of homicide disaggregated by municipality and the national total for the study period (*Jan-Oct 2025*).
 
 Source: SESNSP Open Crime Incidence Data.
 
@@ -189,6 +187,8 @@ Source: CONAPO.
 
 ```{python}
 # join homicides and population tables
+# filter municipalities with more than 10,000 people
+
 df = (
     df_homicides
         .join(df_pop, on='cve_geo', how='inner')
@@ -198,6 +198,8 @@ df = (
 ```
 
 ```{python}
+# clq function
+
 def lq_calculation(df: pl.DataFrame) -> pl.DataFrame:
     """
     Calculates the Location Quotient (LC) of homicides at the municipal level.
@@ -249,6 +251,7 @@ df4 = (
 ```{python}
 #| label: tbl-combined
 #| tbl-cap: Preview of final dataset
+
 (
     df4
         .style.hide(axis='index')
@@ -295,6 +298,7 @@ df_geo_gt1 = df_geo[df_geo['CL_homicides']>1]
 ```
 
 ```{python}
+# map results
 m = df_geo_gt1.explore(
     location=[24, -104],
     zoom_start=5.4,
@@ -327,9 +331,11 @@ The literature establishes LQ as a powerful tool for moving beyond simple crime 
 :::
 
 
+<p style="text-align: center; margin: 1em 0; letter-spacing: 0.5em;">• • •</p>
+
 # Contact
 
-::: {style="color: #004761; font-size: 28px; font-weight: bold; margin-top: 10px; margin-bottom: 0px;"}
+::: {style="color: #004761; font-size: 28px; font-weight: bold; margin-top: 0px; margin-bottom: 0px;"}
 Jesus L. Monroy
 :::
 
@@ -337,7 +343,7 @@ Jesus L. Monroy
 Economist & Data Scientist
 :::
 
-::: {style="color: #4b4f54; font-size: 16px; font-style:italic; font-family: 'ITC Charter', Georgia, serif; width: 60%; text-align: justify; line-height: 1.5; margin-top: 0px; margin-bottom: 15px;"}
+::: {style="color: #4b4f54; font-size: 16px; font-style:italic; font-family: 'ITC Charter', Georgia, serif; width: 45%; text-align: justify; line-height: 1.5; margin-top: 0px; margin-bottom: 15px;"}
 
 Passionate about creating tools that make data accessible and impactful using SQL, Python, Streamlit, Shiny and Tableau in diverse sectors like Public Security, e-commerce, and Healthcare.     
 BA in Economics, MA in Information Technology, and Data Science and Machine Learning certification.
@@ -350,6 +356,7 @@ BA in Economics, MA in Information Technology, and Data Science and Machine Lear
 [Tableau](https://tinyurl.com/jesuslm-tableau)
 :::
 
+<!-- 
 ```{=html}
 <iframe 
     src="https://jlm-contact-form.streamlit.app/?embed=true"
@@ -358,3 +365,4 @@ BA in Economics, MA in Information Technology, and Data Science and Machine Lear
     title="Contact Form">
 </iframe>
 ```
+-->

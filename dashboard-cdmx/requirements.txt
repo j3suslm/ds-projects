@@ -1,0 +1,13 @@
+shiny
+shinywidgets
+shiny[theme]
+polars
+fastexcel
+pyarrow
+plotly
+folium
+pathlib
+pandas
+pyproj
+great-tables
+jupyter

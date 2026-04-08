@@ -1,0 +1,292 @@
+---
+title: 'Robbery of Pedestrians in Mexico City'
+subtitle: Case Study for 2015 -2025
+author: Jesus LM
+date: 2026-04-06
+last-update: last-modified
+date-format: MMM, YYYY
+abstract: |
+  Case study for robbery of pedestrians in Mexico City during the period 2015-2025 using official statistics.
+format:
+  html:
+    embed-resources: true
+    fig-cap-location: margin
+    tbl-cap-location: margin
+    number-sections: false
+    toc: true
+    toc-location: left
+    toc-title: Table of Contents
+    grid:
+      sidebar-width: 250px
+      body-width: 900px
+      margin-width: 150px
+      gutter-width: 1em
+    theme: custom.scss
+    bibliography: references.bib
+    nocite: | 
+      @*
+    link-external-newwindow: true
+    other-links:
+      - text: LinkedIn
+        icon: linkedin
+        href: https://www.linkedin.com/in/j3sus-lm
+      - text: Medium
+        icon: medium
+        href: https://medium.com/@jesuslm
+execute:
+  echo: true
+  freeze: auto  # re-render only when source changes
+jupyter: python3
+---
+
+# Data preparation
+
+For this analysis, a download script was written in order to obtain latest crime incidence data, it also converts this file to Parquet format to optimize performance.
+
+::: {#fig-source}
+[![](dataset.png){fig-align='center' width=80%}](https://www.datos.gob.mx/dataset/incidencia_delictiva)
+
+Data source link.   
+*You can access the data source by clicking on the image and download the official dataset*.
+:::
+
+```{python}
+#| eval: false
+#| 
+import polars as pl
+import requests
+from polars.selectors import starts_with
+from pathlib import Path
+
+def download_incidence():
+    url = 'https://tinyurl.com/incidencia-mexico-2025'
+    csv_path = Path('data/raw_crime_incidence.csv')
+    parquet_path = Path('data/crime_incidence_2025.parquet')
+    
+    # create folder
+    csv_path.parent.mkdir(exist_ok=True)
+
+    print('Downloading ...')
+    res = requests.get(url)
+    res.raise_for_status()
+    
+    with open(csv_path, 'wb') as f:
+        f.write(res.content)
+    
+    # save as parquet
+    df = pl.read_csv(csv_path, encoding='latin-1')
+    df.write_parquet(parquet_path)
+    print(f'✅ Processed file saved at: {parquet_path}')
+```
+
+::: {.callout-note appearance='simple' icon='false'}
+**Manual download**
+
+If you are a `bash` user, you can easily execute this command in your terminal.
+
+```{bash}
+curl -L 'https://tinyurl.com/incidencia-mexico-2025' -o datos_incidencia.csv
+```
+:::
+
+## Reading the dataset
+
+```{python}
+#| label: tbl-incidence-dataset
+#| tbl-cap: Incidence dataset preview. <br><br> You can see the table is in wide format, so we will transform it to long format for our analysis.
+
+import polars as pl
+
+data = pl.scan_parquet('data/crime_incidence_2025.parquet')
+data.head(3).collect().to_pandas().style
+```
+
+We create a month mapping to replace month strings by integers.
+
+```{python}
+# month mapping
+meses_map = {
+    'enero': 1,'febrero': 2,'marzo': 3,'abril': 4,'mayo': 5,'junio': 6,'julio': 7,
+    'agosto': 8,'septiembre': 9,'octubre': 10,'noviembre': 11,'diciembre': 12
+}
+```
+
+We do some data transformations to obtain our prepared dataset.
+
+```{python}
+df = (
+  data
+    .unpivot(
+      on=['Enero','Febrero','Marzo','Abril','Mayo','Junio',
+          'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre',
+      ],
+      index=['Año','Clave_Ent','Entidad','Cve. Municipio','Municipio',
+          'Bien jurídico afectado','Tipo de delito','Subtipo de delito','Modalidad',
+	    ],
+      variable_name='Mes',
+      value_name='Incidencia',
+      )
+    .with_columns(
+      pl.col('Mes').str.strip_chars().str.to_lowercase()
+    )
+    .with_columns(
+      pl.col('Mes').replace(meses_map).cast(pl.Int8).alias('Mes_num')
+    )
+    .with_columns(
+      pl.date(pl.col('Año'), pl.col('Mes_num'), 1).alias('Fecha')
+    )
+    .select([
+      'Fecha','Año','Mes','Mes_num','Clave_Ent','Entidad',
+      'Cve. Municipio','Municipio','Bien jurídico afectado',
+      'Tipo de delito','Subtipo de delito','Modalidad','Incidencia',
+    ])
+)
+```
+
+We check the kinds of robbery included in the dataset in order to filter robbery of pedestrians.
+
+```{python}
+(
+  df.filter(
+    pl.col('Subtipo de delito').str.contains('Robo')
+    )
+    .collect()
+    .get_column('Subtipo de delito')
+    .unique()
+    .to_list()
+)
+```
+
+We filter by names provided in the former list to create our data subset of robbery of pedestrians in Mexico City.
+
+```{python}
+df_cdmx = (
+  df
+    .filter(
+      (pl.col('Subtipo de delito').str.contains('Robo a transeúnte')),
+      (pl.col('Entidad')=='Ciudad de México'),
+    )
+    .select(
+      ['Fecha','Cve. Municipio','Municipio','Subtipo de delito','Modalidad','Incidencia',]
+    )
+)
+```
+
+```{python}
+#| label: tbl-cdmx-theft
+#| tbl-cap: Robbery of Pedestrians Dataset Preview. <br><br> This is the cleaned long-format dataset we will use for our analysis during the period 2015-2025.
+
+(
+  df_cdmx
+    .collect()
+    .sample(5)
+    .to_pandas()
+    .style
+    .format({'Fecha':"{:%Y-%m}"})
+    .hide(axis=0)
+)
+```
+
+
+# Data analysis
+
+We have selected robbery of pedestrians in Mexico City, because these crimes are highly dependent on urban "hotspots" (metro stations, specific intersections, or commercial corridors), making them perfect for spatial clustering.
+
+## Model implementation
+
+K-Means (Clustering): Best for Robo a Transeúnte (Pedestrian Robbery). It helps you identify "Micro-hotspots." For example, clustering by Latitude/Longitude can reveal that 3 clusters are concentrated around Bellas Artes, Insurgentes, and Polanco.
+
+K-Means for Spatial Hotspots. We will cluster crimes based on their coordinates to find high-incidence zones.
+
+```{python}
+#| eval: false
+
+import polars as pl
+from sklearn.cluster import KMeans
+import plotly.express as px
+
+# load dataset
+df = pl.read_parquet("data/incidencia_cdmx.parquet")
+
+# 2. Filter for a specific crime (e.g., Pedestrian Robbery)
+# Using Polars for high-speed filtering
+data_clustering = df.filter(
+    pl.col("delito") == "ROBO A TRANSEUNTE EN VIA PUBLICA CON VIOLENCIA"
+).select(["latitud", "longitud"]).drop_nulls()
+
+# K-Means
+kmeans = KMeans(n_clusters=10, n_init=10, random_state=42)
+clusters = kmeans.fit_predict(data_clustering.to_pandas())
+
+# add clusters back to a DataFrame
+data_clustering = data_clustering.with_columns(
+    pl.Series(name="cluster", values=clusters).cast(pl.Utf8)
+)
+
+# visualization
+fig = px.scatter_mapbox(
+    data_clustering.to_pandas(), 
+    lat="latitud", lon="longitud", 
+    color="cluster",
+    color_discrete_sequence=["#E3120B", "#005073", "#00AEEF", "#7BA2B3"],
+    mapbox_style="carto-positron",
+    title="K-Means: Hotspots de Robo a Transeúnte en CDMX"
+)
+
+fig.show()
+```
+
+## Spatial Analysis
+
+### K-Means clustering
+
+Identification of high-concentration zones (hotspots).
+
+```{python}
+#| echo: false
+#| eval: false
+
+# Insert your Plotly K-Means chart here
+Anomalías (Isolation Forest)
+
+Eventos que rompen el patrón geográfico habitual.
+Code snippet
+```
+
+
+# Conclusions
+
+
+
+# References
+
+::: {#refs}
+:::
+
+
+<!-- asterism like in Medium -->
+<div style='text-align: center; margin: 2em 0; letter-spacing: 0.5em; font-weight: bold; color: #e3120b;'>
+• • •
+</div>
+
+# About the author
+
+::: {.name-header}
+Jesus L. Monroy
+:::
+
+::: {.career-subtitle}
+Economist & Data Scientist
+:::
+
+::: {.bio-text}
+Bridging the gap between economics and scalable data solutions (Python, SQL, Tableau) through the "Everything as Code" philosophy.   
+With over 10 years of experience, I design reproducible pipelines and minimalist data products (Streamlit, Shiny, Polars, Plotly, DuckDB, Scikit-learn, Typst) that transform complex datasets into actionable insights for Public Security, e-commerce, and Healthcare.   
+MA in IT, BA in Economics, MIT-IDSS Certified in Data Science & Machine Learning.
+:::
+
+::: {.bio-links}
+[Portfolio](https://jesuslm-my-website.share.connect.posit.cloud) | 
+[Linkedin](https://www.linkedin.com/in/j3sus-lm) | 
+[Tableau](https://tinyurl.com/jesuslm-tableau)
+:::

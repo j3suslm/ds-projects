@@ -1,0 +1,8 @@
+*_files/
+*_cache/
+.virtual_documents/
+.quarto/
+*.quarto_ipynb*
+.env
+*.html
+*.csv

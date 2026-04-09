@@ -15,7 +15,7 @@
 /*-- scss:rules --*/
 .title {
   color: #004761 !important;
-  border-bottom: 4px solid #e3120b; /* Increased to 4px for that bold masthead look */
+  //border-bottom: 4px solid #e3120b; /* Increased to 4px for that bold masthead look */
   padding-top: 15px;
   margin-top: 20px;
   font-family: 'Milo', sans-serif;
@@ -64,7 +64,7 @@ p {
 }
 
 /* Headings h1*/
-h1:not(.title) {
+h1 {
   color: var(--econ-dark-blue);
   font-family: "Milo", "Helvetica Neue", Arial, sans-serif; /* Their sans-serif font */
   font-weight: 700;
@@ -73,10 +73,10 @@ h1:not(.title) {
   &::after {
     content: "";
     display: block;
-    width: 16%;           /* Your requested width */
+    width: 60px;           /* Your requested width */
     margin-right: auto;   /* Align left (remove for center) */
     // margin-left: auto; /* Uncomment to center */
-    height: 1.8px;        /* Your requested thickness */
+    height: 5px;        /* Your requested thickness */
     background: #e3120b;  /* Your requested color */
     opacity: 0.8;  /* Your requested opacity */
     border: 0;
@@ -88,7 +88,7 @@ h2, h3 {
   color: var(--econ-light-blue);
   font-family: "Milo", "Helvetica Neue", Arial, sans-serif; /* Their sans-serif font */
   font-weight: 700;
-  border-bottom: 0.5px solid #d7d7d7;
+  border-bottom: none; //0.5px solid #d7d7d7;
   margin-bottom: 5px;
   margin-top: 5px;
 }
@@ -194,4 +194,34 @@ code.sourceCode {
   text-transform: uppercase;
   font-size: 0.75rem;
   letter-spacing: 1px;
+}
+
+/* about section customization */
+.name-header {
+  color: #004761;
+  font-size: 28px;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.career-subtitle {
+  color: #00a398;
+  font-size: 20px;
+  font-style: italic;
+  font-family: "ITC Charter", Georgia, serif;
+}
+
+.bio-text {
+  color: #4b4f54;
+  font-size: 16px;
+  font-style: italic;
+  width: 43%;
+  text-align: justify;
+  line-height: 1.5;
+}
+
+.bio-links {
+ color: #4b4f54;
+ font-size: 16px;
+ font-family: sans-serif;  
 }

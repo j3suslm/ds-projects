@@ -6,12 +6,13 @@ def download_incidence():
     # script folder
     SCRIPT_DIR = Path(__file__).resolve().parent
     # script-based routes
-    csv_path = SCRIPT_DIR / "data" / "raw_crime_incidence.csv"
-    parquet_path = SCRIPT_DIR / "data" / "crime_incidence_2025.parquet"
+    csv_path = SCRIPT_DIR / "data" / "raw_fgj_files.csv"
+    parquet_path = SCRIPT_DIR / "data" / "fgj_files.parquet"
     # Create folder
     csv_path.parent.mkdir(parents=True, exist_ok=True)
 
-    url = "https://repodatos.atdt.gob.mx/api_update/sesnsp/incidencia_delictiva/IDM_NM_dic25.csv"
+    #url = "https://repodatos.atdt.gob.mx/api_update/sesnsp/incidencia_delictiva/IDM_NM_dic25.csv"
+    url = "https://archivo.datos.cdmx.gob.mx/FGJ/carpetas/carpetasFGJ_acumulado_2025_01.csv"
     print("Downloading ...")
     res = requests.get(url)
     res.raise_for_status()

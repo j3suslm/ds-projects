@@ -1,6 +1,6 @@
 ---
 title: 'Robbery of Pedestrians in Mexico City'
-subtitle: Case Study for 2015 -2025
+subtitle: Case Study for 2014 - 2024
 author: Jesus LM
 date: 2026-04-06
 last-update: last-modified
@@ -10,6 +10,8 @@ abstract: |
 format:
   html:
     embed-resources: true
+    math: false
+    code-copy: false
     fig-cap-location: margin
     tbl-cap-location: margin
     number-sections: false
@@ -35,48 +37,52 @@ format:
         href: https://medium.com/@jesuslm
 execute:
   echo: true
-  freeze: auto  # re-render only when source changes
+  warning: false
 jupyter: python3
 ---
+
+::: {#fig-robbery}
+[![](https://www.cuestiondepolemica.com/site/wp-content/uploads/2023/01/WhatsApp-Image-2023-01-13-at-9.39.40-PM.jpeg){fig-align='center' width=80%}](https://www.cuestiondepolemica.com/refuerza-toluca-operativos-de-seguridad-para-inhibir-el-robo-a-peatones/)
+
+Security operations to deter robberies against pedestrians. <br><br> In order to deter the commission of crimes, mainly robberies of pedestrians on motorcycles, motorcycle drivers are being checked, especially if they do not have license plates, identification, or safety equipment.
+:::
 
 # Data preparation
 
 For this analysis, a download script was written in order to obtain latest crime incidence data, it also converts this file to Parquet format to optimize performance.
 
-::: {#fig-source}
-[![](dataset.png){fig-align='center' width=80%}](https://www.datos.gob.mx/dataset/incidencia_delictiva)
-
-Data source link.   
-*You can access the data source by clicking on the image and download the official dataset*.
-:::
-
 ```{python}
 #| eval: false
-#| 
+
 import polars as pl
 import requests
-from polars.selectors import starts_with
 from pathlib import Path
 
 def download_incidence():
-    url = 'https://tinyurl.com/incidencia-mexico-2025'
-    csv_path = Path('data/raw_crime_incidence.csv')
-    parquet_path = Path('data/crime_incidence_2025.parquet')
-    
-    # create folder
-    csv_path.parent.mkdir(exist_ok=True)
+    # script folder
+    SCRIPT_DIR = Path(__file__).resolve().parent
+    # script-based routes
+    csv_path = SCRIPT_DIR / "data" / "raw_fgj_files.csv"
+    parquet_path = SCRIPT_DIR / "data" / "fgj_files.parquet"
+    # Create folder
+    csv_path.parent.mkdir(parents=True, exist_ok=True)
 
-    print('Downloading ...')
+    url = "https://tinyurl.com/fgj-files"
+    print("Downloading ...")
     res = requests.get(url)
     res.raise_for_status()
     
-    with open(csv_path, 'wb') as f:
+    with open(csv_path, "wb") as f:
         f.write(res.content)
     
     # save as parquet
-    df = pl.read_csv(csv_path, encoding='latin-1')
+    df = pl.read_csv(csv_path, encoding="latin-1")
     df.write_parquet(parquet_path)
-    print(f'✅ Processed file saved at: {parquet_path}')
+    print(f"✅ Processed file saved at: {parquet_path}")
+
+    # remove csv file to keep parquet only
+    csv_path.unlink(missing_ok=True)
+    print("✅ Removed csv file")
 ```
 
 ::: {.callout-note appearance='simple' icon='false'}
@@ -85,7 +91,7 @@ def download_incidence():
 If you are a `bash` user, you can easily execute this command in your terminal.
 
 ```{bash}
-curl -L 'https://tinyurl.com/incidencia-mexico-2025' -o datos_incidencia.csv
+curl -L 'https://tinyurl.com/fgj-files' -o fgj_files.csv
 ```
 :::
 
@@ -96,161 +102,271 @@ curl -L 'https://tinyurl.com/incidencia-mexico-2025' -o datos_incidencia.csv
 #| tbl-cap: Incidence dataset preview. <br><br> You can see the table is in wide format, so we will transform it to long format for our analysis.
 
 import polars as pl
+from datetime import datetime
 
-data = pl.scan_parquet('data/crime_incidence_2025.parquet')
-data.head(3).collect().to_pandas().style
+data = (
+    pl.scan_parquet('data/fgj_files.parquet')
+        .with_columns(
+            pl.col("fecha_hecho").str.extract(r"(\d{4}-\d{2}-\d{2})").alias("fecha_hecho")
+        )
+        .with_columns(
+            pl.col('fecha_hecho').str.to_date().alias('fecha_hecho')
+        )
+        .filter(pl.col('fecha_hecho') >= datetime(2014,1,1))
+        .collect()
+)
 ```
 
-We create a month mapping to replace month strings by integers.
+::: {.callout-note appearance='simple' icon='false'}
+**A Note on Dataset**
 
-```{python}
-# month mapping
-meses_map = {
-    'enero': 1,'febrero': 2,'marzo': 3,'abril': 4,'mayo': 5,'junio': 6,'julio': 7,
-    'agosto': 8,'septiembre': 9,'octubre': 10,'noviembre': 11,'diciembre': 12
-}
-```
+The dataset contains 2,098,743 records, but it has many null values in diverse fields, for example, there are 101,207 null rows without latitude or longitude. We are losing around 5% of records due to incomplete information.
+:::
 
-We do some data transformations to obtain our prepared dataset.
+Next, we will create a subset for pedestrian robbery only.
 
 ```{python}
 df = (
-  data
-    .unpivot(
-      on=['Enero','Febrero','Marzo','Abril','Mayo','Junio',
-          'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre',
-      ],
-      index=['Año','Clave_Ent','Entidad','Cve. Municipio','Municipio',
-          'Bien jurídico afectado','Tipo de delito','Subtipo de delito','Modalidad',
-	    ],
-      variable_name='Mes',
-      value_name='Incidencia',
-      )
-    .with_columns(
-      pl.col('Mes').str.strip_chars().str.to_lowercase()
-    )
-    .with_columns(
-      pl.col('Mes').replace(meses_map).cast(pl.Int8).alias('Mes_num')
-    )
-    .with_columns(
-      pl.date(pl.col('Año'), pl.col('Mes_num'), 1).alias('Fecha')
-    )
-    .select([
-      'Fecha','Año','Mes','Mes_num','Clave_Ent','Entidad',
-      'Cve. Municipio','Municipio','Bien jurídico afectado',
-      'Tipo de delito','Subtipo de delito','Modalidad','Incidencia',
-    ])
+    data
+        .select('fecha_hecho','delito','colonia_hecho','alcaldia_hecho','latitud','longitud')
+        .filter(pl.col('delito').str.contains('ROBO A TRANSEUNTE'))
+        .drop_nulls()
 )
 ```
 
-We check the kinds of robbery included in the dataset in order to filter robbery of pedestrians.
-
-```{python}
-(
-  df.filter(
-    pl.col('Subtipo de delito').str.contains('Robo')
-    )
-    .collect()
-    .get_column('Subtipo de delito')
-    .unique()
-    .to_list()
-)
-```
-
-We filter by names provided in the former list to create our data subset of robbery of pedestrians in Mexico City.
-
-```{python}
-df_cdmx = (
-  df
-    .filter(
-      (pl.col('Subtipo de delito').str.contains('Robo a transeúnte')),
-      (pl.col('Entidad')=='Ciudad de México'),
-    )
-    .select(
-      ['Fecha','Cve. Municipio','Municipio','Subtipo de delito','Modalidad','Incidencia',]
-    )
-)
-```
+The following code let us preview the pedestrian robbery data subset we will use for our analysis.
 
 ```{python}
 #| label: tbl-cdmx-theft
-#| tbl-cap: Robbery of Pedestrians Dataset Preview. <br><br> This is the cleaned long-format dataset we will use for our analysis during the period 2015-2025.
+#| tbl-cap: Robbery of Pedestrians Dataset. <br><br> This is a preview of the cleaned dataset we will use for our analysis.
+
+headers = {'fecha_hecho': 'Fecha hecho', 'delito': 'Delito', 
+  'latitud': 'Latitud', 'longitud': 'Longitud'}
 
 (
-  df_cdmx
-    .collect()
+  df
     .sample(5)
     .to_pandas()
     .style
-    .format({'Fecha':"{:%Y-%m}"})
+    .format({'fecha_hecho':"{:%Y-%m-%d}"})
     .hide(axis=0)
+    .format_index(headers.get, axis=1)
 )
 ```
 
+::: {.callout-note appearance='simple' icon='false'}
+**A Note on the Pedestrain Data Subset**
 
-# Data analysis
+The robbery data subset contains 150,286 rows, but it has 26 rows without a date and 1,855 rows without latitude or longitude. We finally obtain a clean subset with 148,407 rows. Reducing around 1.25% the reords with complete information.
+:::
+
+
+# Model preparation
 
 We have selected robbery of pedestrians in Mexico City, because these crimes are highly dependent on urban "hotspots" (metro stations, specific intersections, or commercial corridors), making them perfect for spatial clustering.
 
-## Model implementation
+We will apply K-Means clustering for Pedestrian Robbery since it helps us identify spatial "hotspots." 
+For example, clustering by latitude/longitude can reveal that 3 clusters are concentrated around Bellas Artes, Insurgentes, and Polanco.
 
-K-Means (Clustering): Best for Robo a Transeúnte (Pedestrian Robbery). It helps you identify "Micro-hotspots." For example, clustering by Latitude/Longitude can reveal that 3 clusters are concentrated around Bellas Artes, Insurgentes, and Polanco.
+We will cluster crimes based on their coordinates to find high-incidence areas.
 
-K-Means for Spatial Hotspots. We will cluster crimes based on their coordinates to find high-incidence zones.
+```{python}
+from sklearn.cluster import KMeans
+import plotly.express as px
+
+X = df.select(["latitud", "longitud"])
+
+# K-Means modelling
+kmeans = KMeans(n_clusters=4, n_init=4, random_state=365)
+clusters = kmeans.fit_predict(X)
+
+# add clusters back to a DataFrame
+df = (
+  df
+    .with_columns(
+      pl.Series(name="cluster", values=clusters).cast(pl.Utf8)
+    )
+)
+```
+
+```{python}
+distortions = []
+k_range = range(1, 11)
+
+for k in k_range:
+    model = KMeans(n_clusters=k, random_state=365, n_init=10)
+    model.fit(X)
+    distortions.append(model.inertia_)
+```
+
+Chart
+
+```{python}
+import matplotlib.pyplot as plt
+
+plt.figure(figsize=(8, 5), dpi=100)
+plt.plot(k_range,
+    distortions,
+    'o-',
+    color='#005073',
+    linewidth=2,
+    markersize=8)
+
+# Estética editorial
+plt.title("Metodo del Codo: Determinando Clusters en CDMX", 
+    loc='left',
+    fontsize=14,
+    fontweight='bold',
+    pad=20,
+    color='#004761')
+
+plt.xlabel("Number of Clusters (k)", fontsize=10)
+plt.ylabel("Inercia (WCSS)", fontsize=10)
+plt.grid(axis='y', linestyle='--', alpha=0.7)
+plt.gca().spines['top'].set_visible(False)
+plt.gca().spines['right'].set_visible(False)
+plt.show()
+```
 
 ```{python}
 #| eval: false
 
-import polars as pl
-from sklearn.cluster import KMeans
+from sklearn.metrics import silhouette_score
+
+# Prueba con 3 y 4
+for k in [2, 3, 4]:
+    model = KMeans(n_clusters=k, random_state=42).fit(X)
+    score = silhouette_score(data_clustering, model.labels_)
+    print(f"Clusters: {k} | Silhouette Score: {score:.3f}")
+```
+
+Clusters: 2 | Silhouette Score: 0.614  
+Clusters: 3 | Silhouette Score: 0.656  
+Clusters: 4 | Silhouette Score: 0.684  
+
+
+
+```{python}
+import geopandas as gpd
+from shapely.geometry import Point
+
+gdf_neighborhoods = gpd.read_file("neighborhoods.json")
+
+geometry = [Point(xy) for xy in zip(df["longitud"], df["latitud"])]
+gdf_incidence = gpd.GeoDataFrame(df.to_pandas(), geometry=geometry, crs="EPSG:4326")
+
+# 4. Hacer el join espacial: ¿En qué colonia cae cada punto?
+gdf_end = gpd.sjoin(gdf_incidence, gdf_neighborhoods, how="left", predicate="within")
+
+# 5. Volver a Polars para seguir con tu flujo "Everything as Code"
+df_neighborhoods = pl.from_pandas(gdf_end.drop(columns="geometry"))
+df_neighborhoods.head()
+```
+
+## Spatial Analysis
+
+Identification of high-concentration zones (hotspots).
+
+```{python}
 import plotly.express as px
 
-# load dataset
-df = pl.read_parquet("data/incidencia_cdmx.parquet")
-
-# 2. Filter for a specific crime (e.g., Pedestrian Robbery)
-# Using Polars for high-speed filtering
-data_clustering = df.filter(
-    pl.col("delito") == "ROBO A TRANSEUNTE EN VIA PUBLICA CON VIOLENCIA"
-).select(["latitud", "longitud"]).drop_nulls()
-
-# K-Means
-kmeans = KMeans(n_clusters=10, n_init=10, random_state=42)
-clusters = kmeans.fit_predict(data_clustering.to_pandas())
-
-# add clusters back to a DataFrame
-data_clustering = data_clustering.with_columns(
-    pl.Series(name="cluster", values=clusters).cast(pl.Utf8)
+fig = px.scatter_map(
+    df_neighborhoods.to_pandas(),
+    lat="latitud",
+    lon="longitud",
+    color="cluster",        # El resultado de tu K-Means
+    hover_name="colonia_hecho",
+    hover_data={
+        "latitud": False,      # Ocultamos coordenadas en el tooltip
+        "longitud": False,
+        "delito": True,
+        "fecha_hecho": True,
+        "alcaldia_hecho": True,
+    },
+    color_discrete_sequence=["#004761", "#E3120B", "#00a398", "#7BA2B3"],
+    zoom=9.5,
+    height=600
 )
 
-# visualization
-fig = px.scatter_mapbox(
-    data_clustering.to_pandas(), 
-    lat="latitud", lon="longitud", 
-    color="cluster",
-    color_discrete_sequence=["#E3120B", "#005073", "#00AEEF", "#7BA2B3"],
-    mapbox_style="carto-positron",
-    title="K-Means: Hotspots de Robo a Transeúnte en CDMX"
+# Ajustes estéticos finales
+fig.update_layout(
+    margin={"r":0,"t":40,"l":0,"b":0},
+    title_text="Hotspots of Pedestrian Robbery in Mexico City by Neighborhood",
+    title_x=0.05,
+    map_style="carto-positron" # Equivalente al antiguo mapbox_style
 )
 
 fig.show()
 ```
 
-## Spatial Analysis
-
-### K-Means clustering
-
-Identification of high-concentration zones (hotspots).
 
 ```{python}
-#| echo: false
-#| eval: false
+# Ver qué cluster tiene más delitos en promedio o está en el centro
+resumen_clusters = (
+  df
+    .group_by("cluster")
+    .agg(
+      pl.count("delito").alias("total_delitos"),
+      pl.col("latitud").mean().alias("centro_lat"),
+      pl.col("longitud").mean().alias("centro_lon")
+    )
+    .sort("total_delitos", descending=True)
+)
+resumen_clusters
+```
 
-# Insert your Plotly K-Means chart here
-Anomalías (Isolation Forest)
+```{python}
+import folium
+import polars as pl
 
-Eventos que rompen el patrón geográfico habitual.
-Code snippet
+# 1. Definir tu paleta "The Economist" para consistencia
+color_map = {
+    0: "#004761", # Azul Oxford
+    1: "#E3120B", # Rojo Seguridad
+    2: "#00a398", # Verde Petróleo
+    3: "#7BA2B3"  # Azul Acero
+}
+
+# 2. Inicializar el mapa en CDMX
+m_resumen = folium.Map(
+    location=[19.4326, -99.1332], 
+    zoom_start=11, 
+    tiles='cartodbpositron'
+)
+
+# 3. Iterar sobre los centroides calculados
+# Convertimos el resumen a lista de diccionarios para el loop
+for row in resumen_clusters.to_dicts():
+    cluster_id = row["cluster"]
+    color = color_map.get(cluster_id, "#333333")
+    
+    # El tamaño del círculo será proporcional al volumen de delitos
+    # Usamos una raíz cuadrada o logaritmo para que no crezca desproporcionadamente
+    radius_size = (row["total_delitos"] ** 0.5) / 5  
+
+    # Crear el Popup con datos agregados
+    popup_content = f"""
+    <div style="font-family: 'Arial'; font-size: 13px; min-width: 150px;">
+        <h4 style="margin:0; color:{color};">Cluster {cluster_id}</h4>
+        <hr style="margin:5px 0;">
+        <b>Total Delitos:</b> {row['total_delitos']:,}<br>
+        <b>Lat:</b> {row['centro_lat']:.4f}<br>
+        <b>Lon:</b> {row['centro_lon']:.4f}
+    </div>
+    """
+    
+    folium.CircleMarker(
+        location=[row["centro_lat"], row["centro_lon"]],
+        radius=radius_size,
+        color=color,
+        fill=True,
+        fill_color=color,
+        fill_opacity=0.6,
+        popup=folium.Popup(popup_content, max_width=300)
+    ).add_to(m_resumen)
+
+# 4. Mostrar el mapa (Recuerda llamarlo al final para Quarto)
+m_resumen
 ```
 
 
@@ -281,7 +397,7 @@ Economist & Data Scientist
 
 ::: {.bio-text}
 Bridging the gap between economics and scalable data solutions (Python, SQL, Tableau) through the "Everything as Code" philosophy.   
-With over 10 years of experience, I design reproducible pipelines and minimalist data products (Streamlit, Shiny, Polars, Plotly, DuckDB, Scikit-learn, Typst) that transform complex datasets into actionable insights for Public Security, e-commerce, and Healthcare.   
+With over 10 years of experience, I design reproducible pipelines and minimalist data products (Streamlit, Shiny, DuckDB, Polars, Plotly, Scikit-learn, Typst) that transform complex datasets into actionable insights for Public Security, e-commerce, and Healthcare.   
 MA in IT, BA in Economics, MIT-IDSS Certified in Data Science & Machine Learning.
 :::
 

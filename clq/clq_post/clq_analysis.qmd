@@ -1,13 +1,13 @@
 ---
-title: "An Application of Location Quotients to High-Impact Offenses"
-subtitle: "Crime Localization in Mexico 2025"
+title: "Crime Localization in Mexico 2025"
+subtitle: "An Application of Location Quotients to High-Impact Offenses"
 date: "2025-12-08"
 date-format: "MMM, YYYY"
 author: "Jesus L. Monroy"
 abstract: |
     Traditional crime rate metrics often mask geographic risk disparities by presenting aggregate averages.
     <br>
-    In contrast, the LQ provides a robust analytical tool for determining whether a specific geographic area experiences a disproportionate share of a given crime type relative to a larger reference area, thereby highlighting true criminal hotspots.
+    In contrast, the Location Quotient provides a robust analytical tool for determining whether a specific geographic area experiences a disproportionate share of a given crime type relative to a larger reference area, thereby highlighting true criminal hotspots.
 format:
   html:
     code-copy: false
@@ -31,9 +31,6 @@ format:
       - text: LinkedIn
         icon: linkedin
         href: https://www.linkedin.com/in/j3sus-lm
-      - text: Twitter
-        icon: twitter
-        href: https://x.com/j3suslm
       - text: Medium
         icon: medium
         href: https://medium.com/@jesuslm
@@ -67,17 +64,17 @@ The resulting maps and risk profiles offer a critical foundation for designing p
 
 ## Key Elements
 
-- Problem: Traditional crime rates mask disparity.
+- **Problem**: Traditional crime rates mask disparity.
 
-- Methodology: Location Quotient (LQ) analysis.
+- **Methodology**: Location Quotient (LQ) analysis.
 
-- Focus: High-impact homicides in Mexico.
+- **Focus**: High-impact homicides in Mexico.
 
-- Timeframe: January through October 2025.
+- **Timeframe**: January through October 2025.
 
-- Key Findings: Significant spatial concentration (LQ > 1.0) will be revealed.
+- **Key Findings**: Significant spatial concentration (LQ > 1.0) will be revealed.
 
-- Impact: Provides intelligence for targeted resource allocation and precision policing.
+- **Impact**: Provides intelligence for targeted resource allocation and precision policing.
 
 ## Foundations of Location Quotients
 
@@ -330,33 +327,36 @@ The literature establishes LQ as a powerful tool for moving beyond simple crime 
 ::: {#refs}
 :::
 
+<!-- asterism (Medium style) -->
+<div style='text-align: center; margin: 2em 0; letter-spacing: 0.5em; font-weight: bold; color: #e3120b;'>
+    • • •
+</div>
 
-<p style="text-align: center; margin: 1em 0; letter-spacing: 0.5em;">• • •</p>
 
-# Contact
+# About the author
 
-::: {style="color: #004761; font-size: 28px; font-weight: bold; margin-top: 0px; margin-bottom: 0px;"}
+::: {.name-header}
 Jesus L. Monroy
 :::
 
-::: {style="color: #00a398; font-size: 20px; font-style: italic; font-family: 'ITC Charter', Georgia, serif; margin-top: 0px;"}
+::: {.career-subtitle}
 Economist & Data Scientist
 :::
 
-::: {style="color: #4b4f54; font-size: 16px; font-style:italic; font-family: 'ITC Charter', Georgia, serif; width: 45%; text-align: justify; line-height: 1.5; margin-top: 0px; margin-bottom: 15px;"}
-
-Passionate about creating tools that make data accessible and impactful using SQL, Python, Streamlit, Shiny and Tableau in diverse sectors like Public Security, e-commerce, and Healthcare.     
-BA in Economics, MA in Information Technology, and Data Science and Machine Learning certification.
+::: {.bio-text}
+Bridging the gap between economics and scalable data solutions (Python, SQL, Tableau) through the "Everything as Code" philosophy.   
+With over 10 years of experience, I design reproducible pipelines and minimalist data products (Streamlit, Shiny, Polars, Plotly, DuckDB, Scikit-learn, Typst) that transform complex datasets into actionable insights for Public Security, e-commerce, and Healthcare.   
+MA in IT, BA in Economics, MIT-IDSS Certified in Data Science & Machine Learning.
 :::
 
-::: {style="font-size: 15px; font-family: sans-serif;"}
+::: {.bio-links}
 [Portfolio](https://jesuslm-my-website.share.connect.posit.cloud) | 
 [Linkedin](https://www.linkedin.com/in/j3sus-lm) | 
-[Twitter](https://x.com/j3suslm) | 
 [Tableau](https://tinyurl.com/jesuslm-tableau)
 :::
 
-<!-- 
+
+<!-- streamlit form
 ```{=html}
 <iframe 
     src="https://jlm-contact-form.streamlit.app/?embed=true"

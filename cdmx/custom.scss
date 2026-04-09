@@ -39,9 +39,9 @@
   color: var(--econ-grey-text);
   line-height: 1.4;
   text-align: justify;
-  //border-left: 1px solid var(--econ-red);  /* Adds a red Economist accent bar */
-  //padding-left: 20px;
-  margin-bottom: 30px;
+  border-left: 2px solid var(--econ-red);  /* Adds a red Economist accent bar */
+  padding-left: 15px;
+  margin-bottom: 20px;
   font-style: italic;
 }
 

@@ -21,7 +21,7 @@ def download_incidence():
         f.write(res.content)
     
     # save as parquet
-    df = pl.read_csv(csv_path, encoding="latin-1")
+    df = pl.read_csv(csv_path, encoding="utf8")
     df.write_parquet(parquet_path)
     print(f"✅ Processed file saved at: {parquet_path}")
 

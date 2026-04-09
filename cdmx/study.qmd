@@ -112,13 +112,15 @@ data = (
         .with_columns(
             pl.col('fecha_hecho').str.to_date().alias('fecha_hecho')
         )
-        .filter(pl.col('fecha_hecho') >= datetime(2014,1,1))
+        .filter(
+           pl.col("fecha_hecho").is_between(datetime(2014, 1, 1), datetime(2024, 12, 31))
+        )
         .collect()
 )
 ```
 
 ::: {.callout-note appearance='simple' icon='false'}
-**A Note on Dataset**
+**About the dataset**
 
 The dataset contains 2,098,743 records, but it has many null values in diverse fields, for example, there are 101,207 null rows without latitude or longitude. We are losing around 5% of records due to incomplete information.
 :::
@@ -128,7 +130,8 @@ Next, we will create a subset for pedestrian robbery only.
 ```{python}
 df = (
     data
-        .select('fecha_hecho','delito','colonia_hecho','alcaldia_hecho','latitud','longitud')
+        .select('fecha_hecho','delito','colonia_hecho','alcaldia_hecho',
+            'latitud','longitud')
         .filter(pl.col('delito').str.contains('ROBO A TRANSEUNTE'))
         .drop_nulls()
 )
@@ -247,6 +250,9 @@ Clusters: 4 | Silhouette Score: 0.684
 
 
 ```{python}
+#| eval: false
+#| echo: false
+
 import geopandas as gpd
 from shapely.geometry import Point
 
@@ -271,7 +277,7 @@ Identification of high-concentration zones (hotspots).
 import plotly.express as px
 
 fig = px.scatter_map(
-    df_neighborhoods.to_pandas(),
+    df.to_pandas(),
     lat="latitud",
     lon="longitud",
     color="cluster",        # El resultado de tu K-Means
@@ -368,6 +374,8 @@ for row in resumen_clusters.to_dicts():
 # 4. Mostrar el mapa (Recuerda llamarlo al final para Quarto)
 m_resumen
 ```
+
+
 
 
 # Conclusions

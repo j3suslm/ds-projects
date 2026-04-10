@@ -1,6 +1,6 @@
 ---
 title: 'Robbery of Pedestrians in Mexico City'
-subtitle: Case Study for 2014 - 2024
+subtitle: Geographical Distribution of Crime Incidence 2014 - 2024
 author: Jesus LM
 date: 2026-04-06
 last-update: last-modified
@@ -19,9 +19,9 @@ format:
     toc-location: left
     toc-title: Table of Contents
     grid:
-      sidebar-width: 250px
+      sidebar-width: 230px
       body-width: 900px
-      margin-width: 150px
+      margin-width: 170px
       gutter-width: 1em
     theme: custom.scss
     bibliography: references.bib
@@ -98,9 +98,6 @@ curl -L 'https://tinyurl.com/fgj-files' -o fgj_files.csv
 ## Reading the dataset
 
 ```{python}
-#| label: tbl-incidence-dataset
-#| tbl-cap: Incidence dataset preview. <br><br> You can see the table is in wide format, so we will transform it to long format for our analysis.
-
 import polars as pl
 from datetime import datetime
 
@@ -314,23 +311,32 @@ resumen_clusters = (
     .agg(
       pl.count("delito").alias("total_delitos"),
       pl.col("latitud").mean().alias("centro_lat"),
-      pl.col("longitud").mean().alias("centro_lon")
+      pl.col("longitud").mean().alias("centro_lon"),
+      pl.col("alcaldia_hecho").mode().first().alias("alcaldia"),
     )
     .sort("total_delitos", descending=True)
 )
+```
+
+```{python}
+#| label: tbl-centroids
+#| tbl-cap: Pedestrain Robbery Clusters and Centroids. <br><br> This table presents the total volume of pedestrian robberies alongside their spatial centroids, highlighting the mayorships with the highest concentration of incidents.
+
 resumen_clusters
 ```
 
 ```{python}
-import folium
-import polars as pl
+#| label: fig-hotspots
+#| fig-cap: "Pedistrian Robbery Spatial Hubs. <br><br> This map visualizes the geographic centroids of each cluster, where the size of each marker is proportional to the total volume of detected crimes. To ensure visual integrity and avoid perceptual distortion, a square root scaling was applied to the radius of the bubbles, guaranteeing that the area of ​​each circle accurately represents the magnitude of the phenomenon in the identified neighborhoods."
 
-# 1. Definir tu paleta "The Economist" para consistencia
+import folium
+
+# color palette
 color_map = {
-    0: "#004761", # Azul Oxford
-    1: "#E3120B", # Rojo Seguridad
-    2: "#00a398", # Verde Petróleo
-    3: "#7BA2B3"  # Azul Acero
+    0: "#004761",
+    1: "#E3120B",
+    2: "#00a398",
+    3: "#7BA2B3",
 }
 
 # 2. Inicializar el mapa en CDMX
@@ -356,6 +362,7 @@ for row in resumen_clusters.to_dicts():
         <h4 style="margin:0; color:{color};">Cluster {cluster_id}</h4>
         <hr style="margin:5px 0;">
         <b>Total Delitos:</b> {row['total_delitos']:,}<br>
+        <b>Alcaldia:</b> {row['alcaldia']}<br>
         <b>Lat:</b> {row['centro_lat']:.4f}<br>
         <b>Lon:</b> {row['centro_lon']:.4f}
     </div>
@@ -371,11 +378,34 @@ for row in resumen_clusters.to_dicts():
         popup=folium.Popup(popup_content, max_width=300)
     ).add_to(m_resumen)
 
-# 4. Mostrar el mapa (Recuerda llamarlo al final para Quarto)
+    folium.Marker(
+        location=[row["centro_lat"], row["centro_lon"]],
+        popup=folium.Popup(popup_content, max_width=300),
+        #icon=folium.Icon(color='black', icon='building', prefix='fa'),
+        icon=folium.Icon(color='red', icon='lightbulb-o', prefix='fa'),
+    ).add_to(m_resumen)
+
+# Definir el título con HTML y CSS
+titulo_html = '''
+             <h3 align="center" style="font-family: Arial; font-size: 18px; font-weight: bold; color: #333333;">
+                 <b>Geographical Distribution of Crime Incidence (Mexico City 2014-2024)</b>
+             </h3>
+             <p align="center" style="font-family: Arial; font-size: 14px; color: #666666; margin-top: -10px;">
+                 Kmeans Cluster Analysis and Intensity Centroids
+             </p>
+             '''
+
+# Inyectar el título en el "Root" del mapa
+m_resumen.get_root().html.add_child(folium.Element(titulo_html))
+
+# Mostrar el mapa
 m_resumen
 ```
 
-
+@fig-hotspots shows the geographic distribution of crime incidence by clusters (2014–2024).
+The points represent the centers of gravity of each cluster identified using spatial partitioning algorithms.
+The shading and size of the circles encode the crime intensity by area, highlighting **Cuauhtemoc** mayorship as the core of highest concentration.
+The visualization allows for an immediate comparison between existing security infrastructure and the areas with the greatest statistical demand.
 
 
 # Conclusions

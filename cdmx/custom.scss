@@ -168,3 +168,16 @@ div#refs {
  font-size: 16px;
  font-family: sans-serif;  
 }
+
+/* footnote background */
+section.footnotes {
+  background-color: var(--econ-bg-latte);
+  //padding: 15px;
+  //border-radius: 5px;
+  //border-top: 1px solid #dee2e6;
+}
+
+section.footnotes {
+    margin-top: -2em !important; 
+    border-top: 2px solid #eeeeee !important;
+}

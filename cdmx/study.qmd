@@ -1,17 +1,22 @@
 ---
 title: 'Robbery of Pedestrians in Mexico City'
 subtitle: Geographical Distribution of Crime Incidence 2014 - 2024
-author: Jesus LM
-date: 2026-04-06
+author: "*Jesus L. Monroy*"
+date: "*2026-04-10*"
 last-update: last-modified
 date-format: MMM, YYYY
 abstract: |
-  Case study for robbery of pedestrians in Mexico City during the period 2015-2025 using official statistics.
+  This article analyzes a decade of crime reports in Mexico City to answer a key question: Where is criminal activity really concentrated, and how can we act more efficiently? By using data science tools, we have transformed thousands of rows of government data into an intelligent map that reveals the true crime hotspots, allowing us to move from intuition to evidence.^[This analysis was developed under open-source standards, promoting transparency and democratizing access to public information.]
 format:
   html:
     embed-resources: true
-    math: false
     code-copy: false
+    code-fold: show
+    code-tools:
+      source: false
+      toggle: true
+      caption: Code
+    code-summary: "Hide the code"
     fig-cap-location: margin
     tbl-cap-location: margin
     number-sections: false
@@ -47,16 +52,31 @@ jupyter: python3
 Security operations to deter robberies against pedestrians. <br><br> In order to deter the commission of crimes, mainly robberies of pedestrians on motorcycles, motorcycle drivers are being checked, especially if they do not have license plates, identification, or safety equipment.
 :::
 
-# Data preparation
+# Data preprocessing
 
-For this analysis, a download script was written in order to obtain latest crime incidence data, it also converts this file to Parquet format to optimize performance.
+We start by importing the necessary libraries for our analysis.
 
 ```{python}
-#| eval: false
-
+# libraries
+import numpy as np
+import pandas as pd
 import polars as pl
 import requests
 from pathlib import Path
+from datetime import datetime
+import plotly.express as px
+import matplotlib.pyplot as plt
+import seaborn as sns
+from plotnine import *
+import folium
+import geopandas as gpd
+from shapely.geometry import Point
+```
+
+A data download script was written in order to obtain latest crime incidence data, it also converts this file to Parquet format to optimize performance.
+
+```{python}
+#| eval: false
 
 def download_incidence():
     # script folder
@@ -87,9 +107,7 @@ def download_incidence():
 
 ::: {.callout-note appearance='simple' icon='false'}
 **Manual download**
-
 If you are a `bash` user, you can easily execute this command in your terminal.
-
 ```{bash}
 curl -L 'https://tinyurl.com/fgj-files' -o fgj_files.csv
 ```
@@ -97,10 +115,12 @@ curl -L 'https://tinyurl.com/fgj-files' -o fgj_files.csv
 
 ## Reading the dataset
 
-```{python}
-import polars as pl
-from datetime import datetime
+Now, we read our parquet file and do some data manipulations to clean and format certain columns for our model, including:
 
+- A regex expression to get a uniform date format, since data column is mixed with date and datetime formats.
+- Filter cleaned date field between Jan 2014 and Dec 2024 (there are some odd dates). 
+
+```{python}
 data = (
     pl.scan_parquet('data/fgj_files.parquet')
         .with_columns(
@@ -134,14 +154,14 @@ df = (
 )
 ```
 
-The following code let us preview the pedestrian robbery data subset we will use for our analysis.
+The following code let us preview the pedestrian robbery data subset we will use for our analysis. This dataset includes date, crime type, latitude, and longitude of the crime.
 
 ```{python}
 #| label: tbl-cdmx-theft
 #| tbl-cap: Robbery of Pedestrians Dataset. <br><br> This is a preview of the cleaned dataset we will use for our analysis.
 
 headers = {'fecha_hecho': 'Fecha hecho', 'delito': 'Delito', 
-  'latitud': 'Latitud', 'longitud': 'Longitud'}
+  'colonia_hecho':'Colonia', 'alcaldia_hecho':'Alcaldia', 'latitud': 'Latitud', 'longitud': 'Longitud'}
 
 (
   df
@@ -160,19 +180,16 @@ headers = {'fecha_hecho': 'Fecha hecho', 'delito': 'Delito',
 The robbery data subset contains 150,286 rows, but it has 26 rows without a date and 1,855 rows without latitude or longitude. We finally obtain a clean subset with 148,407 rows. Reducing around 1.25% the reords with complete information.
 :::
 
+# Modelling
 
-# Model preparation
+We have selected robbery of pedestrians in Mexico City, because these crimes are highly dependent on urban `hotspots` (*subway stations, specific intersections, or commercial corridors*), making them perfect for spatial clustering.
 
-We have selected robbery of pedestrians in Mexico City, because these crimes are highly dependent on urban "hotspots" (metro stations, specific intersections, or commercial corridors), making them perfect for spatial clustering.
-
-We will apply K-Means clustering for Pedestrian Robbery since it helps us identify spatial "hotspots." 
-For example, clustering by latitude/longitude can reveal that 3 clusters are concentrated around Bellas Artes, Insurgentes, and Polanco.
+We will apply K-Means clustering for Pedestrian Robbery since it helps us identify above mentioned spatial `hotspots`.
 
 We will cluster crimes based on their coordinates to find high-incidence areas.
 
 ```{python}
 from sklearn.cluster import KMeans
-import plotly.express as px
 
 X = df.select(["latitud", "longitud"])
 
@@ -180,7 +197,7 @@ X = df.select(["latitud", "longitud"])
 kmeans = KMeans(n_clusters=4, n_init=4, random_state=365)
 clusters = kmeans.fit_predict(X)
 
-# add clusters back to a DataFrame
+# add clusters back to dataset
 df = (
   df
     .with_columns(
@@ -188,6 +205,12 @@ df = (
     )
 )
 ```
+
+The following code implements the `Elbow Method` to find the optimal number of clusters in our data.
+
+- **The loop**. Trains the model 10 times, testing from 1 to 10 clusters.
+- **Inertia** . Measures how "compact" the clusters are (the sum of the squared distances from each point to its centroid).
+- **Purpose**. When plotting k against distortions, we look for the point where the curve's drop becomes sharply smooth (the "elbow"). This point represents the ideal balance between accuracy and simplicity for our model.
 
 ```{python}
 distortions = []
@@ -199,41 +222,67 @@ for k in k_range:
     distortions.append(model.inertia_)
 ```
 
-Chart
+Next, we plot our Elbow method results.
 
 ```{python}
-import matplotlib.pyplot as plt
+#| label: fig-elbow
+#| fig-cap: "Elbow Method. This chart let us choose the best k for our kmeans model."
+from mizani.formatters import number_format
 
-plt.figure(figsize=(8, 5), dpi=100)
-plt.plot(k_range,
-    distortions,
-    'o-',
-    color='#005073',
-    linewidth=2,
-    markersize=8)
+# data
+df_elbow = pd.DataFrame({
+    'k': k_range,
+    'inertia': distortions
+})
 
-# Estética editorial
-plt.title("Metodo del Codo: Determinando Clusters en CDMX", 
-    loc='left',
-    fontsize=14,
-    fontweight='bold',
-    pad=20,
-    color='#004761')
+# plot
+elbow_plot = (
+    ggplot(df_elbow, aes(x='k', y='inertia'))
+    + geom_line(color='#005073', size=1.5)
+    + geom_point(color='#005073', size=4, fill='white', stroke=1.5)
+    + theme_538()
+    + labs(
+        title="Elbow Method: Determining Clusters in Mexico City Case Study",
+        x="Number of Clusters (k)",
+        y="Inertia (WCSS)"
+    )
+    + scale_x_continuous(breaks=range(0, 11))
+    + scale_y_continuous(
+        breaks=np.arange(0, 1201, 200), 
+        limits=(0, 1200),
+        labels=number_format(big_mark=',', precision=0)
+    )
+    + theme(
+        figure_size=(8.5, 5),
+        plot_title=element_text(
+            #alignment='left', 
+            size=14, 
+            weight='bold', 
+            color='#004761',
+            margin={'b': 20}
+        ),
+        axis_title=element_text(size=10),
+        panel_grid_major_y=element_line(color='gray', linetype='dashed', alpha=0.7),
+        panel_grid_major_x=element_blank() # hide vertical lines
+    )
+)
 
-plt.xlabel("Number of Clusters (k)", fontsize=10)
-plt.ylabel("Inercia (WCSS)", fontsize=10)
-plt.grid(axis='y', linestyle='--', alpha=0.7)
-plt.gca().spines['top'].set_visible(False)
-plt.gca().spines['right'].set_visible(False)
-plt.show()
+elbow_plot.draw()
 ```
+
+Due to the Elbow Method results gives us a small number of clusters, we will apply the Silhouette Coefficient, which measures the technical quality of our clusters. While the elbow method looks for "compactness," the silhouette measures how well each cluster is separated from the others.
+
+- Silhouette Score: This is a value between -1 and 1.
+- Close to 1: The points are very well grouped and far from other clusters.
+- Close to 0: The clusters overlap (there is geographical ambiguity).
+
+The objective to use the Silhouette coefficient is owing to mathematically validate that k=4 best defines crime zones in Mexico City.
 
 ```{python}
 #| eval: false
 
 from sklearn.metrics import silhouette_score
 
-# Prueba con 3 y 4
 for k in [2, 3, 4]:
     model = KMeans(n_clusters=k, random_state=42).fit(X)
     score = silhouette_score(data_clustering, model.labels_)
@@ -245,42 +294,45 @@ Clusters: 3 | Silhouette Score: 0.656
 Clusters: 4 | Silhouette Score: 0.684  
 
 
-
 ```{python}
 #| eval: false
 #| echo: false
 
-import geopandas as gpd
-from shapely.geometry import Point
+# this code was to join geojson coordinates with data, but dataset has coordinates also
+#gdf_neighborhoods = gpd.read_file("neighborhoods.json")
 
-gdf_neighborhoods = gpd.read_file("neighborhoods.json")
+#geometry = [Point(xy) for xy in zip(df["longitud"], df["latitud"])]
+#gdf_incidence = gpd.GeoDataFrame(df.to_pandas(), geometry=geometry, crs="EPSG:4326")
 
-geometry = [Point(xy) for xy in zip(df["longitud"], df["latitud"])]
-gdf_incidence = gpd.GeoDataFrame(df.to_pandas(), geometry=geometry, crs="EPSG:4326")
+# spatial join
+#gdf_end = gpd.sjoin(gdf_incidence, gdf_neighborhoods, how="left", #predicate="within")
 
-# 4. Hacer el join espacial: ¿En qué colonia cae cada punto?
-gdf_end = gpd.sjoin(gdf_incidence, gdf_neighborhoods, how="left", predicate="within")
-
-# 5. Volver a Polars para seguir con tu flujo "Everything as Code"
-df_neighborhoods = pl.from_pandas(gdf_end.drop(columns="geometry"))
-df_neighborhoods.head()
+# polars
+#df_neighborhoods = pl.from_pandas(gdf_end.drop(columns="geometry"))
+#df_neighborhoods.head()
 ```
 
-## Spatial Analysis
 
-Identification of high-concentration zones (hotspots).
+# Spatial Analysis
+
+## Identification of Clusters
+
+This analysis employs the K-Means unsupervised learning algorithm to segment crime incidence in Mexico City into geographic clusters. Unlike a traditional heat map, this methodology identifies centers of gravity (centroids) that represent the core areas of highest criminal activity. See @fig-clusters.
+
+By locating these hotspots, the model transforms raw data into operational intelligence, facilitating the auditing of security funds and the optimization of resources in the areas with the highest statistical demand.
 
 ```{python}
-import plotly.express as px
+#| label: fig-clusters
+#| fig-cap: Pedestrain Robbery Clusters in Mexico City. <br><br> In this map we present all the individual crimes during the period of analysis and how groups them by cluster according to the concentrated volume of incidents by coordinates.
 
 fig = px.scatter_map(
     df.to_pandas(),
     lat="latitud",
     lon="longitud",
-    color="cluster",        # El resultado de tu K-Means
+    color="cluster", # K-Means results
     hover_name="colonia_hecho",
     hover_data={
-        "latitud": False,      # Ocultamos coordenadas en el tooltip
+        "latitud": False, # hide coordinates from tooltip
         "longitud": False,
         "delito": True,
         "fecha_hecho": True,
@@ -288,23 +340,54 @@ fig = px.scatter_map(
     },
     color_discrete_sequence=["#004761", "#E3120B", "#00a398", "#7BA2B3"],
     zoom=9.5,
-    height=600
+    height=650
 )
 
-# Ajustes estéticos finales
+# final adjustments
 fig.update_layout(
-    margin={"r":0,"t":40,"l":0,"b":0},
-    title_text="Hotspots of Pedestrian Robbery in Mexico City by Neighborhood",
-    title_x=0.05,
-    map_style="carto-positron" # Equivalente al antiguo mapbox_style
-)
+    # title style
+    title={
+        'text': "<b>Spatial Clustering of Pedestrian Robberies</b><br><span style='font-size:14px; color:#666;'>Geographic distribution of high-incidence hotspots in Mexico City (2014-2026)</span>",
+        'x': 0.03, # left overall alignment
+        'y': 0.96, # vertical position in the upper margin
+        'xanchor': 'left',
+        'yanchor': 'top',
+        'font': {
+            'family': "Helvetica, sans-serif",
+            'size': 26,
+            'color': '#004761'
+        }
+    },
+    
+    # minimalist map style
+    mapbox_style="carto-positron", # Carto Positron es ideal por su paleta neutra
+    
+    # chart general style
+    font=dict(family="Arial, sans-serif", size=12, color="#333333"),
+    
+    # transparent background color so CSS orders
+    paper_bgcolor='rgba(0,0,0,0)',
+    plot_bgcolor='rgba(0,0,0,0)',
+
+    legend=dict(
+        orientation="h", # horizontal
+        yanchor="bottom",
+        y=-0.08, # low or lift legend
+        xanchor="center",
+        x=0.5, # horizontally centered
+        bgcolor='rgba(0,0,0,0)', # transparent background
+        font=dict(size=12)
+        ),
+    
+    margin={"r":0,"t":70,"l":0,"b":5} # increase "b" (bottom) for legend not to be cut
+    )
 
 fig.show()
 ```
 
 
 ```{python}
-# Ver qué cluster tiene más delitos en promedio o está en el centro
+# clusters with total of crimes or centroids
 resumen_clusters = (
   df
     .group_by("cluster")
@@ -318,45 +401,58 @@ resumen_clusters = (
 )
 ```
 
+## Identification of Centroids
+
 ```{python}
 #| label: tbl-centroids
 #| tbl-cap: Pedestrain Robbery Clusters and Centroids. <br><br> This table presents the total volume of pedestrian robberies alongside their spatial centroids, highlighting the mayorships with the highest concentration of incidents.
 
-resumen_clusters
+resumen_headers = {'cluster': 'Cluster ID', 'total_delitos': 'Total Delitos', 
+  'centro_lat': 'Latitud_centroide', 'centro_lon': 'Longitud_centroide',
+  'alcaldia': 'Alcaldia',}
+
+(
+    resumen_clusters
+    .to_pandas()
+    .style
+    .highlight_max(axis=0, subset='total_delitos',)
+    .format({'total_delitos': '{:,.0f}',})
+    .hide(axis=0)
+    .format_index(resumen_headers.get, axis=1)
+)
 ```
 
+The size of the markers follows a square root scaling relative to the volume of crimes, allowing for an honest and proportional interpretation of crime density in each borough.
 ```{python}
 #| label: fig-hotspots
 #| fig-cap: "Pedistrian Robbery Spatial Hubs. <br><br> This map visualizes the geographic centroids of each cluster, where the size of each marker is proportional to the total volume of detected crimes. To ensure visual integrity and avoid perceptual distortion, a square root scaling was applied to the radius of the bubbles, guaranteeing that the area of ​​each circle accurately represents the magnitude of the phenomenon in the identified neighborhoods."
 
-import folium
-
 # color palette
-color_map = {
+map_color = {
     0: "#004761",
     1: "#E3120B",
     2: "#00a398",
     3: "#7BA2B3",
 }
 
-# 2. Inicializar el mapa en CDMX
+# map root
 m_resumen = folium.Map(
     location=[19.4326, -99.1332], 
     zoom_start=11, 
     tiles='cartodbpositron'
 )
 
-# 3. Iterar sobre los centroides calculados
-# Convertimos el resumen a lista de diccionarios para el loop
+# Iterate over calculated centroids
+# list of dicts for loop
 for row in resumen_clusters.to_dicts():
     cluster_id = row["cluster"]
-    color = color_map.get(cluster_id, "#333333")
+    color = map_color.get(cluster_id, "#333333")
     
-    # El tamaño del círculo será proporcional al volumen de delitos
-    # Usamos una raíz cuadrada o logaritmo para que no crezca desproporcionadamente
+    # proportial size of circles to crime volume
+    # using square root not to grow exponentially
     radius_size = (row["total_delitos"] ** 0.5) / 5  
 
-    # Crear el Popup con datos agregados
+    # Popup
     popup_content = f"""
     <div style="font-family: 'Arial'; font-size: 13px; min-width: 150px;">
         <h4 style="margin:0; color:{color};">Cluster {cluster_id}</h4>
@@ -381,12 +477,11 @@ for row in resumen_clusters.to_dicts():
     folium.Marker(
         location=[row["centro_lat"], row["centro_lon"]],
         popup=folium.Popup(popup_content, max_width=300),
-        #icon=folium.Icon(color='black', icon='building', prefix='fa'),
         icon=folium.Icon(color='red', icon='lightbulb-o', prefix='fa'),
     ).add_to(m_resumen)
 
-# Definir el título con HTML y CSS
-titulo_html = '''
+# title by using html and css
+html_title = '''
              <h3 align="center" style="font-family: Arial; font-size: 18px; font-weight: bold; color: #333333;">
                  <b>Geographical Distribution of Crime Incidence (Mexico City 2014-2024)</b>
              </h3>
@@ -395,10 +490,10 @@ titulo_html = '''
              </p>
              '''
 
-# Inyectar el título en el "Root" del mapa
-m_resumen.get_root().html.add_child(folium.Element(titulo_html))
+# insert title in map root
+m_resumen.get_root().html.add_child(folium.Element(html_title))
 
-# Mostrar el mapa
+# map
 m_resumen
 ```
 
@@ -407,9 +502,37 @@ The points represent the centers of gravity of each cluster identified using spa
 The shading and size of the circles encode the crime intensity by area, highlighting **Cuauhtemoc** mayorship as the core of highest concentration.
 The visualization allows for an immediate comparison between existing security infrastructure and the areas with the greatest statistical demand.
 
-
 # Conclusions
 
+From this analysis, we can derive the following reflections:
+
+**Algorithmic Efficiency Across Administrative Boundaries**
+
+The use of K-Means demonstrated that crime does not respect the political boundaries of mayorships.
+By identifying clusters based on actual density rather than territorial divisions, the model revealed "hot spots" that cross administrative borders.
+This suggests that security strategies must be inter-municipal and coordinated, focusing on the detected centroids to maximize the impact of patrols.
+
+**Statistical Validation as a Quality Filter**
+
+The implementation of the Elbow Method and the Silhouette Coefficient were not simply technical steps, but rather integrity filters. 
+Confirming that k=4 is the optimal structure ensures that resources are not dispersed across too many small areas or generalized into a single ambiguous mass.
+This mathematical validation elevates the report from a simple visualization to a data auditing tool.
+
+**Visual Integrity for Decision Making**
+
+By scaling by area using square root technique in map design of centroids, we achieve an honest representation of the magnitude of the crime.
+This technique eliminates common cognitive biases in map interpretation, allowing a decision-maker to assess the severity of a cluster at a glance, ensuring that "visual urgency" exactly matches "statistical severity."
+
+**"Everything as Code" Philosophy: Scalability and Future-Proofing**
+
+Thanks to the architecture built with Polars, this analysis is fully reproducible and scalable. The pipeline allows for:
+
+- **Instant Updates**. Ingest new data monthly and update the maps in seconds.
+- **Transferability**. Apply the same methodology to other crimes (such as vehicle theft or extortion) simply by changing a parameter in the code.
+- **Sustainability**. Reduce dependence on expensive software or complex cloud infrastructure, while maintaining complete control over the cleaning and modeling process.
+
+This project demonstrates that Data Science applied to the Public Sector is not just about technology, but about clarity.
+By combining rigorous modeling with a clean visual narrative, we transformed historical data into geographic intelligence, offering a clear roadmap for a safer, evidence-based Mexico City.
 
 
 # References

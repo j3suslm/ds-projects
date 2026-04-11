@@ -1,0 +1,12 @@
+numpy
+pandas
+polars
+plotnine
+matplotlib
+seaborn
+plotly
+folium
+pathlib
+geopandas
+shapely
+jupyter

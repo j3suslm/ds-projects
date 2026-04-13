@@ -11,4 +11,5 @@ geopandas
 shapely
 pyarrow
 fastexcel
+sickit-learn
 jupyter

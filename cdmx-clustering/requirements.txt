@@ -9,4 +9,6 @@ folium
 pathlib
 geopandas
 shapely
+pyarrow
+fastexcel
 jupyter

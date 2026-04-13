@@ -139,7 +139,8 @@ data = (
 ::: {.callout-note appearance='simple' icon='false'}
 **About the dataset**
 
-The dataset contains 2,098,743 records, but it has many null values in diverse fields, for example, there are 101,207 null rows without latitude or longitude. We are losing around 5% of records due to incomplete information.
+The dataset contains 2,098,743 records, but it has many null values in diverse fields, for example, there are 101,207 null rows without latitude or longitude.
+We are losing around 5% of records due to incomplete information.
 :::
 
 Next, we will create a subset for pedestrian robbery only.
@@ -154,14 +155,15 @@ df = (
 )
 ```
 
-The following code let us preview the pedestrian robbery data subset we will use for our analysis. This dataset includes date, crime type, latitude, and longitude of the crime.
+The following code let us preview the pedestrian robbery data subset we will use for our analysis.
+This dataset includes date, crime type, latitude, and longitude of the crime.
 
 ```{python}
 #| label: tbl-cdmx-theft
 #| tbl-cap: Robbery of Pedestrians Dataset. <br><br> This is a preview of the cleaned dataset we will use for our analysis.
 
-headers = {'fecha_hecho': 'Fecha hecho', 'delito': 'Delito', 
-  'colonia_hecho':'Colonia', 'alcaldia_hecho':'Alcaldia', 'latitud': 'Latitud', 'longitud': 'Longitud'}
+headers = {'fecha_hecho': 'Fecha hecho', 'delito': 'Delito', 'colonia_hecho':'Colonia', 
+    'alcaldia_hecho':'Alcaldia', 'latitud': 'Latitud', 'longitud': 'Longitud'}
 
 (
   df
@@ -226,7 +228,7 @@ Next, we plot our Elbow method results.
 
 ```{python}
 #| label: fig-elbow
-#| fig-cap: "Elbow Method. This chart let us choose the best k for our kmeans model."
+#| fig-cap: "Elbow Method. This chart let us choose the best k for our kmeans model"
 from mizani.formatters import number_format
 
 # data
@@ -347,7 +349,12 @@ fig = px.scatter_map(
 fig.update_layout(
     # title style
     title={
-        'text': "<b>Spatial Clustering of Pedestrian Robberies</b><br><span style='font-size:14px; color:#666;'>Geographic distribution of high-incidence hotspots in Mexico City (2014-2026)</span>",
+        'text': (
+            "<b>Spatial Clustering of Pedestrian Robberies</b><br>"
+            "<span style='font-size:14px; color:#666;'>"
+            "Geographic distribution of high-incidence hotspots in Mexico City (2014-2026)"
+        "</span>"
+        ),
         'x': 0.03, # left overall alignment
         'y': 0.96, # vertical position in the upper margin
         'xanchor': 'left',
@@ -360,7 +367,7 @@ fig.update_layout(
     },
     
     # minimalist map style
-    mapbox_style="carto-positron", # Carto Positron es ideal por su paleta neutra
+    mapbox_style="carto-positron",
     
     # chart general style
     font=dict(family="Arial, sans-serif", size=12, color="#333333"),
@@ -370,7 +377,7 @@ fig.update_layout(
     plot_bgcolor='rgba(0,0,0,0)',
 
     legend=dict(
-        orientation="h", # horizontal
+        orientation="h",
         yanchor="bottom",
         y=-0.08, # low or lift legend
         xanchor="center",
@@ -384,7 +391,6 @@ fig.update_layout(
 
 fig.show()
 ```
-
 
 ```{python}
 # clusters with total of crimes or centroids
@@ -423,6 +429,7 @@ resumen_headers = {'cluster': 'Cluster ID', 'total_delitos': 'Total Delitos',
 ```
 
 The size of the markers follows a square root scaling relative to the volume of crimes, allowing for an honest and proportional interpretation of crime density in each borough.
+
 ```{python}
 #| label: fig-hotspots
 #| fig-cap: "Pedistrian Robbery Spatial Hubs. <br><br> This map visualizes the geographic centroids of each cluster, where the size of each marker is proportional to the total volume of detected crimes. To ensure visual integrity and avoid perceptual distortion, a square root scaling was applied to the radius of the bubbles, guaranteeing that the area of ​​each circle accurately represents the magnitude of the phenomenon in the identified neighborhoods."
@@ -482,10 +489,13 @@ for row in resumen_clusters.to_dicts():
 
 # title by using html and css
 html_title = '''
-             <h3 align="center" style="font-family: Arial; font-size: 18px; font-weight: bold; color: #333333;">
-                 <b>Geographical Distribution of Crime Incidence (Mexico City 2014-2024)</b>
+             <h3 align="center" style="font-family: Arial; font-size: 18px; 
+             font-weight: bold; color: #333333;">
+                 <b>Geographical Distribution of Crime Incidence (Mexico City 
+                 2014-2024)</b>
              </h3>
-             <p align="center" style="font-family: Arial; font-size: 14px; color: #666666; margin-top: -10px;">
+             <p align="center" style="font-family: Arial; font-size: 14px; 
+             color: #666666; margin-top: -10px;">
                  Kmeans Cluster Analysis and Intensity Centroids
              </p>
              '''

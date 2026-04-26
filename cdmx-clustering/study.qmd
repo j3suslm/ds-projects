@@ -336,7 +336,7 @@ fig = px.scatter_map(
     hover_data={
         "latitud": False, # hide coordinates from tooltip
         "longitud": False,
-        "delito": True,
+        "delito": False,
         "fecha_hecho": True,
         'colonia_hecho': True,
         "alcaldia_hecho": True,

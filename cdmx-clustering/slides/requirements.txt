@@ -1,0 +1,13 @@
+numpy
+pandas
+polars
+matplotlib
+seaborn
+plotly
+pyarrow
+fastexcel
+scipy
+scikit-learn
+great-tables
+pathlib
+jupyter

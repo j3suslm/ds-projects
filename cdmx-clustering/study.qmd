@@ -338,11 +338,12 @@ fig = px.scatter_map(
         "longitud": False,
         "delito": True,
         "fecha_hecho": True,
+        'colonia_hecho': True,
         "alcaldia_hecho": True,
     },
     color_discrete_sequence=["#004761", "#E3120B", "#00a398", "#7BA2B3"],
     zoom=9.5,
-    height=650
+    height=750
 )
 
 # final adjustments
@@ -390,6 +391,8 @@ fig.update_layout(
     )
 
 fig.show()
+
+fig.write_html("cdmx_clusters.html")
 ```
 
 ```{python}

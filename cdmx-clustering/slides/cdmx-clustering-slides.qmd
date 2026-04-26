@@ -1,0 +1,234 @@
+---
+title: "A/B Testing in Crime Analysis"
+subtitle: "Mexico City Case Study: Smart Lighting"
+author: "Jesus LM"
+date: 2026-03-17
+date-format: MMM, YYYY
+format: 
+  revealjs:
+    theme: custom.scss
+    embed-resources: true
+    execute: 
+      echo: true
+    logo: network.png
+    footer: © 2026
+    transition: fade
+    transition-speed: slow
+    slide-number: c/t
+jupyter: python3
+---
+
+## Table of Contents
+
+::: {.agenda-nav}
+[**1. Experimental Design**]{.active}
+
+[**2. Statistical Hypothesis**]{.active}
+
+[**3. Data Simulation & Analysis**]{.active}
+:::
+
+
+## {visibility="uncounted"}
+
+::: {.agenda-nav}
+[**1. Experimental Design**]{.active}
+
+[**2. Statistical Hypothesis**]{.faded}
+
+[**3. Data Simulation & Analysis**]{.faded}
+:::
+
+
+## Experimental Design
+
+To move beyond anecdotal evidence, we applied a **Randomized Controlled Trial** to urban safety.
+
+::: {.incremental}
+
+* [**Control Group (A):**]{style="color: #e3120b;"} Roma Norte (Standard HPS Lighting).
+* [**Treatment Group (B):**]{style="color: #e3120b;"} Condesa (New 5000K LED Smart Lighting).
+* [**Metric:**]{style="color: #e3120b;"} Daily reports of nighttime Street Robbery.
+* [**Duration:**]{style="color: #e3120b;"} 30-day trial period.
+
+:::
+
+
+## {visibility="uncounted"}
+
+::: {.agenda-nav}
+[**1. Experimental Design**]{.faded}
+
+[**2. Statistical Hypothesis**]{.active}
+
+[**3. Data Simulation & Analysis**]{.faded}
+:::
+
+
+## Statistical Hypothesis
+
+We utilize an **Independent T-Test** to compare the crime means.
+
+::: {.incremental}
+
+- [**Null Hypothesis ($H_0$):**]{style="color: #e3120b;"} Street lighting has no effect on robbery rates. 
+- [**Alternative Hypothesis ($H_a$):**]{style="color: #e3120b;"} LED Smart Lighting significantly reduces robbery rates.
+- [**$\alpha$ Level:**]{style="color: #e3120b;"} 0.05
+
+:::
+
+
+## {visibility="uncounted"}
+
+::: {.agenda-nav}
+[**1. Experimental Design**]{.faded}
+
+[**2. Statistical Hypothesis**]{.faded}
+
+[**3. Data Simulation & Analysis**]{.active}
+:::
+
+
+## Data Simulation & Analysis
+
+**Environment settings**
+
+```{python}
+#| echo: true
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from scipy import stats
+
+# Generate Dummy Data
+np.random.seed(42)
+days = 30
+roma_control = np.random.poisson(lam=5.2, size=days)
+condesa_treatment = np.random.poisson(lam=3.8, size=days)
+
+df = pd.DataFrame({
+    'Day': range(1, days + 1),
+    'Roma_Control': roma_control,
+    'Condesa_Treatment': condesa_treatment
+})
+```
+
+
+## {}
+
+**Dataset**
+
+```{python}
+#| echo: false
+#| label: tbl-preview
+#| tbl-cap: Records of robberies
+#| tbl-cap-location: bottom
+
+from great_tables import GT, style, loc
+(
+    GT(df.head())
+    .tab_header(title="Street Robbery", subtitle=f"December 2025")
+    .fmt_number(columns="volume", compact=True)
+    .cols_label(
+        Roma_Control="Roma (Control)",
+        Condesa_Treatment="Condesa (Treatment)",
+    )
+    .tab_options(
+        container_width = "90%",
+        table_width="100%",
+        table_background_color="#f8faf7",
+        heading_background_color = "#004f71",
+        column_labels_background_color="#e3120b",
+    )
+    .tab_style(
+        style=style.text(size="18px"),
+        locations=loc.body(columns=None, rows=None),
+    )
+    .cols_align(align="center", columns=None)
+)
+```
+
+
+## {}
+
+**Hypothesis Testing**
+
+```{python}
+# Statistical Test
+t_stat, p_val = stats.ttest_ind(
+    df['Roma_Control'],
+    df['Condesa_Treatment']
+)
+```
+
+```{=html}
+<style>
+.callout {
+  border-left: 8px solid #e3120b !important; /* Replace with your --econ-red hex */
+  background-color: #f6f6f6 !important;
+}
+</style>
+```
+
+<br>
+
+::: {.callout-note appearance="simple" icon="false"}
+[P-Value: 0.1902 <br> Result: Not Significant]{.smallcaps}
+:::
+
+
+## {}
+
+**Visualization**
+
+```{python}
+#| echo: false
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Set the 538 style
+plt.style.use('fivethirtyeight')
+plt.figure(figsize=(10, 6))
+
+# Plotting with 538-compatible colors
+sns.kdeplot(df['Roma_Control'], fill=True, label='Roma (Control)', color='#e5ae38') # 538 Gold
+sns.kdeplot(df['Condesa_Treatment'], fill=True, label='Condesa (Treatment)', color='#008fd5') # 538 Blue
+
+# Customizing the layout for the 538 look
+plt.title('Distribution of Nightly Robberies', fontsize=20, fontweight='bold')
+plt.xlabel('Number of Incidents', fontsize=14)
+plt.ylabel('Frequency', fontsize=14)
+plt.legend()
+
+# Final touch: subtle adjustment to the grid
+plt.tight_layout()
+```
+
+
+## Contact {.center}
+
+:::: columns
+::: {.column width="60%"}
+::: {style="color: #00313a; font-size: 40px; font-weight: bold; margin-top: 10px; margin-bottom: 0px;"}
+Jesus L. Monroy
+:::
+
+::: {style="color: #00a398; font-size: 30px; font-style: italic; font-family: 'ITC Charter', Georgia, serif; margin-top: 0px;"}
+Economist & Data Scientist
+:::
+
+::: {style="color: #4b4f54; font-size: 14px; font-style:italic; font-family: 'ITC Charter', Georgia, serif; width: 60%; text-align: justify; line-height: 1.5; margin-top: 0px; margin-bottom: 15px;"}
+Passionate about creating tools that make data accessible and impactful using SQL, Python, Streamlit, Shiny and Tableau in diverse sectors like Public Security, e-commerce, and Healthcare.\
+BA in Economics, MA in Information Technology, and Data Science/Machine Learning certification.
+:::
+
+::: {style="font-size: 15px; font-family: sans-serif;"}
+[Portfolio](https://jesuslm-my-website.share.connect.posit.cloud) \| [Linkedin](https://www.linkedin.com/in/j3sus-lm) \| [Twitter](https://x.com/j3suslm) \| [Tableau](https://tinyurl.com/jesuslm-tableau)
+:::
+:::
+
+::: {.column width="40%"}
+![](network.png)
+:::
+::::

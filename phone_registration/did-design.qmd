@@ -1,0 +1,224 @@
+---
+title: "Does Mobile Phone Registration Really Work to Stop Extortion?"
+subtitle: "A Difference in Differences Approach"
+author: "Jesus L. Monroy"
+date: last-modified
+date-format: medium
+abstract: |
+  This study investigates the causal impact of mandatory SIM card registration policies on the incidence of extortion.
+  While intended to enhance public safety by reducing anonymity in telecommunications, the effectiveness of such mandates remains a subject of empirical debate.
+  Utilizing a Difference-in-Differences (DiD) framework, this research evaluates whether the implementation of these regulations led to a statistically significant reduction in crime or merely followed pre-existing downward trends in national security metrics.
+  By comparing jurisdictions with early adoption against late-adopters, the analysis accounts for time-invariant unobserved heterogeneity.
+  The findings contribute to the ongoing discourse on the trade-offs between digital privacy and criminal surveillance, providing evidence-based insights for policymakers considering similar regulatory interventions.
+toc: true
+lof: true
+lot: true
+format:
+  typst:
+    template-partials:
+      - typst-show.typ
+      - typst-template.typ
+bibliography: references.bib
+execute:
+  echo: true
+jupyter: python3
+---
+
+# The Dilemma of Anonymity
+
+## Does SIM registration really curb crime?
+
+Over the past decade, various governments have implemented mandatory SIM card registration as a national security tool.
+The premise is intuitive: *by associating each phone line with a citizen's identity and biometric data, the anonymity that protects extortionists is eliminated, facilitating the traceability of crimes and increasing the operating costs for criminal networks.*
+
+However, the effectiveness of this policy is the subject of intense debate.
+While authorities defend registration as a pillar of digital forensics strategy, critics argue that these measures impose a privacy burden on citizens without truly affecting organized crime, which typically evades these controls through the use of roaming networks, stolen devices, or identity theft.
+
+## The Problem of Causality
+
+The analytical challenge lies in the fact that crime does not occur in a vacuum.
+If extortion decreases after the implementation of the law, a critical question arises: **Is this reduction a direct consequence of mandatory registration, or is it simply a reflection of a general trend of improvement in public safety?**
+
+## Study Framework
+
+To address this question, this project uses a causal inference design with the Difference-in-Differences (DID) technique.
+The analysis focuses on a natural experiment comparing two entities with similar socioeconomic characteristics:
+
+- **Treatment Group (State A)**: Implemented mandatory registration and biometric data collection in January 2026.
+
+- **Control Group (State B)**: A neighboring state that maintained the SIM card acquisition scheme without identification requirements.
+
+Through this approach, the study seeks to isolate the net effect of the policy, controlling for temporal factors and pre-existing trends.
+The ultimate goal is to determine whether SIM card registration is an evidence-based public policy tool or, on the contrary, represents a high-friction measure with zero impact on reducing crime rates.
+
+
+As seen in @sample2026, the market is shifting. The Economist style relies on heavy use of "Economist Red" for headers and horizontal rules.
+
+{{< pagebreak >}}
+
+# Data Analysis
+
+### Environment settings
+
+```{python}
+import polars as pl
+import numpy as np
+from plotnine import *
+import statsmodels.formula.api as smf
+```
+
+### Data Simulation 
+
+We have generated 02 years of data, 12 months pre, 12 months post observations.
+
+```{python}
+np.random.seed(88)
+months = np.arange(1, 25)
+
+# State B (Control): Stable trend with noise
+control = 15 + 0.1 * months + np.random.normal(0, 1.5, 24)
+
+# State A (Treatment): Follows the same trend, but we apply law in the 12th month
+# Hypothesis: Law does NOT work as well as expected (small effect)
+pre_treatment = 18 + 0.1 * months[:12] + np.random.normal(0, 1.5, 12)
+post_treatment = 18 + 0.1 * months[12:] + np.random.normal(0, 1.5, 12) # 2.5 points only
+```
+
+### Creation of Dataframe
+
+``` {python}
+df = pl.DataFrame({
+    "month": np.tile(months, 2),
+    "extorsions": np.concatenate([control, pre_treatment, post_treatment]),
+    "state": ["State B (Control)"] * 24 + ["State A (SIM Registration)"] * 24,
+    "post_law": (np.tile(months, 2) > 12).astype(int),
+    "treated_group": ([0] * 24 + [1] * 24)
+})
+```
+
+```{python}
+#| label: tbl-states
+#| tbl-cap: "Preview of Treatment and Control Groups"
+df.sample(5)
+```
+
+We can see in @tbl-states the values for treatment and control groups.
+
+### Data Visualization
+
+```{python}
+#| label: fig-growth-trend
+#| fig-cap: "Difference in Differences Analysis (2026)"
+#| fig-align: left
+
+(
+    ggplot(df, aes(x='month', y='extorsions', color="state"))
+    + geom_smooth(method='lm', se=False, linetype='dashed', size=0.5, alpha=0.5) # Trendlines
+    + geom_line(size=1.2)
+    + geom_vline(xintercept=12.5, linetype="dotted", size=1)
+    + annotate("text", x=14, y=22, label="Start of SIM Registration", size=10, color="#34495e")
+    + labs(
+        title="Impact of SIM Registration on Extorsion",
+        subtitle="Analysis of Difference in Differences",
+        x="Months",
+        y="Extorsion Reports per 100k inhabitants",
+        color='',
+    )
+    + theme_minimal()
+    + theme(
+          figure_size=(12, 8), #width, height
+          dpi=100,
+          legend_position='bottom',
+          legend_direction='horizontal',
+        )
+    + scale_color_manual(values=["#c0392b", "#2980b9"])
+)
+```
+
+### Causal Effect Estimation (DiD)
+
+```{python}
+model = smf.ols("extorsions ~ treated_group * post_law", data=df,).fit()
+print(model.summary())
+```
+
+{{< pagebreak >}}
+
+# Conclusions
+
+### The Verdict: No Causal Effect
+
+The focus should be on the interaction between treated_group and post_law.
+
+P-value (0.730): This number is devastating for the policy. Being much greater than 0.05, we cannot reject the null hypothesis. This means that the slight increase of 0.2983 in the coefficient is pure noise; the law had no real impact on extortion.
+
+Confidence Interval (-1.431 to 2.028): The interval crosses zero. This implies that the effect of the law could be either a reduction or an increase, reinforcing the idea that the policy made no difference.
+
+### Trend Analysis
+
+treated_group (2.5639, p=0.000): This remains significant. State A has always had more extortion cases than State B, regardless of the law.
+
+post_law (0.1403, p=0.818): There is also no significant time effect. Extortion in the control group (State B) remained flat.
+
+### Model Fit
+
+R-squared (0.480): Interestingly, the model explains more variance than the previous one (48%), but this variance is mainly explained by the structural difference between the states (treated_group) and the intercept, not by the law.
+
+{{< pagebreak >}}
+
+# About the Author
+
+```{=typst}
+// Define the Economist-inspired colors
+#let dark-teal = rgb("#00313a")
+#let accent-teal = rgb("#00a398")
+#let dark-gray = rgb("#4b4f54")
+#let econ-red = rgb("#e3120b")
+
+// Name Section
+#text(fill: dark-teal, size: 16pt, weight: "bold")[Jesus L. Monroy]
+
+#v(-0.8em) // Adjust vertical space between name and title
+
+// Title Section
+#text(
+  fill: accent-teal, 
+  size: 13pt, 
+  style: "italic", 
+  font: "ITC Charter" // Reliable substitute for ITC Charter/Georgia
+)[Economist & Data Scientist]
+
+#v(-0.1em)
+
+// Bio Description
+// We use a block with 50% width and justified alignment
+#block(width: 50%)[
+  #set text(
+    fill: dark-gray, 
+    size: 10pt, 
+    style: "italic", 
+    font: "PT Serif",
+    tracking: 0.2pt // Slight letter spacing for that print look
+  )
+  #set par(justify: true, leading: 0.65em)
+  
+  Bridging the gap between economic theory and scalable data solutions (Python, SQL, Tableau) through the "Everything as Code" philosophy.
+
+  With over 10 years of experience, I design reproducible pipelines and minimalist data products (Streamlit, Shiny, DuckDB, Polars, Plotly, Scikit-learn, Typst) that transform complex datasets into actionable insights for Public Security, e-commerce, and Healthcare.
+
+  MA in IT, BA in Economics, MIT-IDSS Certified in Data Science & Machine Learning.
+
+]
+
+#v(0.2em)
+
+// Social Links in Economist Red
+#set text(size: 9pt, font: "Arial", weight: "medium")
+#let econ-link(dest, label) = link(dest)[#text(fill: econ-red)[#label]]
+
+#econ-link("https://jesuslm-my-website.share.connect.posit.cloud", "Portfolio") | 
+#econ-link("https://www.linkedin.com/in/j3sus-lm", "Linkedin") | 
+#econ-link("https://tinyurl.com/jesuslm-tableau", "Tableau")
+```
+
+{{<pagebreak>}}

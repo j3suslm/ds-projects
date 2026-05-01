@@ -1,5 +1,7 @@
 numpy
 polars
+pyarrow
+fastexcel
 pandas
 plotnine
 statsmodels

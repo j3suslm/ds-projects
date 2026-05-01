@@ -392,7 +392,7 @@ fig.update_layout(
 
 fig.show()
 
-fig.write_html("cdmx_clusters.html")
+#fig.write_html("cdmx_clusters.html")
 ```
 
 ```{python}

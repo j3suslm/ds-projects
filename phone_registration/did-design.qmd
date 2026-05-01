@@ -33,17 +33,25 @@ jupyter: python3
 Over the past decade, various governments have implemented mandatory SIM card registration as a national security tool.
 The premise is intuitive: *by associating each phone line with a citizen's identity and biometric data, the anonymity that protects extortionists is eliminated, facilitating the traceability of crimes and increasing the operating costs for criminal networks.*
 
-However, the effectiveness of this policy is the subject of intense debate.
+However, the effectiveness of this policy is the subject of intense debate. For example, see @donovan2014 and @oruame.
 While authorities defend registration as a pillar of digital forensics strategy, critics argue that these measures impose a privacy burden on citizens without truly affecting organized crime, which typically evades these controls through the use of roaming networks, stolen devices, or identity theft.
+
+::: {layout="[[0.9, 1.1]]"}
+![](sim.png){fig-align="left" width=80%}
+
+::: {.callout-note apperance="minimal" icon="false"}
 
 ## The Problem of Causality
 
 The analytical challenge lies in the fact that crime does not occur in a vacuum.
-If extortion decreases after the implementation of the law, a critical question arises: **Is this reduction a direct consequence of mandatory registration, or is it simply a reflection of a general trend of improvement in public safety?**
+If extortion decreases after the implementation of the law, a critical question arises: *Is this reduction a direct consequence of mandatory registration, or is it simply a reflection of a general trend of improvement in public safety?*
+:::
+
+:::
 
 ## Study Framework
 
-To address this question, this project uses a causal inference design with the Difference-in-Differences (DID) technique.
+To address this question, this project uses a causal inference design with the Difference-in-Differences (DiD) technique.
 The analysis focuses on a natural experiment comparing two entities with similar socioeconomic characteristics:
 
 - **Treatment Group (State A)**: Implemented mandatory registration and biometric data collection in January 2026.
@@ -68,7 +76,7 @@ The following environment configuration ensures a reproducible workflow:
 
 - **Plotnine** An implementation of the Grammar of Graphics for Python, used to visualize the "Parallel Trends" assumption and the divergence between the treatment and control groups.
 
-- **Statsmodels** The core econometric engine used to estimate the Difference-in-Differences (DiD) coefficients and assess the statistical significance of the policy intervention.^[We focus specifically on the interaction term between the treatment group and the post-intervention period to isolate the Average Treatment Effect (ATT).]
+- **Statsmodels** The core econometric engine used to estimate the Difference-in-Differences (DiD) coefficients and assess the statistical significance of the policy intervention. ^[We focus specifically on the interaction term between the treatment group and the post-intervention period to isolate the Average Treatment Effect (ATT)].
 
 ```{python}
 import polars as pl
@@ -127,7 +135,7 @@ This visualization tracks the trajectories of both the treatment and control gro
 
 (
     ggplot(df, aes(x='month', y='extorsions', color="state"))
-    + geom_smooth(method='lm', se=False, linetype='dashed', size=0.5, alpha=0.5) # Trendlines
+    + geom_smooth(method='lm', se=False, linetype='dashed', size=0.5, alpha=0.5)
     + geom_line(size=1.2)
     + geom_vline(xintercept=12.5, linetype="dotted", size=1)
     + annotate("text", x=14, y=22, label="Start of SIM Registration", size=10, color="#34495e")
@@ -137,13 +145,20 @@ This visualization tracks the trajectories of both the treatment and control gro
         x="Months",
         y="Extorsion Reports per 100k inhabitants",
         color='',
-    )
+      )
     + theme_538()
     + theme(
-          figure_size=(12, 8), #width, height
+          figure_size=(12, 8),
           dpi=100,
+          axis_title_x=element_text(size=15, weight='bold', color="#01516c", margin={'t': 10}),
+          axis_text_x=element_text(size=14, color='#333333'),
+          axis_title_y=element_text(size=15, weight='bold', color="#01516c", margin={'r': 10}),
+          axis_text_y=element_text(size=14, color='#333333'),
           legend_position='bottom',
-          legend_direction='horizontal',
+          legend_title=element_text(size=14, weight='bold'),
+          legend_text=element_text(size=14),
+          plot_title=element_text(size=22, weight='bold', color='#c0392b', ha='left'),
+          plot_subtitle=element_text(size=16, color='#01516c', ha='left', margin={'b': 15}),
         )
     + scale_color_manual(values=["#c0392b", "#2980b9"])
 )
@@ -214,6 +229,13 @@ placebo_model = smf.ols("extorsions ~ treated_group * placebo_post", data=placeb
 print(placebo_model.summary().tables[1])
 ```
 
+A placebo-controlled trial was conducted using a period prior to the implementation of the SIM card registration law.
+The results show that the interaction term (treated_group:placebo_post) is not statistically significant (p = 0.125).
+
+> *This supports the assumption of parallel trends, indicating that there were no differential shocks between the groups before the policy was evaluated.*
+
+{{< pagebreak >}}
+
 ```{python}
 #| label: fig-placebo
 #| fig-cap: "Placebo Difference in Differences Analysis (2026)"
@@ -232,10 +254,17 @@ print(placebo_model.summary().tables[1])
           )
     + theme_538()
     + theme(
-          figure_size=(12, 8), #width, height
+          figure_size=(12, 7),
           dpi=100,
+          axis_title_x=element_text(size=15, weight='bold', color="#01516c", margin={'t': 10}),
+          axis_text_x=element_text(size=14, color='#333333'),
+          axis_title_y=element_text(size=15, weight='bold', color="#01516c", margin={'r': 10}),
+          axis_text_y=element_text(size=14, color='#333333'),
           legend_position='bottom',
-          legend_direction='horizontal',
+          legend_title=element_text(size=14, weight='bold'),
+          legend_text=element_text(size=14),
+          plot_title=element_text(size=22, weight='bold', color='#c0392b', ha='left'),
+          plot_subtitle=element_text(size=16, color='#01516c', ha='left', margin={'b': 15}),
         )
     + scale_color_manual(values=["#c0392b", "#2980b9"])
 )
@@ -268,7 +297,6 @@ Hay quye checar xq no muestra referencias si no se citan.
 See @sample2026, for more details.
 :::
 
-
 {{< pagebreak >}}
 
 # About the Author
@@ -300,9 +328,9 @@ See @sample2026, for more details.
 #block(width: 50%)[
   #set text(
     fill: dark-gray, 
-    size: 10pt, 
+    size: 9.5pt, 
     style: "italic", 
-    font: "PT Serif",
+    font: "Helvetica Neue",
     tracking: 0.2pt // Slight letter spacing for that print look
   )
   #set par(justify: true, leading: 0.65em)

@@ -47,7 +47,7 @@
     }
   )
 
-  set text(font: "Helvetica Neue", size: 10.5pt)
+  set text(font: "Noto Sans", size: 10.5pt)
   set par(justify: true)
 
   // Heading Styles
@@ -80,7 +80,7 @@
     v(15em)
     align(center, {
       // Title
-      text(fill: econ-red, weight: "bold", size: 31pt)[#title] //set title size
+      text(fill: econ-red, weight: "bold", size: 29pt)[#title] //set title size
       v(0.5em)
       
       // 2. The line is already centered, but ensure it has space
@@ -149,13 +149,23 @@
   }
 
   // change bibliography title
+  show bibliography: set text(font: "Linux Libertine", size: 12pt)
   set bibliography(title: "References", style: "apa")
-
+  
   show bibliography: it => {
     pagebreak(weak: true)
     v(0.5em)
     it
   }
+  
+  // table formatting
+  show table: set table(
+  stroke: (x, y) => (
+      top: if y == 0 { 2pt + rgb("#e3120B") } else { 0pt },
+      bottom: 2pt + rgb("#e3120B"),
+    ),
+    inset: 10pt,
+  )
 
   body
 }

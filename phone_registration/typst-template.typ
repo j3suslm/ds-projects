@@ -80,7 +80,7 @@
     v(15em)
     align(center, {
       // Title
-      text(fill: econ-red, weight: "bold", size: 29pt)[#title]
+      text(fill: econ-red, weight: "bold", size: 31pt)[#title] //set title size
       v(0.5em)
       
       // 2. The line is already centered, but ensure it has space
@@ -89,14 +89,14 @@
       
       // Subtitle
       if subtitle != none {
-        text(size: 16pt, style: "italic", fill: econ-blue)[#subtitle]
+        text(size: 18pt, style: "italic", fill: econ-blue)[#subtitle]
         v(5em) 
       }
 
       // 3. Author and Date (Now properly centered by the outer align)
-      text(size: 16pt, style: "italic", fill: econ-black)[#author]
+      text(size: 15pt, style: "italic", fill: econ-black)[#author]
       v(2em)
-      text(fill: rgb("#666666"), size: 14pt)[#date]
+      text(fill: rgb("#666666"), size: 12pt)[#date]
     })
   })
 
@@ -125,11 +125,11 @@
 
   // Outlines often need context in newer Typst versions 
   // if they are inside complex layout blocks
-  if toc { 
+  if toc {
     context outline(title: "Table of Contents")
     pagebreak(weak: true)
   }
-
+  
   if lof { 
     context outline(
       title: "List of Figures",
@@ -147,7 +147,7 @@
       )
     pagebreak(weak: true)
   }
-  
+
   // change bibliography title
   set bibliography(title: "References", style: "apa")
 

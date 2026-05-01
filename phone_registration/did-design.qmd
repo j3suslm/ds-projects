@@ -19,6 +19,8 @@ format:
       - typst-show.typ
       - typst-template.typ
 bibliography: references.bib
+nocite: |
+  @*
 execute:
   echo: true
 jupyter: python3
@@ -51,14 +53,22 @@ The analysis focuses on a natural experiment comparing two entities with similar
 Through this approach, the study seeks to isolate the net effect of the policy, controlling for temporal factors and pre-existing trends.
 The ultimate goal is to determine whether SIM card registration is an evidence-based public policy tool or, on the contrary, represents a high-friction measure with zero impact on reducing crime rates.
 
-
-As seen in @sample2026, the market is shifting. The Economist style relies on heavy use of "Economist Red" for headers and horizontal rules.
-
 {{< pagebreak >}}
 
 # Data Analysis
 
+To evaluate the causal impact of the mandatory SIM card registration on extortion rates, we employ an approach focused on data integrity and statistical rigor.
+The analysis is performed using a robust suite of libraries designed for high-performance data manipulation and econometric modeling.
+
 ### Environment settings
+
+The following environment configuration ensures a reproducible workflow:
+
+- **Polars** Utilized as the primary data manipulation engine due to its memory efficiency and speed in handling time-series data.
+
+- **Plotnine** An implementation of the Grammar of Graphics for Python, used to visualize the "Parallel Trends" assumption and the divergence between the treatment and control groups.
+
+- **Statsmodels** The core econometric engine used to estimate the Difference-in-Differences (DiD) coefficients and assess the statistical significance of the policy intervention.^[We focus specifically on the interaction term between the treatment group and the post-intervention period to isolate the Average Treatment Effect (ATT).]
 
 ```{python}
 import polars as pl
@@ -69,7 +79,8 @@ import statsmodels.formula.api as smf
 
 ### Data Simulation 
 
-We have generated 02 years of data, 12 months pre, 12 months post observations.
+To test the robustness of our Difference-in-Differences (DiD) estimator, we generated a synthetic dataset representing two years of monthly observations (12 months pre-intervention and 12 months post-intervention).
+This controlled environment allows us to evaluate the model's ability to detect policy effects under a specific hypothesis.
 
 ```{python}
 np.random.seed(88)
@@ -81,10 +92,10 @@ control = 15 + 0.1 * months + np.random.normal(0, 1.5, 24)
 # State A (Treatment): Follows the same trend, but we apply law in the 12th month
 # Hypothesis: Law does NOT work as well as expected (small effect)
 pre_treatment = 18 + 0.1 * months[:12] + np.random.normal(0, 1.5, 12)
-post_treatment = 18 + 0.1 * months[12:] + np.random.normal(0, 1.5, 12) # 2.5 points only
+post_treatment = 18 + 0.1 * months[12:] + np.random.normal(0, 1.5, 12)
 ```
 
-### Creation of Dataframe
+With these data, we proceed to create a DataFrame object. Accordingly, we can see in @tbl-states the values for treatment and control groups.
 
 ``` {python}
 df = pl.DataFrame({
@@ -97,14 +108,17 @@ df = pl.DataFrame({
 ```
 
 ```{python}
+#| echo: false
 #| label: tbl-states
 #| tbl-cap: "Preview of Treatment and Control Groups"
-df.sample(5)
+
+df.sample(5).to_pandas().style.hide().format({'extorsions': '{:,.2f}',})
 ```
 
-We can see in @tbl-states the values for treatment and control groups.
-
 ### Data Visualization
+
+To visually inspect the parallel trends assumption, we generate a time-series comparative plot.
+This visualization tracks the trajectories of both the treatment and control groups, allowing us to observe the pre-intervention alignment and the subsequent evolution of extortion rates following the implementation of the SIM registration mandate.
 
 ```{python}
 #| label: fig-growth-trend
@@ -124,7 +138,7 @@ We can see in @tbl-states the values for treatment and control groups.
         y="Extorsion Reports per 100k inhabitants",
         color='',
     )
-    + theme_minimal()
+    + theme_538()
     + theme(
           figure_size=(12, 8), #width, height
           dpi=100,
@@ -137,9 +151,94 @@ We can see in @tbl-states the values for treatment and control groups.
 
 ### Causal Effect Estimation (DiD)
 
+To quantify the impact of the policy, we specify a Difference-in-Differences (DiD) model using an Ordinary Least Squares (OLS) regression. The model leverages an interaction term to isolate the causal effect by comparing the change in the treatment group relative to the change in the control group over the same period.
+
+The regression equation is defined as follows:
+
+$$ Y_{i,t} = \beta_0 + \beta_1 \text{Treated}_i + \beta_2 \text{Post}_t + \beta_3 (\text{Treated}_i \times \text{Post}_t) + \epsilon_{i,t} $$
+
+where:
+
+- $\beta_1$ (treated_group): Captures the baseline difference between State A and State B before the law.
+- $\beta_2$ (post_law): Accounts for the common time trend shared by both states.
+- $\beta_3$ (interaction): Represents the Average Treatment Effect on the Treated (ATT). This coefficient tells us if the SIM registration policy actually shifted the extortion trend in State A beyond what was observed in the control group.
+
+Then, we run the regression model, as follows:
+
 ```{python}
 model = smf.ols("extorsions ~ treated_group * post_law", data=df,).fit()
+```
+
+```{python}
+#| echo: false
 print(model.summary())
+```
+
+### Discussion of Findings
+
+Despite the implementation of mandatory SIM card registration, the observed impact could be considered marginal for the following technical reasons:
+
+- **Channel Substitution** Criminal groups may have migrated from traditional cell phone calls to Voice over IP (VoIP) services or encrypted messaging, which circumvent the registration of the physical SIM card.
+
+- **Black Markets** The persistence of extortion suggests the existence of a secondary market for prepaid cards registered in the names of third parties or the use of stolen identities (identity theft).
+
+- **Spillover Effect** It is possible that the policy in State A has pushed criminals to operate physically from State B, slightly contaminating our control group.
+
+### Further Analysis
+
+To strengthen the robustness of this research, a placebo test is suggested.
+This test consists of re-estimating the model using a "false treatment date" (e.g., 6 months before the law).
+If the model finds an effect where there was no law, the original design may be capturing noise rather than causality.
+
+The Placebo Test is the "lie detector" of econometrics.
+Its purpose is to demonstrate that the model is not finding causal effects where none exist.
+
+Thus, we will conduct a Time Placebo Test: we will simulate the law being implemented 6 months earlier than the actual date (in month 6 instead of month 12). If the model finds a "significant effect" at that fictitious date, it means your original study has biases (such as omitted variables or trends that were already changing).
+
+We filtered the data to use only the actual "PRE-TREATMENT" period (Months 1-12).
+We want to see if there were any suspicious changes before the law was enacted.
+
+```{python}
+# Filter data
+placebo_df = df.filter(pl.col("month") <= 12)
+# False treatment date(eg. Month 6)
+placebo_df = placebo_df.with_columns(placebo_post = (pl.col("month") > 6).cast(int))
+# run the regression model
+placebo_model = smf.ols("extorsions ~ treated_group * placebo_post", data=placebo_df).fit()
+```
+
+### Placebo Test Results
+
+```{python}
+#| echo: false
+print(placebo_model.summary().tables[1])
+```
+
+```{python}
+#| label: fig-placebo
+#| fig-cap: "Placebo Difference in Differences Analysis (2026)"
+#| fig-align: left
+
+(
+    ggplot(placebo_df, aes(x='month', y='extorsions', color='state'))
+    + geom_line(size=1.1)
+    + geom_vline(xintercept=6.5, linetype="dashed", color="gray")
+    + annotate("text", x=8, y=20, label="Tratamiento Falso", color="gray")
+    + labs(title="Placebo Test (Pre-Law Period)",
+           subtitle="If the effect is real, there wouldn´t be significative changes",
+           x="Month",
+           y="Extorsions",
+           color='',
+          )
+    + theme_538()
+    + theme(
+          figure_size=(12, 8), #width, height
+          dpi=100,
+          legend_position='bottom',
+          legend_direction='horizontal',
+        )
+    + scale_color_manual(values=["#c0392b", "#2980b9"])
+)
 ```
 
 {{< pagebreak >}}
@@ -150,7 +249,7 @@ print(model.summary())
 
 The focus should be on the interaction between treated_group and post_law.
 
-P-value (0.730): This number is devastating for the policy. Being much greater than 0.05, we cannot reject the null hypothesis. This means that the slight increase of 0.2983 in the coefficient is pure noise; the law had no real impact on extortion.
+P-value (0.730): This number is devastating for the policy. Being much greater than 0.05, we cannot reject the null hypothesis. This means that the slight increase of 0.2983 in the coefficient is pure noise. We can conclude that despite the political narrative, the data suggest that cell phone registration did not have a statistically significant impact on reducing extortion.
 
 Confidence Interval (-1.431 to 2.028): The interval crosses zero. This implies that the effect of the law could be either a reduction or an increase, reinforcing the idea that the policy made no difference.
 
@@ -163,6 +262,12 @@ post_law (0.1403, p=0.818): There is also no significant time effect. Extortion 
 ### Model Fit
 
 R-squared (0.480): Interestingly, the model explains more variance than the previous one (48%), but this variance is mainly explained by the structural difference between the states (treated_group) and the intercept, not by the law.
+
+::: {.content-hidden}
+Hay quye checar xq no muestra referencias si no se citan.
+See @sample2026, for more details.
+:::
+
 
 {{< pagebreak >}}
 

@@ -238,7 +238,7 @@ df_elbow = pd.DataFrame({
 })
 
 # plot
-elbow_plot = (
+(
     ggplot(df_elbow, aes(x='k', y='inertia'))
     + geom_line(color='#005073', size=1.5)
     + geom_point(color='#005073', size=4, fill='white', stroke=1.5)
@@ -268,8 +268,6 @@ elbow_plot = (
         panel_grid_major_x=element_blank() # hide vertical lines
     )
 )
-
-elbow_plot.draw()
 ```
 
 Due to the Elbow Method results gives us a small number of clusters, we will apply the Silhouette Coefficient, which measures the technical quality of our clusters. While the elbow method looks for "compactness," the silhouette measures how well each cluster is separated from the others.
@@ -391,8 +389,6 @@ fig.update_layout(
     )
 
 fig.show()
-
-#fig.write_html("cdmx_clusters.html")
 ```
 
 ```{python}

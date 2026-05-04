@@ -10,23 +10,45 @@ abstract: |
   Utilizing a Difference-in-Differences (DiD) framework, this research evaluates whether the implementation of these regulations led to a statistically significant reduction in crime or merely followed pre-existing downward trends in national security metrics.
   By comparing jurisdictions with early adoption against late-adopters, the analysis accounts for time-invariant unobserved heterogeneity.
   The findings contribute to the ongoing discourse on the trade-offs between digital privacy and criminal surveillance, providing evidence-based insights for policymakers considering similar regulatory interventions.
-toc: true
-lof: true
-lot: true
 format:
-  typst:
-    template-partials:
-      - typst-show.typ
-      - typst-template.typ
-bibliography: references.bib
-nocite: |
-  @*
+  html:
+    code-copy: false
+    embed-resources: true
+    fig-cap-location: margin
+    tbl-cap-location: margin
+    number-sections: false
+    toc: true
+    toc-location: left
+    toc-title: Table of Contents
+    grid:
+      sidebar-width: 250px
+      body-width: 940px
+      margin-width: 110px
+      gutter-width: 1em
+    theme: custom.scss
+    bibliography: references.bib
+    nocite: |
+      @*
+    link-external-newwindow: true
+    code-links:
+      - text: PDF Document
+        icon: file-pdf
+        href: https://jesuslm-sim-registration.share.connect.posit.cloud
+    other-links:
+      - text: LinkedIn
+        icon: linkedin
+        href: https://www.linkedin.com/in/j3sus-lm/
+      - text: Medium
+        icon: medium
+        href: https://medium.com/@jesuslm
 execute:
   echo: true
 jupyter: python3
 ---
 
 # The Dilemma of Anonymity
+
+![](sim.png){fig-align="left" width=55% .lightbox}
 
 ## Does SIM registration really curb crime?
 
@@ -36,17 +58,10 @@ The premise is intuitive: *by associating each phone line with a citizen's ident
 However, the effectiveness of this policy is the subject of intense debate. For example, see @donovan2014 and @oruame.
 While authorities defend registration as a pillar of digital forensics strategy, critics argue that these measures impose a privacy burden on citizens without truly affecting organized crime, which typically evades these controls through the use of roaming networks, stolen devices, or identity theft.
 
-::: {layout="[[0.9, 1.1]]"}
-![](sim.png){fig-align="left" width=80%}
-
-::: {.callout-note apperance="minimal" icon="false"}
-
+::: {.callout-note apperance='simple' icon="false"}
 ## The Problem of Causality
-
 The analytical challenge lies in the fact that crime does not occur in a vacuum.
 If extortion decreases after the implementation of the law, a critical question arises: *Is this reduction a direct consequence of mandatory registration, or is it simply a reflection of a general trend of improvement in public safety?*
-:::
-
 :::
 
 ## Study Framework
@@ -60,8 +75,6 @@ The analysis focuses on a natural experiment comparing two entities with similar
 
 Through this approach, the study seeks to isolate the net effect of the policy, controlling for temporal factors and pre-existing trends.
 The ultimate goal is to determine whether SIM card registration is an evidence-based public policy tool or, on the contrary, represents a high-friction measure with zero impact on reducing crime rates.
-
-{{< pagebreak >}}
 
 # Data Analysis
 
@@ -130,10 +143,10 @@ This visualization tracks the trajectories of both the treatment and control gro
 
 ```{python}
 #| label: fig-growth-trend
-#| fig-cap: "Difference in Differences Analysis"
+#| fig-cap: "Applying Difference in Differences Analysis"
 #| fig-align: left
 
-sub = "Mandatory SIM registration was touted as a panacea for extortion.\nInitial data suggests the connection is dropped"
+sub='Mandatory SIM registration was touted as a panacea for extortion. Initial data suggests the connection is dropped.'
 
 (
     ggplot(df, aes(x='month', y='extorsions', color="state"))
@@ -150,17 +163,17 @@ sub = "Mandatory SIM registration was touted as a panacea for extortion.\nInitia
       )
     + theme_538()
     + theme(
-          figure_size=(12, 8),
+          figure_size=(9, 5),
           dpi=100,
-          axis_title_x=element_text(size=15, weight='bold', color="#01516c", margin={'t': 10}),
-          axis_text_x=element_text(size=14, color='#333333'),
-          axis_title_y=element_text(size=15, weight='bold', color="#01516c", margin={'r': 10}),
-          axis_text_y=element_text(size=14, color='#333333'),
+          axis_title_x=element_text(size=11, weight='bold', color="#01516c", margin={'t': 10}),
+          axis_text_x=element_text(size=11, color='#333333'),
+          axis_title_y=element_text(size=10, weight='bold', color="#01516c", margin={'r': 10}),
+          axis_text_y=element_text(size=10, color='#333333'),
           legend_position='bottom',
-          legend_title=element_text(size=14, weight='bold'),
-          legend_text=element_text(size=14),
-          plot_title=element_text(size=22, weight='bold', color='#c0392b', ha='left'),
-          plot_subtitle=element_text(size=16, color='#01516c', ha='left', margin={'b': 15}),
+          legend_title=element_text(size=11, weight='bold'),
+          legend_text=element_text(size=11),
+          plot_title=element_text(size=20, weight='bold', color='#c0392b', ha='left'),
+          plot_subtitle=element_text(size=10, color='#01516c', ha='left', margin={'b': 15}),
         )
     + scale_color_manual(values=["#c0392b", "#2980b9"])
 )
@@ -236,11 +249,9 @@ The results show that the interaction term (treated_group:placebo_post) is not s
 
 > *This supports the assumption of parallel trends, indicating that there were no differential shocks between the groups before the policy was evaluated.*
 
-{{< pagebreak >}}
-
 ```{python}
 #| label: fig-placebo
-#| fig-cap: "Placebo Difference in Differences Analysis (2026)"
+#| fig-cap: "Placebo Difference in Differences Analysis"
 #| fig-align: left
 
 (
@@ -256,23 +267,21 @@ The results show that the interaction term (treated_group:placebo_post) is not s
           )
     + theme_538()
     + theme(
-          figure_size=(12, 7),
+          figure_size=(9, 5),
           dpi=100,
-          axis_title_x=element_text(size=15, weight='bold', color="#01516c", margin={'t': 10}),
-          axis_text_x=element_text(size=14, color='#333333'),
-          axis_title_y=element_text(size=15, weight='bold', color="#01516c", margin={'r': 10}),
-          axis_text_y=element_text(size=14, color='#333333'),
+          axis_title_x=element_text(size=10, weight='bold', color="#01516c", margin={'t': 10}),
+          axis_text_x=element_text(size=10, color='#333333'),
+          axis_title_y=element_text(size=10, weight='bold', color="#01516c", margin={'r': 10}),
+          axis_text_y=element_text(size=10, color='#333333'),
           legend_position='bottom',
-          legend_title=element_text(size=14, weight='bold'),
-          legend_text=element_text(size=14),
-          plot_title=element_text(size=22, weight='bold', color='#c0392b', ha='left'),
-          plot_subtitle=element_text(size=16, color='#01516c', ha='left', margin={'b': 15}),
+          legend_title=element_text(size=10, weight='bold'),
+          legend_text=element_text(size=10),
+          plot_title=element_text(size=20, weight='bold', color='#c0392b', ha='left'),
+          plot_subtitle=element_text(size=11, color='#01516c', ha='left', margin={'b': 15}),
         )
     + scale_color_manual(values=["#c0392b", "#2980b9"])
 )
 ```
-
-{{< pagebreak >}}
 
 # Conclusions
 
@@ -295,65 +304,35 @@ post_law (0.1403, p=0.818): There is also no significant time effect. Extortion 
 R-squared (0.480): Interestingly, the model explains more variance than the previous one (48%), but this variance is mainly explained by the structural difference between the states (treated_group) and the intercept, not by the law.
 
 ::: {.content-hidden}
-Hay quye checar xq no muestra referencias si no se citan.
+Hay que checar xq no muestra referencias si no se citan.
 See @sample2026, for more details.
 :::
 
-{{< pagebreak >}}
+# References
+
+::: {#refs}
+:::
 
 # About the Author
 
-```{=typst}
-// Define the Economist-inspired colors
-#let dark-teal = rgb("#00313a")
-#let accent-teal = rgb("#00a398")
-#let dark-gray = rgb("#4b4f54")
-#let econ-red = rgb("#e3120b")
+::: {style="color: #00313a; font-size: 28px; font-weight: bold; margin-top: 10px; margin-bottom: 0px"}
+Jesus L. Monroy
+:::
 
-// Name Section
-#text(fill: dark-teal, size: 16pt, weight: "bold")[Jesus L. Monroy]
+::: {style="color: #00a398; font-size: 20px; font-style: italic; font-family: 'ITC Charter', Georgia, serif; margin-top: 0px;"}
+Economist & Data Scientist
+:::
 
-#v(-0.8em) // Adjust vertical space between name and title
+::: {style="color: #4b4f54; font-size: 16px; font-style: italic; font-family: 'ITC Charter', Georgia, serif; width: 65%; text-align: justify; line-height: 1.5; margin-top: 0px; margin-bottom: 15px;"}
+Bridging the gap between economic theory and scalable data solutions (Python, SQL, Tableau) through the "Everything as Code" philosophy.
 
-// Title Section
-#text(
-  fill: accent-teal, 
-  size: 13pt, 
-  style: "italic", 
-  font: "ITC Charter" // Reliable substitute for ITC Charter/Georgia
-)[Economist & Data Scientist]
+With over 10 years of experience, I design reproducible pipelines and minimalist data products (Streamlit, Shiny, DuckDB, Polars, Plotly, Scikit-learn, Typst) that transform complex datasets into actionable insights for Public Security, e-commerce, and Healthcare.
 
-#v(-0.1em)
+MA in IT, BA in Economics, MIT-IDSS Certified in Data Science & Machine Learning.
+:::
 
-// Bio Description
-// We use a block with 50% width and justified alignment
-#block(width: 50%)[
-  #set text(
-    fill: dark-gray, 
-    size: 9.5pt, 
-    style: "italic", 
-    font: "Helvetica Neue",
-    tracking: 0.2pt // Slight letter spacing for that print look
-  )
-  #set par(justify: true, leading: 0.65em)
-  
-  Bridging the gap between economic theory and scalable data solutions (Python, SQL, Tableau) through the "Everything as Code" philosophy.
-
-  With over 10 years of experience, I design reproducible pipelines and minimalist data products (Streamlit, Shiny, DuckDB, Polars, Plotly, Scikit-learn, Typst) that transform complex datasets into actionable insights for Public Security, e-commerce, and Healthcare.
-
-  MA in IT, BA in Economics, MIT-IDSS Certified in Data Science & Machine Learning.
-
-]
-
-#v(0.2em)
-
-// Social Links in Economist Red
-#set text(size: 9pt, font: "Arial", weight: "medium")
-#let econ-link(dest, label) = link(dest)[#text(fill: econ-red)[#label]]
-
-#econ-link("https://jesuslm-my-website.share.connect.posit.cloud", "Portfolio") | 
-#econ-link("https://www.linkedin.com/in/j3sus-lm", "Linkedin") | 
-#econ-link("https://tinyurl.com/jesuslm-tableau", "Tableau")
-```
-
-{{<pagebreak>}}
+::: {style="color: #4b4f54; font-size: 16px; font-family: sans-serif;"}
+[Portfolio](https://jesuslm-my-website.share.connect.posit.cloud) | 
+[Linkedin](https://www.linkedin.com/in/j3sus-lm) | 
+[Tableau](https://tinyurl.com/jesuslm-tableau)
+:::

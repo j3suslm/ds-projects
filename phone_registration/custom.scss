@@ -1,0 +1,189 @@
+/*-- scss:defaults --*/
+
+/* The Economist Color Palette & Web Reporting Style */
+:root {
+  /* Core Palette */
+  --econ-red: #e3120b;         /* The 'Red Top' brand color */
+  --econ-dark-blue: #005073; //#004761 //#005073 //#00313a   /* Headings and primary text */
+  --econ-light-blue: #00a398;  /* Accents / Links */
+  --econ-bg-latte: #f6f6f6;    /* #F5F2F0 Page background */
+  --econ-grey-text: #4b4f54;   /* Body text */
+  --econ-border: #d7d7d7;      /* Dividers */
+}
+
+/*-- scss:rules --*/
+
+.title {
+  color: var(--econ-dark-blue) !important;
+  //border-bottom: 3px solid var(--econ-red); /* Increased to 4px for that bold masthead look */
+  padding-top: 15px;
+  margin-top: 20px;
+  font-family: 'Milo', sans-serif;
+  font-weight: 900;
+  font-size: 40px;
+  /*text-transform: uppercase;*/
+}
+
+.subtitle {
+  color: var(--econ-red);
+  font-weight: bold;
+  font-size: 0.9em;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: -10px; /* Pulls the title closer to the subtitle */
+}
+
+.abstract {
+  font-family: 'ITC Charter', Georgia, serif;
+  font-size: 18px; /* Slightly smaller than 'lead' for standard abstracts */
+  color: var(--econ-grey-text);
+  line-height: 1.4;
+  text-align: justify;
+  border-left: 2px solid var(--econ-red);  /* Adds a red Economist accent bar */
+  padding-left: 15px;
+  margin-bottom: 20px;
+  font-style: italic;
+}
+
+/* Optional: Style the "Abstract" title itself */
+.abstract-title {
+  color: var(--econ-red);
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+body {
+  background-color: var(--econ-bg-latte);
+  color: var(--econ-grey-text);
+  font-family: "ITC Charter", "Georgia", serif; /* Mimics their serif style */
+  line-height: 1.5;
+  text-align: justify;
+}
+
+/* Headings */
+h1 {
+  color: var(--econ-dark-blue);
+  font-family: "Milo", "Helvetica Neue", Arial, sans-serif;
+  font-weight: 700;
+  position: relative; /* Necesario para ubicar la línea */
+  padding-bottom: 10px; /* Espacio entre texto y línea */
+}
+
+h1::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 60px; /* <--- line length */
+  height: 4px; /* <--- line thickness */
+  background-color: var(--econ-red);
+}
+
+
+h2, h3 {
+  color: var(--econ-light-blue);
+  font-family: "Milo", "Helvetica Neue", Arial, sans-serif; /* Their sans-serif font */
+  font-weight: 700;
+  border-bottom: none; //border-bottom: 0px solid var(--econ-border);
+}
+
+/* Links */
+a {
+  color: var(--econ-red);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+}
+
+a:hover {
+  border-bottom: 1px solid var(--econ-dark-blue);
+}
+
+/* Quarto Callouts (The Economist uses "Box" styles often) */
+.callout {
+  border-left-color: var(--econ-red) !important;
+  background-color: white !important;
+  border-radius: 1;
+}
+
+/* ensure the icon/title area matches if needed */
+.callout-header {
+  background-color: white !important;
+}
+
+
+/* Table styling */
+table {
+  border-top: 2px solid var(--econ-dark-blue);
+  border-bottom: 2px solid var(--econ-dark-blue);
+}
+
+th {
+  color: var(--econ-dark-blue);
+  border-bottom: 1px solid var(--econ-border);
+}
+
+/* Target the main bibliography container */
+div#refs {
+  margin-left: 0;
+  padding-left: 0;
+}
+
+/* individual entry formatting */
+#refs .csl-entry {
+  margin-bottom: 1em;
+  padding-left: 10px; /* left inside space */
+  text-indent: 0; /* removes french indent (hanging indent) */
+  margin-left: 0; /* no external margin */
+  line-height: 1.5; /* legibility */
+}
+
+/* customized hypen adjustment */
+#refs .csl-entry::before {
+  content: "- ";
+  font-weight: bold;
+  color: var(--econ-red); 
+  margin-right: 0.5px; /* space between hypen and text */
+}
+
+/* about section customization */
+.name-header {
+  color: #004761;
+  font-size: 28px;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.career-subtitle {
+  color: #00a398;
+  font-size: 20px;
+  font-style: italic;
+  font-family: "ITC Charter", Georgia, serif;
+}
+
+.bio-text {
+  color: #4b4f54;
+  font-size: 16px;
+  font-style: italic;
+  width: 43%;
+  text-align: justify;
+  line-height: 1.5;
+}
+
+.bio-links {
+ color: #4b4f54;
+ font-size: 16px;
+ font-family: sans-serif;  
+}
+
+/* footnote background */
+section.footnotes {
+  background-color: var(--econ-bg-latte);
+  //padding: 15px;
+  //border-radius: 5px;
+  //border-top: 1px solid #dee2e6;
+}
+
+section.footnotes {
+    margin-top: -2em !important; 
+    border-top: 2px solid #eeeeee !important;
+}

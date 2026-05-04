@@ -244,7 +244,7 @@ This approach shifts law enforcement from reactive to proactive. By identifying 
 :::
 
 
-# Contact
+# About the Author
 
 ::: {style="color: #00313a; font-size: 28px; font-weight: bold; margin-top: 10px; margin-bottom: 0px"}
 Jesus L. Monroy
@@ -255,13 +255,15 @@ Economist & Data Scientist
 :::
 
 ::: {style="color: #4b4f54; font-size: 16px; font-style: italic; font-family: 'ITC Charter', Georgia, serif; width: 65%; text-align: justify; line-height: 1.5; margin-top: 0px; margin-bottom: 15px;"}
-Passionate about creating tools that make data accessible and impactful using SQL, Python, Streamlit, Shiny and Tableau in diverse sectors like Public Security, e-commerce, and Healthcare.     
-BA in Economics, MA in Information Technology, and Data Science and Machine Learning certification.
+Bridging the gap between economic theory and scalable data solutions (Python, SQL, Tableau) through the "Everything as Code" philosophy.
+
+With over 10 years of experience, I design reproducible pipelines and minimalist data products (Streamlit, Shiny, DuckDB, Polars, Plotly, Scikit-learn, Typst) that transform complex datasets into actionable insights for Public Security, e-commerce, and Healthcare.
+
+MA in IT, BA in Economics, MIT-IDSS Certified in Data Science & Machine Learning.
 :::
 
 ::: {style="color: #4b4f54; font-size: 16px; font-family: sans-serif;"}
 [Portfolio](https://jesuslm-my-website.share.connect.posit.cloud) | 
 [Linkedin](https://www.linkedin.com/in/j3sus-lm) | 
-[Twitter](https://x.com/j3suslm) | 
 [Tableau](https://tinyurl.com/jesuslm-tableau)
 :::

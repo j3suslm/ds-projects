@@ -46,9 +46,9 @@ execute:
 jupyter: python3
 ---
 
-# The Dilemma of Anonymity
-
 ![](sim.png){fig-align="left" width=55% .lightbox}
+
+# The Dilemma of Anonymity
 
 ## Does SIM registration really curb crime?
 
@@ -163,7 +163,7 @@ sub='Mandatory SIM registration was touted as a panacea for extortion. Initial d
       )
     + theme_538()
     + theme(
-          figure_size=(9, 5),
+          figure_size=(8.8, 5.5),
           dpi=100,
           axis_title_x=element_text(size=11, weight='bold', color="#01516c", margin={'t': 10}),
           axis_text_x=element_text(size=11, color='#333333'),
@@ -247,7 +247,9 @@ print(placebo_model.summary().tables[1])
 A placebo-controlled trial was conducted using a period prior to the implementation of the SIM card registration law.
 The results show that the interaction term (treated_group:placebo_post) is not statistically significant (p = 0.125).
 
-> *This supports the assumption of parallel trends, indicating that there were no differential shocks between the groups before the policy was evaluated.*
+::: {.callout-note apperance='simple' icon="false"}
+*This supports the assumption of parallel trends, indicating that there were no differential shocks between the groups before the policy was evaluated.*
+:::
 
 ```{python}
 #| label: fig-placebo
@@ -267,7 +269,7 @@ The results show that the interaction term (treated_group:placebo_post) is not s
           )
     + theme_538()
     + theme(
-          figure_size=(9, 5),
+          figure_size=(8.8, 5.5),
           dpi=100,
           axis_title_x=element_text(size=10, weight='bold', color="#01516c", margin={'t': 10}),
           axis_text_x=element_text(size=10, color='#333333'),
@@ -289,22 +291,22 @@ The results show that the interaction term (treated_group:placebo_post) is not s
 
 The focus should be on the interaction between treated_group and post_law.
 
-P-value (0.730): This number is devastating for the policy. Being much greater than 0.05, we cannot reject the null hypothesis. This means that the slight increase of 0.2983 in the coefficient is pure noise. We can conclude that despite the political narrative, the data suggest that cell phone registration did not have a statistically significant impact on reducing extortion.
+- **P-value (0.730)**. This number is devastating for the policy. Being much greater than 0.05, we cannot reject the null hypothesis. This means that the slight increase of 0.2983 in the coefficient is pure noise. We can conclude that despite the political narrative, the data suggest that cell phone registration did not have a statistically significant impact on reducing extortion.
 
-Confidence Interval (-1.431 to 2.028): The interval crosses zero. This implies that the effect of the law could be either a reduction or an increase, reinforcing the idea that the policy made no difference.
+- **Confidence Interval (-1.431 to 2.028)**. The interval crosses zero. This implies that the effect of the law could be either a reduction or an increase, reinforcing the idea that the policy made no difference.
 
 ### Trend Analysis
 
-treated_group (2.5639, p=0.000): This remains significant. State A has always had more extortion cases than State B, regardless of the law.
+- **treated_group (2.5639, p=0.000)**. This remains significant. State A has always had more extortion cases than State B, regardless of the law.
 
-post_law (0.1403, p=0.818): There is also no significant time effect. Extortion in the control group (State B) remained flat.
+- **post_law (0.1403, p=0.818)**. There is also no significant time effect. Extortion in the control group (State B) remained flat.
 
 ### Model Fit
 
-R-squared (0.480): Interestingly, the model explains more variance than the previous one (48%), but this variance is mainly explained by the structural difference between the states (treated_group) and the intercept, not by the law.
+- **R-squared (0.480)**. Interestingly, the variance explained by the model is mainly explained by the structural difference between the states (treated_group) and the intercept, not by the law.
 
 ::: {.content-hidden}
-Hay que checar xq no muestra referencias si no se citan.
+no muestran referencias si no se citan.
 See @sample2026, for more details.
 :::
 
@@ -323,7 +325,7 @@ Jesus L. Monroy
 Economist & Data Scientist
 :::
 
-::: {style="color: #4b4f54; font-size: 16px; font-style: italic; font-family: 'ITC Charter', Georgia, serif; width: 65%; text-align: justify; line-height: 1.5; margin-top: 0px; margin-bottom: 15px;"}
+::: {style="color: #4b4f54; font-size: 16px; font-style: italic; font-family: 'ITC Charter', Georgia, serif; width: 45%; text-align: justify; line-height: 1.5; margin-top: 0px; margin-bottom: 15px;"}
 Bridging the gap between economic theory and scalable data solutions (Python, SQL, Tableau) through the "Everything as Code" philosophy.
 
 With over 10 years of experience, I design reproducible pipelines and minimalist data products (Streamlit, Shiny, DuckDB, Polars, Plotly, Scikit-learn, Typst) that transform complex datasets into actionable insights for Public Security, e-commerce, and Healthcare.

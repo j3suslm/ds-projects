@@ -1,0 +1,33 @@
+---
+title: "Nuestra Tienda"
+subtitle: "Recursos Premium para el Practicante de Kung Fu"
+toc: true
+toc-title: "Catálogo de Productos"
+---
+
+## Muñeco de Madera
+
+![](https://www.dummymaker.com/wp-content/uploads/2022/05/Wing-Chun-Choy-Lee-Fut-Measurement-1.jpg){fig-align="left" width="300px" style="height: 300px; object-fit: cover; border-radius: 8px;"}
+
+<p class="text-muted small mt-2 mb-2">Muñeco de Madera para Wing Chun</p>
+
+Tao Mini Wing Chun Dummy Wooden Collectible, Muk Yan Jong Model, Kung Fu Martial Arts Decoration, Ideal Gift for Martial Artists, Handcrafted Acacia Wood, Height 21cm.
+
+<div class="d-flex justify-content-between align-items-center mt-3 mb-5">
+  <strong>\$29.00</strong>
+  <a href="https://your-gumroad-or-stripe-link.com" class="btn btn-primary btn-sm">Buy Now</a>
+</div>
+
+
+## Traje Tradicional
+
+![](https://centurymartialarts.com/cdn/shop/products/lightweight-kung-fu-top-378041_2048x2048.jpg?v=1687810880){fig-align="left" width="300px" style="height: 300px; object-fit: cover; border-radius: 8px;"}
+
+<p class="text-muted small mt-2 mb-2">Traje para Practicar Kung Fu</p>
+
+La vestimenta tradicional para el Kung Fu. Diseñado para ofrecer la máxima comodidad y flexibilidad durante el entrenamiento de formas y combate.
+
+<div class="d-flex justify-content-between align-items-center mt-3 mb-5">
+  <strong>\$49.00</strong>
+  <a href="https://your-gumroad-or-stripe-link.com" class="btn btn-primary btn-sm">Buy Now</a>
+</div>

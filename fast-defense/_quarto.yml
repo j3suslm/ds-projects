@@ -12,6 +12,7 @@ website:
       - instructores.qmd
       - videogaleria.qmd
       - cursos.qmd
+      - shopping.qmd
     right:
       - icon: youtube
         href: https://www.youtube.com/@fastdefensesystem

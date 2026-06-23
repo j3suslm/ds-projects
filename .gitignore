@@ -3,3 +3,6 @@
 .streamlit/secrets.toml
 *.html
 
+# pixi environments
+.pixi/*
+!.pixi/config.toml

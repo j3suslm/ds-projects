@@ -1,0 +1,282 @@
+---
+title: SQL Project with DuckDB
+subtitle: Empowering SQL within Python
+author: "*Jesus L. Monroy*"
+date: "*2026-06-23*"
+last-update: last-modified
+date-format: MMM, YYYY
+abstract: |
+  The story of SQL (Structured Query Language) is essentially the story of modern data management. Before SQL, finding a specific piece of information in a computer database was a massive chore that required navigating complex, rigid paths of computer code.
+  Today, SQL is the undisputed lingua franca of data. Whether you are a data scientist analyzing billions of rows or a software engineer building a mobile app, SQL is likely powering the engine under the hood.
+tbl-cap-location: bottom
+format:
+  html:
+    embed-resources: true
+    code-copy: false
+    code-fold: show
+    code-tools:
+      source: false
+      toggle: true
+      caption: Code
+    code-summary: "Hide the code"
+    fig-cap-location: margin
+    tbl-cap-location: margin
+    number-sections: false
+    toc: true
+    toc-location: left
+    toc-title: Table of Contents
+    grid:
+      sidebar-width: 230px
+      body-width: 900px
+      margin-width: 170px
+      gutter-width: 1em
+    theme: custom.scss
+    link-external-newwindow: true
+    other-links:
+      - text: LinkedIn
+        icon: linkedin
+        href: https://www.linkedin.com/in/j3sus-lm
+      - text: Medium
+        icon: medium
+        href: https://medium.com/@jesuslm
+execute:
+  echo: true
+  warning: false
+jupyter: python3
+---
+
+# History
+
+In 1970, an IBM computer scientist named Edgar F. Codd published a groundbreaking paper titled *"A Relational Model of Data for Large Shared Data Banks."* Codd proposed a revolutionary paradigm shift: instead of organizing data in complex networks or rigid hierarchical trees, information should be decoupled from the hardware layer and stored in intuitive **tables** (relations) comprised of rows and columns.
+
+## The Birth of SEQUEL
+
+Inspired by Codd’s mathematical relational algebra, fellow IBM researchers Donald D. Chamberlin and Raymond F. Boyce set out to create a declarative language to interact with this new database structure. In the early 1970s, they developed **SEQUEL** (Structured English Query Language).
+
+The language was designed to read almost like plain English sentences, allowing domain experts who were not necessarily computer programmers to independently retrieve data.
+
+> **Fun Fact:** IBM was later forced to change the name from SEQUEL to SQL due to a trademark dispute with a UK-based aviation company. However, the original pronunciation stuck—which is why today, engineers still passionately debate whether to say "S-Q-L" or "Sequel."
+
+## Standardization and Commercialization
+
+IBM was slow to commercialize its creation, leaving the door wide open for competitors. A young entrepreneur named Larry Ellison recognized SQL's immense potential and utilized it to launch Relational Software (which later became **Oracle**), beating IBM to the market with the first commercial relational database in 1979.
+
+As more vendors began building proprietary database systems, the tech industry faced an interoperability crisis: every vendor implemented a slightly different dialect of SQL. To prevent total fragmentation, the **American National Standards Institute (ANSI)** stepped in, releasing the first official SQL standard in 1986, cementing its place in industry history.
+
+# Basic SQL Syntax
+
+## The Core Building Blocks
+
+At its heart, SQL is a **declarative language**. Unlike procedural languages, you explicitly define *what* data you want to retrieve, leaving the query optimizer to figure out *how* to fetch it.
+
+SQL commands are grouped into distinct sub-languages. The most ubiquitous is the **Data Query Language (DQL)**, used to extract insights from database tables.
+
+Here is an anatomy of a foundational SQL query:
+
+```{sql}
+SELECT first_name, last_name, salary
+FROM employees
+WHERE department = 'Marketing'
+ORDER BY salary DESC;
+```
+
+| first_name | last_name | salary |
+| --- | --- | --- |
+| Charlie | Brown | 120000 |
+| Alice | Smith | 95000 |
+| Evan | Wright | 90000 |
+
+: Results of SQL query {.striped .hover}
+
+Breaking Down the Syntax:
+
+- SELECT: This tells the database which columns you want to view (e.g., first name, last name, salary). You can use an asterisk (*) to select all columns.
+- FROM: This specifies the table where the data is stored (e.g., the employees table).
+- WHERE: This filters the results based on a condition. In this case, we only want employees whose department is exactly 'Marketing'.
+- ORDER BY: This sorts the final output. Here, it sorts the rows by salary in descending (DESC) order—highest paid to lowest paid.
+
+Beyond querying, SQL uses Data Manipulation Language (DML) to modify data:
+
+- INSERT INTO: Adds new rows to a table.
+- UPDATE: Modifies existing data.
+- DELETE: Removes rows from a table.
+
+
+# The Modern "Flavors" of SQL
+
+While the ANSI standards exist to keep everyone on the same page, the major tech companies and open-source communities have developed their own "flavors" (formally known as Relational Database Management Systems, or RDBMS).
+
+Think of these flavors like dialects of a language. If you speak standard English, you can easily understand someone speaking with a British or Australian accent—but they might use a few unique slang words. Similarly, different database engines have unique features, optimization tweaks, and slight syntax variations.
+
+Here are the most popular flavors used today:
+
+| RDBMS Flavor | Type | Best Known For |
+| --- | --- | --- |
+| PostgreSQL | Open-Source | Known as the most advanced, feature-rich open-source database. Highly extensible and strictly adheres to SQL standards. |
+| MySQL | Open-Source | The powerhouse of the web. It's incredibly fast, reliable, and forms the backbone of platforms like WordPress, Facebook, and YouTube. |
+| SQLite | Open-Source | A self-contained, serverless database. It lives as a single file on a device, making it the default choice inside mobile apps (iOS/Android) and browsers. |
+| Microsoft SQL Server | Commercial | Deeply integrated into the Microsoft ecosystem. Widely used by enterprise corporations that rely on Windows Server and Azure cloud. |
+| Oracle Database | Commercial | The massive, ultra-robust enterprise heavyweight. It is expensive but favored by giant corporations and banks for its extreme scalability and security. |
+
+: Flavors of SQL {.striped .hover tbl-colwidths="[25,25,50]"}
+
+
+# The Merge of SQL and Python
+
+In recent years, the data landscape has witnessed a massive shift in how Python and SQL interact, largely driven by a tool that has taken the data engineering and data science worlds by storm: DuckDB.
+
+Historically, Python and SQL were treated as two different paradigms. You either wrote SQL queries inside a database or used Python libraries like Pandas to manipulate data in memory. Moving data between the two was often slow and clunky.
+
+DuckDB has effectively erased that boundary, allowing SQL and Python to seamlessly merge.
+
+## What is DuckDB?
+
+Launched in 2019 and exploding in popularity over the last few years, DuckDB is often described as the "SQLite for Analytics." Like SQLite, it is serverless, deeply lightweight, and embedded directly inside your application—requiring no complex server installation. However, while SQLite is built for transactional operations (like saving a user's settings in a mobile app), DuckDB is a columnar database optimized for analytical queries (OLAP) on massive datasets.
+
+## How DuckDB Merges SQL and Python
+
+Before DuckDB, if you wanted to run SQL on a Python data structure like a Pandas DataFrame, you had to spin up an in-memory database, export the Python data into it, run the query, and export it back. It was slow and heavy on RAM.
+
+DuckDB achieves a true merger by utilizing zero-copy data sharing. It can query Python objects directly where they sit in your computer's memory, bypassing the costly overhead of data conversion.
+
+Here is how that look in practice, showcasing how fluidly the two languages blend:
+
+### Querying Python Variables Directly in SQL
+
+With DuckDB, you can write a standard SQL query and reference a Python variable (like a Pandas DataFrame or a Polars DataFrame) as if it were a table in a database.
+
+```{python}
+import polars as pl
+import duckdb
+
+# A standard Python Pandas DataFrame
+df_employees = pl.DataFrame({
+    'name': ['Alice', 'Bob', 'Charlie'],
+    'department': ['Marketing', 'Engineering', 'Marketing'],
+    'salary': [90_000, 110_000, 95_000]
+})
+
+# Save to parquet
+df_employees.write_parquet("employees.parquet")
+
+# DuckDB seamlessly runs SQL directly on the Python variable 'df_employees'
+result = duckdb.sql('''
+    SELECT department,
+        AVG(salary),
+    FROM df_employees
+    GROUP BY department
+''').df()
+
+result
+```
+
+In the example above, .df() at the end converts the SQL output back into a native Python Pandas DataFrame instantly.
+
+### Streamlining the Data Pipeline
+
+DuckDB can also read external file formats common in Python ecosystems—like CSV, JSON, and Parquet—directly using SQL, without requiring you to "import" them first.
+
+```{python}
+# Querying a massive 10GB Parquet file directly using SQL syntax
+duckdb.sql("SELECT * FROM 'employees.parquet' WHERE name == 'Alice'").df()
+```
+
+## Why This Marriage Matters
+
+This merger solves a long-standing workflow dilemma for data professionals.
+
+- The Best of Both Worlds: Data practitioners no longer have to choose between the readability and speed of SQL for aggregations, and the deep flexibility of Python for machine learning and visualization. You can use SQL to filter and aggregate millions of rows in milliseconds, and then immediately hand that data off to Python libraries like Scikit-Learn or Matplotlib.
+
+- Performance Boost: Because DuckDB is written in highly optimized C++ and uses columnar vectorization, running SQL through DuckDB is often significantly faster than doing the equivalent data manipulations using native Pandas code.
+
+- Local Big Data: It allows engineers to run "big data" analytics locally on their laptops. You can query data sizes that used to require a massive cloud warehouse (like Snowflake or BigQuery) right inside a local Jupyter Notebook.
+
+By marrying the ubiquitous querying power of SQL with the rich ecosystem of Python, DuckDB has established a new standard for modern data analysis, proving that these two language giants are far better together than apart.
+
+# Working with SQL within Python
+
+Below is an end-to-end workflow highlighting how to initialize an in-memory database engine, establish schema definitions, populate data, and run analytical filters entirely inside a script block.
+
+- Set up SQL engine in Python with DuckDB library
+
+```{python}
+import duckdb
+```
+
+- Connect to an in-memory DuckDB database
+
+```{python}
+conn = duckdb.connect(database=':memory:')
+```
+
+- Create the employees table using DDL
+
+```{python}
+conn.execute("""
+    CREATE TABLE employees (
+        first_name VARCHAR,
+        last_name VARCHAR,
+        department VARCHAR,
+        salary INTEGER
+    );
+""")
+```
+
+- Insert sample data (including non-Marketing rows to test the WHERE clause)
+
+```{python}
+conn.execute("""
+    INSERT INTO employees VALUES 
+    ('Alice', 'Smith', 'Marketing', 95000),
+    ('Bob', 'Jones', 'Engineering', 110000),
+    ('Charlie', 'Brown', 'Marketing', 120000),
+    ('Diana', 'Prince', 'HR', 85000),
+    ('Evan', 'Wright', 'Marketing', 90000);
+""")
+```
+
+- Run your SQL query
+
+```{python}
+query_result = conn.execute("""
+    SELECT first_name, last_name, salary
+    FROM employees
+    WHERE department = 'Marketing'
+    ORDER BY salary DESC;
+""").df()
+```
+
+- Print the results
+
+```{python}
+query_result
+```
+
+# Conclusions
+
+More than half a century after its inception, SQL remains one of the most resilient engineering languages in modern tech history.
+While NoSQL architectures emerged in the late 2000s to manage horizontally scaled unstructured data, relational systems rapidly evolved, and nearly every modern NoSQL tool has since layered an SQL dialect on top of its storage engine.
+
+Because of its logical, robust foundations, mastery over SQL continues to be an exceptionally high-yield investment for any modern technical career.
+
+# About the author
+
+::: {.name-header}
+Jesus L. Monroy
+:::
+
+::: {.career-subtitle}
+Economist & Data Scientist
+:::
+
+::: {.bio-text}
+Bridging the gap between economics and scalable data solutions (Python, SQL, Tableau) through the "Everything as Code" philosophy.   
+With over 10 years of experience, I design reproducible pipelines and minimalist data products (Streamlit, Shiny, DuckDB, Polars, Plotly, Scikit-learn, Typst) that transform complex datasets into actionable insights for Public Security, e-commerce, and Healthcare.   
+MA in IT, BA in Economics, MIT-IDSS Certified in Data Science & Machine Learning.
+:::
+
+::: {.bio-links}
+[Portfolio](https://jesuslm-my-website.share.connect.posit.cloud) | 
+[Linkedin](https://www.linkedin.com/in/j3sus-lm) | 
+[Tableau](https://tinyurl.com/jesuslm-tableau)
+:::

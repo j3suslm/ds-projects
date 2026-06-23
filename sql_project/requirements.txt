@@ -1,3 +1,6 @@
 polars
 duckdb
 jupyterlab
+pyarrow
+fastexcel
+
